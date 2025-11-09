@@ -5,7 +5,7 @@
 
 **Ustanova**: Sveučilište Jurja Dobrile u Puli, Fakultet informatike u Puli
 
-<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-PJS/main/0.%20Template/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-PJS/main/0.%20Template/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; float:left;"></img>
 
 # (1) Programski jezik Python
 
@@ -310,7 +310,7 @@ Popularan je i široko korišten u mnogim područjima, uključujući: web razvoj
 
 Ono što nam je još važno za zapamtiti, Python je tzv. **multi-paradigmatski** (_eng. multi-paradigm_) jezik, što znači da podržava više stilova programiranja, uključujući proceduralno, objektno orijentirano ili funkcijsko programiranje. Korisnik može odabrati stil programiranja koji najbolje odgovara problemu koji rješava pa i kombinirati različite stilove programiranja što čini ovaj jezik vrlo fleksibilnim.
 
-<img src="https://runestone.academy/ns/books/published/mobilecsp/_images/python-logo.png" style="width:25%">
+<img src="https://runestone.academy/ns/books/published/mobilecsp/_images/python-logo.png" style="width:25%; float:left;">
 
 ## 3.1 VS Code okruženje
 
@@ -953,11 +953,11 @@ print(bool(None)) # False (None se tumači kao False)
 
 Logički operatori se koriste za kombiniranje logičkih izraza. Nad objektima logičkog tipa `bool` moguće je primjenjivati uobičajene operatore `and`, `or` i `not`.
 
-| Operator | Opis                                                                  | Primjer          | Rezultat |
-| -------- | --------------------------------------------------------------------- | ---------------- | -------- |
-| `and`    | Konjunkcija ili logičko "I" - `True` ako su oba izraza `True`         | `True and False` | `False`  |
+| Operator | Opis                                                         | Primjer          | Rezultat |
+| -------- | ------------------------------------------------------------ | ---------------- | -------- |
+| `and`    | Konjunkcija ili logičko "I" - `True` ako su oba izraza `True` | `True and False` | `False`  |
 | `or`     | Disjunkcija ili logičko "ILI - `True` ako je barem jedan izraz `True` | `True or False`  | `True`   |
-| `not`    | Negacija ili logičko "NE". Negiramo operande, ne operatore.           | `not True`       | `False`  |
+| `not`    | Negacija ili logičko "NE". Negiramo operande, ne operatore.  | `not True`       | `False`  |
 
 Izračunavanje logičkih operatora prestaje **čim konačna vrijednost izraza postane "jasna"**.
 
@@ -992,7 +992,7 @@ Primjer:
 
 <details>
   <summary>Spoiler alert! Odgovor na pitanje</summary>
-  
+
   <p>Izraz se interpretira kao <code> 1 < 2+3 and 2+3 < 6</code>, dakle izvršit će se dvije usporedbe.</p>
   <p>Međutim, zbrajanje će se izvršiti samo jednom, budući da Python izračunava izraz (2+3) samo jednom, a onda primjenjuje dobivenu vrijednost na obe usporedbe.</p>
 </details>
@@ -1003,7 +1003,7 @@ Primjer:
 
 <details>
   <summary>Spoiler alert! Odgovor na pitanje</summary>
-  
+
   <p>Izraz se interpretira kao <code>1 < 4 and 4 < 3 and 3 < 6</code>.</p>
   <p>Prva usporedba je zadovoljena, ali druga nije, pa se izračunavanje prekida i cijeli izraz se tumači kao <code>False</code>.</p>
   <p>Drugim riječima, treća usporedba se neće uopće izvesti.</p>
@@ -1101,7 +1101,7 @@ print(a == b) # ?
   <summary>Spoiler alert! Odgovor na pitanje</summary>
   <p><code>a is b</code> True jer su literali</p>
   <p><code>a == b</code> True</p>
-  
+
   Simple answer: Brojevi su pohranjeni na istoj memorijskoj lokaciji (*cached*) i nepromijenjivi su (*eng. immutable*).
 </details>
 
@@ -1728,15 +1728,15 @@ for sastojak in sastojci: # sastojak (upravljačko ime),
 
 Ukratko, sljedeća tablica prikazuje osnovne karakteristike n-torki (_eng. tuples_):
 
-| **N-torka (_eng. tuple_)**                | _Primjer:_ `lokacija = (34.0522, -118.2437)` ili `lokacija = 34.0522, -118.2437`                             |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| **Karakteristika**                        | **Objašnjenje**                                                                                              |
-| **Nepromjenjivost (_eng. Immutable_)**    | N-torke nije moguće mijenjati nakon stvaranja (nema dodavanja, uklanjanja, mijenjanja redoslijeda)           |
-| **Uređenost (_eng. Ordered_)**            | Elementi n-torke imaju definirani slijed koji se ne može promijeniti.                                        |
-| **Indeksirani elementi (_eng. Indexed_)** | Elementima se može pristupiti preko indeksa (npr, `tuple[0]`).                                               |
-| **Hashable**                              | N-torke se mogu koristiti kao ključevi rječnika (liste ne mogu!)                                             |
-| **Fiksna veličina**                       | Veličina n-torke je fiksna i definira se prilikom izrade                                                     |
-| **Heterogeni elementi**                   | Može sadržavati različite _non-literals_ elemente (npr. integere, stringove, liste, itd.)                    |
+| **N-torka (_eng. tuple_)**                | _Primjer:_ `lokacija = (34.0522, -118.2437)` ili `lokacija = 34.0522, -118.2437` |
+| ----------------------------------------- | ------------------------------------------------------------ |
+| **Karakteristika**                        | **Objašnjenje**                                              |
+| **Nepromjenjivost (_eng. Immutable_)**    | N-torke nije moguće mijenjati nakon stvaranja (nema dodavanja, uklanjanja, mijenjanja redoslijeda) |
+| **Uređenost (_eng. Ordered_)**            | Elementi n-torke imaju definirani slijed koji se ne može promijeniti. |
+| **Indeksirani elementi (_eng. Indexed_)** | Elementima se može pristupiti preko indeksa (npr, `tuple[0]`). |
+| **Hashable**                              | N-torke se mogu koristiti kao ključevi rječnika (liste ne mogu!) |
+| **Fiksna veličina**                       | Veličina n-torke je fiksna i definira se prilikom izrade     |
+| **Heterogeni elementi**                   | Može sadržavati različite _non-literals_ elemente (npr. integere, stringove, liste, itd.) |
 | **Packing/Unpacking**                     | Korisno za "pakiranje" više vrijednosti u jednu varijablu i njihovo "raspakiravanje" u pojedinačne varijable |
 
 N-torke možemo definirati na mnogo načina:
@@ -1888,15 +1888,15 @@ print(sastojci) # ['brašno', 'jaja', 'mlijeko', 'sol', 'šećer'] - sortira ele
 
 Sve `list` metode možete pronaći [ovdje](https://www.w3schools.com/python/python_ref_list.asp).
 
-| **Lista (_eng. List_)**                             | _Primjer:_ `lista = [1, 2, 3, 4, 5]`                                                               |
-| --------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| **Karakteristika**                                  | **Opis**                                                                                           |
-| **Promjenjivost (_eng. Mutable_)**                  | Liste je moguće mijenjati nakon izrade                                                             |
-| **Uređenost (_eng. Ordered_)**                      | Elementi liste imaju definirani slijed koji se može mijenjati                                      |
-| **Indeksirani elementi (_eng. Indexed_)**           | Elementima se može pristupiti preko indeksa (npr, `list[0]`)                                       |
-| **Non-Hashable**                                    | Liste se ne mogu koristiti kao ključevi rječnika jer su promjenjiva struktura                      |
-| **Dinamička alokacija (_eng. Dynamic allocation_)** | Liste se dinamički mijenjaju dodavanjem/oduzimanjem elemenata                                      |
-| **Heterogeni elementi**                             | Može sadržavati različite _non-literals_ elemente (npr. integere, stringove, liste, itd.)          |
+| **Lista (_eng. List_)**                             | _Primjer:_ `lista = [1, 2, 3, 4, 5]`                         |
+| --------------------------------------------------- | ------------------------------------------------------------ |
+| **Karakteristika**                                  | **Opis**                                                     |
+| **Promjenjivost (_eng. Mutable_)**                  | Liste je moguće mijenjati nakon izrade                       |
+| **Uređenost (_eng. Ordered_)**                      | Elementi liste imaju definirani slijed koji se može mijenjati |
+| **Indeksirani elementi (_eng. Indexed_)**           | Elementima se može pristupiti preko indeksa (npr, `list[0]`) |
+| **Non-Hashable**                                    | Liste se ne mogu koristiti kao ključevi rječnika jer su promjenjiva struktura |
+| **Dinamička alokacija (_eng. Dynamic allocation_)** | Liste se dinamički mijenjaju dodavanjem/oduzimanjem elemenata |
+| **Heterogeni elementi**                             | Može sadržavati različite _non-literals_ elemente (npr. integere, stringove, liste, itd.) |
 | **Fleksibilnost**                                   | Fleksibilne strukture koje mogu sadržavati duplikate, različite tipove, ugniježđene strukture itd. |
 
 Liste jednako kao i n-torke možemo stvarati na različite načine:
@@ -2072,17 +2072,17 @@ coordinates = {
 }
 ```
 
-| **Rječnik (_eng. Dictionary_)**                    | Primjer: `rjecnik = {"ime": "Pero", "prezime" : "Perić"}`                                                                                    |
-| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Karakteristika**                                 | **Opis**                                                                                                                                     |
-| **Promjenjivost (eng. mutable)**                   | Rječnike je moguće mijenjati nakon izrade                                                                                                    |
-| **Neuređenost (_eng. unordered_) (Python < 3.7)**  | Prije Pythona 3.7, rječnici nisu održavali redoslijed umetanja.                                                                              |
-| **Uređenost (_eng. ordered_) (Python ≥3.7)**       | Nakon Pythona 3.7, rječnici čuvaju redoslijed umetanja elemenata                                                                             |
-| **Ključ-vrijednost parovi (eng. key-value pairs)** | Asocijativna struktura - podaci se spremaju u obliku ključ-vrijednost parova                                                                 |
+| **Rječnik (_eng. Dictionary_)**                    | Primjer: `rjecnik = {"ime": "Pero", "prezime" : "Perić"}`    |
+| -------------------------------------------------- | ------------------------------------------------------------ |
+| **Karakteristika**                                 | **Opis**                                                     |
+| **Promjenjivost (eng. mutable)**                   | Rječnike je moguće mijenjati nakon izrade                    |
+| **Neuređenost (_eng. unordered_) (Python < 3.7)**  | Prije Pythona 3.7, rječnici nisu održavali redoslijed umetanja. |
+| **Uređenost (_eng. ordered_) (Python ≥3.7)**       | Nakon Pythona 3.7, rječnici čuvaju redoslijed umetanja elemenata |
+| **Ključ-vrijednost parovi (eng. key-value pairs)** | Asocijativna struktura - podaci se spremaju u obliku ključ-vrijednost parova |
 | **Ključevi moraju biti _Hashable_**                | Ključevi moraju biti _hashable_ (npr. brojevi, znakovni nizovi, n-torke), dok vrijednosti mogu biti bilo što. Sam rječnik je _non-hashable_. |
-| **Jedinstveni ključevi**                           | Svaki ključ je jedinstven, dupli ključevi se _overwritaju_                                                                                   |
-| **Učinkovito pretraživanje po ključu**             | Omogućuje brz pristup vrijednostima pomoću ključeva; prikladan za pretraživanje i dohvaćanje                                                 |
-| **Fleksibilnost i heterogenost**                   | Fleksibilne strukture koje mogu sadržavati duple vrijednosti, različite tipove, ugniježđene strukture itd.                                   |
+| **Jedinstveni ključevi**                           | Svaki ključ je jedinstven, dupli ključevi se _overwritaju_   |
+| **Učinkovito pretraživanje po ključu**             | Omogućuje brz pristup vrijednostima pomoću ključeva; prikladan za pretraživanje i dohvaćanje |
+| **Fleksibilnost i heterogenost**                   | Fleksibilne strukture koje mogu sadržavati duple vrijednosti, različite tipove, ugniježđene strukture itd. |
 
 #### Skup (eng. Set)
 
@@ -2167,16 +2167,16 @@ print(voce.difference(povrce)) # {'🍎', '🍌', '🍐', '🍊'} - voće koje n
 print(povrce.difference(voce)) # {'🥒', '🧅', '🥬'} - povrće koje nije voće
 ```
 
-| **Skup (_eng. Set_)**                             | _Primjer:_ `skup = {'5', '10', '15'}`                                                                                                                                 |
-| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Karakteristika**                                | **Opis**                                                                                                                                                              |
-| **Promjenjivost (eng. mutable)**                  | Možemo dodavati i brisati elemente nakon izrade (kod _frozenset_ ne možemo)                                                                                           |
-| **Neuređenost (_eng. unordered_)**                | Skupovi, poput matematičkih skupova, ne poznaju redoslijed elemenata                                                                                                  |
-| **Jedinstveni elementi**                          | Skupovi pohranjuju samo jedinstvene elemente, duplikati se brišu automatski                                                                                           |
-| **Neindeksirani elementi (eng. Unindexed)**       | Elementi se ne mogu dohvaćati putem indeksa, samim time ih ne možemo niti rezati                                                                                      |
-| **Dinamička alokacija (eng. Dynamic allocation)** | Skupovi se dinamički mijenjaju dodavanjem/oduzimanjem elemenata                                                                                                       |
+| **Skup (_eng. Set_)**                             | _Primjer:_ `skup = {'5', '10', '15'}`                        |
+| ------------------------------------------------- | ------------------------------------------------------------ |
+| **Karakteristika**                                | **Opis**                                                     |
+| **Promjenjivost (eng. mutable)**                  | Možemo dodavati i brisati elemente nakon izrade (kod _frozenset_ ne možemo) |
+| **Neuređenost (_eng. unordered_)**                | Skupovi, poput matematičkih skupova, ne poznaju redoslijed elemenata |
+| **Jedinstveni elementi**                          | Skupovi pohranjuju samo jedinstvene elemente, duplikati se brišu automatski |
+| **Neindeksirani elementi (eng. Unindexed)**       | Elementi se ne mogu dohvaćati putem indeksa, samim time ih ne možemo niti rezati |
+| **Dinamička alokacija (eng. Dynamic allocation)** | Skupovi se dinamički mijenjaju dodavanjem/oduzimanjem elemenata |
 | **Non-Hashable**                                  | Skupovi su non-hashable (`frozenset` nije), ali elementi u skupu moraju biti hashable (npr. brojevi, znakovni nizovi, n-torke), ali ne i skupovi, liste, ni rječnici. |
-| **Podržava operacije nad skupovima**              | Skupovi podržavaju matematičke operacije kao što su unija, presjek, razlika itd.                                                                                      |
+| **Podržava operacije nad skupovima**              | Skupovi podržavaju matematičke operacije kao što su unija, presjek, razlika itd. |
 
 Skupove možemo stvarati na različite načine:
 
