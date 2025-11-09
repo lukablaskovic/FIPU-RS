@@ -9,7 +9,7 @@
 
 # (1) Programski jezik Python
 
-<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS1%20-%20Ponavljanje%20Pythona/RS_01.png" style="width:9%; border-radius: 8px; float:right;"></img>
+<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS1%20-%20Programski%20jezik%20Python/RS_01.png?raw=true" style="width:9%; border-radius: 8px; float:right;"></img>
 
 <div style="float: clear; margin-right:5px;">Raspodijeljeni sustav je svaki računalni sustav koji se sastoji od više povezanih autonomnih računala koja zajedno rade kao jedinstveni kohezivni sustav za postizanje zajedničkog cilja. Drugim riječima, raspodijeljeni sustavi su skupina nezavisnih računala (čvorova u mreži) koji međusobno komuniciraju i koordiniraju svoje radnje kako bi izvršili određeni zadatak.
 
@@ -294,7 +294,7 @@ Nije loše instalirati i sveobuhvatnu Anaconda distribuciju budući da dolazi s 
 
 Anaconda distribuciju možete preuzeti sa [službene stranice](https://www.anaconda.com/products/distribution). Naravno, `conda` je uključena u ovoj distribuciji pa možete provjeriti na isti način prepoznaje li ju naredbeni redak.
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS1%20-%20Ponavljanje%20Pythona/screenshots/anaconda.png?raw=true" style="width:50%">
+<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS1%20-%20Programski%20jezik%20Python/screenshots/anaconda.png?raw=true" style="width:50%">
 
 > Prikaz aplikacije Anaconda Navigator i pregled izrađenih okruženja i Python paketa.
 
@@ -335,7 +335,7 @@ U donjem desnom kutu VS Code sučelja uočite trenutni Python _interpreter_ koji
 
 Ovaj prozor možete otvoriti i kraticom `CTRL/CMD + SHIFT + P` te upisivanjem naredbe `Python: Select Interpreter`.
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS1%20-%20Ponavljanje%20Pythona/screenshots/interpreter_vscode.png?raw=true" style="width:50%">
+<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS1%20-%20Programski%20jezik%20Python/screenshots/interpreter_vscode.png?raw=true" style="width:50%">
 
 > Odabran je Python interpreter (Python 3.13.0 /usr/local/bin/python3) koji će se koristiti za izvršavanje Python skripte `hello.py`.
 
