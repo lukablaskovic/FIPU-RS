@@ -221,7 +221,7 @@ Zašto jednu po jednu? Python nije striktno jednodretveni jezik (_eng. single-th
 
 - GIL je implementacijsko ograničenje unutar CPython _interpretera/compilera_ koje možemo zamisliti kao ključ koji dozvoljava samo jednoj dretvi da izvršava Python _bytecode_ u određenom trenutku. Ako vas više zanima, pročitajte [ovaj članak o GIL-u](https://realpython.com/python-gil/#what-problem-did-the-gil-solve-for-python).
 
-<img src="./screenshots/event-loop-simplified-illustration.png" style="width:70%;"></img>
+<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS3%20-%20Asinkroni%20Python%20-%20Osnove%20asyncio%20biblioteke/screenshots/event-loop-simplified-illustration.png?raw=true" style="width:70%;"></img>
 
 > Jednostavna ilustracija Python _event loop_-a koja prikazuje dvije korutine (`add(5,5)` i `add(3,4)`) koje se raspoređuju unutar _event loop_-a za konkurentno izvršavanje.
 
