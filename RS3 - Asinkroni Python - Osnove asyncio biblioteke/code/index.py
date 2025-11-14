@@ -1,37 +1,23 @@
-import asyncio
-import time
+import asyncio, time
 
-async def timer(name, delay):
-    for i in range(delay, 0, -1):
-        print(f'{name}: {i} sekundi preostalo...')
-        await asyncio.sleep(1)
-    print(f'{name}: Vrijeme je isteklo!')
-    return name, True
+async def fetch_data(param):
+    print(f"Nešto delam s {param}...")
+    await asyncio.sleep(param)
+    print(f'Dovršio sam s {param}.')
+    return f"Rezultat za {param}"
+
 
 async def main():
-  
-  timers = [
-        asyncio.create_task(timer('Timer 1', 3)),
-        asyncio.create_task(timer('Timer 2', 5)),
-        asyncio.create_task(timer('Timer 3', 7))
-    ]
-  
-  # 1. način
-  await timers[0]
-  await timers[1]
-  await timers[2]
-  
-  # 2. način
-  
-  for timer in timers:
-    await timer
-    
-  # 3. način
-  
-  lista_rezultata = [await timer for timer in timers]
-  
-  # 4. način
-  
-  await asyncio.gather(*timers)
+    task1 = asyncio.create_task(fetch_data(1)) # schedule
+    task2 = asyncio.create_task(fetch_data(2)) #schedule
+    result1 = await task1
+    await asyncio.sleep(1)
+    print("Fetch 1 uspješno završen.")
+    return [result1]
 
-asyncio.run(main())
+
+t1 = time.perf_counter()
+results = asyncio.run(main()) # pokretanje event loop-a
+t2 = time.perf_counter()
+print(results)
+print(f"Vrijeme izvođenja {t2 - t1:.2f} sekunde")
