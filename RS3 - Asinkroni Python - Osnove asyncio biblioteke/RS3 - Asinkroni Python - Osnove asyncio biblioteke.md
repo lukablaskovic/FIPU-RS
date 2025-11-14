@@ -1140,7 +1140,7 @@ Korutinu `autentifikacija()` pozovite u `main()` funkciji s proizvoljnim korisni
 
 <br>
 
-Kako možete unutar `main` korutine natjerati _event loop_ da obuhvati ispis unutar korutine `fetch_data(2)` bez da ju _awaitate_ unutar `main` funkcije. Preciznije, dokažite kako se može ispisati tekst `Dovršio sam s 2.` unutar korutine `fetch_data(2)` bez da eksplicitno pozivate `await task2` unutar `main()` funkcije.
+6. **Kako možete unutar `main` korutine natjerati _event loop_ da obuhvati ispis unutar korutine** `fetch_data(2)` bez da ju _awaitate_ unutar `main` funkcije. Preciznije, dokažite kako se može ispisati tekst `Dovršio sam s 2.` unutar korutine `fetch_data(2)` bez da eksplicitno pozivate `await task2` unutar `main()` funkcije.
 
 ```python
 import asyncio, time
@@ -1168,7 +1168,7 @@ print(f"Vrijeme izvođenja {t2 - t1:.2f} sekunde")
 
 <br>
 
-1. **Objasnite korak po korak kako se ponaša _event loop_** (kako se raspoređuju, izvršavaju i dovršavaju korutine te koja su njihova stanja u različitim fazama izvođenja) u sljedećem primjeru:
+7. **Objasnite korak po korak kako se ponaša _event loop_** (kako se raspoređuju, izvršavaju i dovršavaju korutine te koja su njihova stanja u različitim fazama izvođenja) u sljedećem primjeru:
 
 ```python
 import asyncio
