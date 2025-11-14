@@ -1,17 +1,15 @@
 import asyncio, time
 
 async def fetch_data(param):
-    print(f"Nešto delam s {param}...")
+    print(f"Nešto radim s {param}...")
     await asyncio.sleep(param)
     print(f'Dovršio sam s {param}.')
     return f"Rezultat za {param}"
-
 
 async def main():
     task1 = asyncio.create_task(fetch_data(1)) # schedule
     task2 = asyncio.create_task(fetch_data(2)) #schedule
     result1 = await task1
-    await asyncio.sleep(1)
     print("Fetch 1 uspješno završen.")
     return [result1]
 

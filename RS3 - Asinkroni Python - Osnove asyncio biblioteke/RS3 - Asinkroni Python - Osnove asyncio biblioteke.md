@@ -1140,11 +1140,35 @@ Korutinu `autentifikacija()` pozovite u `main()` funkciji s proizvoljnim korisni
 
 <br>
 
-6. **Uzmite kod iz Primjera 5**, kako možete unutar `main` korutine natjerati _event loop_ da obuhvati rezultat korutine `fetch_data(2)` bez da je awaitate unutar `main` funkcije, odnosno, kako da se ispiše linija `Dovršio sam s 2.` bez da eksplicitno pozivate tu korutinu s `await` ?
+Kako možete unutar `main` korutine natjerati _event loop_ da obuhvati ispis unutar korutine `fetch_data(2)` bez da ju _awaitate_ unutar `main` funkcije. Preciznije, dokažite kako se može ispisati tekst `Dovršio sam s 2.` unutar korutine `fetch_data(2)` bez da eksplicitno pozivate `await task2` unutar `main()` funkcije.
+
+```python
+import asyncio, time
+
+async def fetch_data(param):
+    print(f"Nešto radim s {param}...")
+    await asyncio.sleep(param)
+    print(f'Dovršio sam s {param}.')
+    return f"Rezultat za {param}"
+
+async def main():
+    task1 = asyncio.create_task(fetch_data(1)) # schedule
+    task2 = asyncio.create_task(fetch_data(2)) #schedule
+    result1 = await task1
+    print("Fetch 1 uspješno završen.")
+    return [result1]
+
+
+t1 = time.perf_counter()
+results = asyncio.run(main()) # pokretanje event loop-a
+t2 = time.perf_counter()
+print(results)
+print(f"Vrijeme izvođenja {t2 - t1:.2f} sekunde")
+```
 
 <br>
 
-7. **Objasnite korak po korak kako se ponaša _event loop_** (kako se raspoređuju, izvršavaju i dovršavaju korutine te koja su njihova stanja u različitim fazama izvođenja) u sljedećem primjeru:
+1. **Objasnite korak po korak kako se ponaša _event loop_** (kako se raspoređuju, izvršavaju i dovršavaju korutine te koja su njihova stanja u različitim fazama izvođenja) u sljedećem primjeru:
 
 ```python
 import asyncio
