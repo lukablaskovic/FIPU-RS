@@ -42,3 +42,4 @@ Kolegij slušaju:
 ## Kolokviji
 
 - [Službeni šalabahter za 1. Kolokvij (rs-mid)](https://gist.github.com/lukablaskovic/e66d8cdb651a2b54fba842890c92d121)
+- [Službeni šalabahter za 2. Kolokvij (rs-final)](https://gist.github.com/lukablaskovic/417537f934051fe261cdd2f76212475e)
