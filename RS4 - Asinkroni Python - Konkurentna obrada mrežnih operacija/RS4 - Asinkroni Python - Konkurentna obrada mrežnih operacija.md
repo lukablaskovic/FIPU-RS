@@ -63,7 +63,7 @@ HTTP je **_request-response_** protokol osmišljen prema modelu _klijent-posluž
 
 HTTP je u [svojim počecima](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Evolution_of_HTTP) (90-ih) bio namijenjen isključivo za prijenos hipertekstualnih dokumenata (HTML stranica) između web preglednika i web poslužitelja. Međutim, s vremenom je evoluirao u univerzalni protokol za komunikaciju između različitih vrsta _service-oriented_ arhitektura, evoluirajući u industrijski standard _general-purpose application-layer_ mrežnog protokola za **prijenos gotovo svih vrsta podataka**, uključujući JSON, XML, slike, audio, video i druge binarne formate.
 
-<img src="./screenshots/fetching-a-page.svg" style="width:50%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/ea6e5a8f96a04c8f882ac73813a8d303e64fb890/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/fetching-a-page.svg" style="width:50%; box-shadow: none !important; "></img>
 
 > HTTP zahtjevima mogu se "dohvatiti" preko mreže razni resursi s različitih poslužitelja
 
@@ -125,7 +125,7 @@ Tipičan HTTP komunikacijski model (**klijent ↔ poslužitelj**) temelji se na 
 
 **HTTP odgovor** (_eng. HTTP response_) predstavlja poruku koju poslužitelj vraća klijentu kao rezultat obrade zahtjeva. Primjerice, poslužitelj može vratiti HTTP odgovor s JSON podacima u tijelu odgovora, npr. JSON HTTP odgovor s podacima o autentificiranom korisniku.
 
-<img src="./screenshots/http-protocol.png" style="width:50%; box-shadow: none !important; "></img>
+<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/http-protocol.png?raw=true" style="width:50%; box-shadow: none !important; "></img>
 
 > HTTP komunikacijski model: klijent šalje HTTP zahtjev poslužitelju, koji obrađuje zahtjev i vraća HTTP odgovor klijentu.
 
@@ -147,7 +147,7 @@ Tipičan HTTP komunikacijski model (**klijent ↔ poslužitelj**) temelji se na 
 
 - **Verzija protokola** (_eng. protocol version_): označava verziju HTTP protokola korištenu u zahtjevu (npr. `HTTP/1.1`, `HTTP/2`, `HTTP/3`).
 
-<img src="./screenshots/http-request.png" style="width:60%; box-shadow: none !important; "></img>
+<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/http-request.png?raw=true" style="width:60%; box-shadow: none !important; "></img>
 
 > Struktura HTTP zahtjeva: metoda, URL, zaglavlja i tijelo zahtjeva.
 
@@ -258,7 +258,7 @@ _Primjer:_ HTTP zahtjev koji zamjenjuje sve podatke o korisniku `pero_peric`:
 - **Tijelo** (_eng. body_): sadrži **podatke koje poslužitelj vraća klijentu**, najčešće u formatima kao što su JSON, HTML ili XML.
 - **Verzija protokola** (_eng. protocol version_): specificira **verziju HTTP protokola** korištenu u odgovoru (npr. `HTTP/1.1`).
 
-<img src="./screenshots/http-response.png" style="width:50%; box-shadow: none !important; "></img>
+<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/http-response.png?raw=true" style="width:50%; box-shadow: none !important; "></img>
 
 > Struktura HTTP odgovora: statusna linija, zaglavlja i tijelo odgovora.
 
