@@ -34,7 +34,7 @@ Kolegij slušaju:
 2. [Napredniji Python koncepti](https://youtu.be/ql80nc2oGR4) ([RS2](https://github.com/lukablaskovic/FIPU-RS/tree/main/RS2%20-%20Napredniji%20Python%20koncepti))
 3. [Asinkroni Python: Osnove asyncio biblioteke](https://youtu.be/f5pmXZnoA0M) ([RS3](https://github.com/lukablaskovic/FIPU-RS/tree/main/RS3%20-%20Asinkroni%20Python%20-%20Osnove%20asyncio%20biblioteke))
 4. [Asinkroni Python: Kako funkcionira event loop?](https://youtu.be/LP1HDi8dpFw) ([RS3](https://github.com/lukablaskovic/FIPU-RS/tree/main/RS3%20-%20Asinkroni%20Python%20-%20Osnove%20asyncio%20biblioteke))
-5. [Asinkroni Python: Slanje konkurentnih HTTP zahtjeva](https://youtu.be/XdmGpfCJbaE) ([RS4](https://github.com/lukablaskovic/FIPU-RS/tree/main/RS4%20-%20Asinkroni%20Python%20-%20Slanje%20konkurentnih%20HTTP%20zahtjeva))
+5. [Asinkroni Python: Konkurentna obrada mrežnih operacija](https://youtu.be/XdmGpfCJbaE) ([RS4](https://github.com/lukablaskovic/FIPU-RS/tree/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija))
 6. [Mikroservisna arhitektura](https://youtu.be/gA7p9NvNisM) ([RS5](https://github.com/lukablaskovic/FIPU-RS/tree/main/RS5%20-%20Mikroservisna%20arhitektura))
 7. [Razvojni okvir FastAPI](https://youtu.be/4hy4Xf6gM6A) ([RS6](https://github.com/lukablaskovic/FIPU-RS/tree/main/RS6%20-%20Razvojni%20okvir%20FastAPI))
 8. [Kontejnerizacija i Load balancing](https://youtu.be/FF1wwNmutGc) ([RS7](https://github.com/lukablaskovic/FIPU-RS/tree/main/RS7%20-%20Kontejnerizacija%20i%20Load%20balancing)) 
