@@ -1,25 +1,19 @@
-
-import aiohttp
 import asyncio
 
-async def get_cat_fact(session):
-  response = await session.get("https://catfact.ninja/fact")
-  fact_dict = await response.json()
-  print(fact_dict['fact'])
-  return fact_dict['fact']
+async def fetch_camera_data(camera_id):
+    print(f"Fetching data from camera {camera_id}...")
+    try:
+        await asyncio.wait_for(asyncio.sleep(camera_id * 2 if camera_id != 3 else 20), timeout=10)  # Postavljamo timeout od 10 sekundi za dohvaćanje podataka o svakoj kameri pojedinačno
+        print(f"Data from camera {camera_id} fetched.")
+        return f"Data from camera {camera_id}"
+    except asyncio.TimeoutError:
+        print(f"Timeout while fetching data from camera {camera_id}.")
+        return None
 
 async def main():
-  async with aiohttp.ClientSession() as session:
-    cat_fact_korutine = [get_cat_fact(session) for i in range(5)]
-    rezulat = await asyncio.gather(*cat_fact_korutine)
-    
-    [[{}, {},{}], [{},{},{}]]
-    #rezultat["name"]
-    
-    # transformacija ovdje
-    # lista1 = []
-    # lista2 = []
-    # lista3 = []
-    # print print print
-    
+    camera_ids = [1, 2, 3, 4, 5]
+    tasks = [fetch_camera_data(camera_id) for camera_id in camera_ids]
+    results = await asyncio.gather(*tasks)
+    print("All camera data fetched:", results)
+
 asyncio.run(main())

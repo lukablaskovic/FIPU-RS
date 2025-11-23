@@ -789,7 +789,11 @@ Vrijeme izvođenja 1.00 sekunde
 
 ## 1.4 Konkurentno izvršavanje s `asyncio.gather()`
 
-Konkurentno izvršavanje možemo postići i funkcijom `asyncio.gather()` koja omogućuje pokretanje **više korutina konkurentno** **bez nužnog definiranja _Taskova_**. Ova funkcija prima više korutina objekata kao argumente te ih pokreće "istovremeno" (**konkurentno**).
+Konkurentno izvršavanje možemo postići i funkcijom `asyncio.gather()` koja omogućuje pokretanje **više korutina konkurentno** **bez nužnog definiranja _Taskova_**. Ova funkcija prima više _corutine_ objekata kao argumente te ih pokreće konkurentno unutar _event loop_-a.
+
+Funkcija `asyncio.gather()` vrlo je moćan alat za upravljanje konkurentnim izvršavanjem korutina, posebno kada želimo pokrenuti više asinkronih zadataka i pričekati da se svi dovrše prije nego što nastavimo s daljnjim izvršavanjem koda. Dakle, osim što nam omogućuje konkurentno izvršavanje, `asyncio.gather()` također olakšava prikupljanje rezultata iz više korutina.
+
+- Djeluje kao višenamjenski _wrapper_ za kreiranje i upravljanje Task objektima u _event loopu_ te **omogućava sinkronizaciju rezultata iz više korutina**.
 
 **Sintaksa:**
 
@@ -798,12 +802,12 @@ asyncio.gather(corutine_object1, corutine_object2, ... corutine_objectN)
 asyncio.gather(*corutine_objects)
 ```
 
-- `*corutine_objects` - argumenti su asinkrone funkcije koje želimo pokrenuti
+- `*corutine_objects` - argumenti su asinkrone funkcije koje želimo rasporediti unutar _event loopa_ i izvršiti konkurentno
 - **Unpacking** operator `*` se koristi za raspakiravanje liste ili n-torke objekata u pojedinačne argumente funkcije (_slično kao spread operator ... u JavaScriptu_)
 
 ```python
 async def main():
-    podaci_1, podaci_2 = await asyncio.gather(fetch_api_1(), fetch_api_2())
+    podaci_1, podaci_2 = await asyncio.gather(fetch_api_1(), fetch_api_2()) # funkcija će pričekati da se obje korutine dovrše i "prikupiti" njihove rezultate
 
     print(f'Podaci s API-ja 1: {podaci_1}')
     print(f'Podaci s API-ja 2: {podaci_2}')
