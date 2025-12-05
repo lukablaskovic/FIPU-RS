@@ -1,0 +1,105 @@
+[
+    {
+        "server": "sentinel-auth",
+        "logs": {
+            "2024": [
+                {
+                    "timestamp": "2024-01-15T10:23:45Z",
+                    "level": "ERROR",
+                    "message": "Authentication failed for user 'john_doe'."
+                },
+                {
+                    "timestamp": "2024-02-20T14:12:30Z",
+                    "level": "INFO",
+                    "message": "User 'jane_smith' logged in successfully."
+                },
+                {
+                    "timestamp": "2024-08-03T17:55:10Z",
+                    "level": "WARNING",
+                    "message": "Session timeout limit exceeded for user 'john_doe'."
+                },
+                {
+                    "timestamp": "2024-10-22T09:41:23Z",
+                    "level": "INFO",
+                    "message": "Two-factor authentication enabled for user 'michael_lee'."
+                }
+            ],
+            "2025": [
+                {
+                    "timestamp": "2025-03-05T09:45:00Z",
+                    "level": "WARNING",
+                    "message": "Multiple failed login attempts detected for user 'alice_wonder'."
+                },
+                {
+                    "timestamp": "2025-04-10T16:30:15Z",
+                    "level": "INFO",
+                    "message": "Password reset requested for user 'bob_builder'."
+                },
+                {
+                    "timestamp": "2025-05-22T11:20:50Z",
+                    "level": "ERROR",
+                    "message": "Database connection error during authentication process."
+                },
+                {
+                    "timestamp": "2025-09-11T07:18:22Z",
+                    "level": "INFO",
+                    "message": "Security policy updated for inactive account cleanup."
+                },
+                {
+                    "timestamp": "2025-11-29T22:44:03Z",
+                    "level": "WARNING",
+                    "message": "Suspicious login attempt blocked from non-trusted device."
+                }
+            ]
+        }
+    },
+    {
+        "server": "fiscal-registry",
+        "logs": {
+            "2024": [
+                {
+                    "timestamp": "2024-03-12T08:15:30Z",
+                    "level": "INFO",
+                    "message": "Fiscal report generated for Q1 2024."
+                },
+                {
+                    "timestamp": "2024-06-18T13:45:00Z",
+                    "level": "ERROR",
+                    "message": "Failed to retrieve fiscal data for user 'charlie_brown'."
+                },
+                {
+                    "timestamp": "2024-08-05T11:00:10Z",
+                    "level": "INFO",
+                    "message": "Fiscal audit request submitted."
+                },
+                {
+                    "timestamp": "2024-11-14T19:23:55Z",
+                    "level": "WARNING",
+                    "message": "Inconsistency detected in quarterly reconciliation."
+                }
+            ],
+            "2025": [
+                {
+                    "timestamp": "2025-01-25T10:00:00Z",
+                    "level": "INFO",
+                    "message": "New fiscal year data initialized."
+                },
+                {
+                    "timestamp": "2025-02-14T15:30:45Z",
+                    "level": "WARNING",
+                    "message": "Unusual activity detected in fiscal transactions."
+                },
+                {
+                    "timestamp": "2025-07-09T10:50:18Z",
+                    "level": "INFO",
+                    "message": "Updated tax rate tables deployed."
+                },
+                {
+                    "timestamp": "2025-08-30T14:22:40Z",
+                    "level": "ERROR",
+                    "message": "Failed to export fiscal document batch."
+                }
+            ]
+        }
+    }
+]
