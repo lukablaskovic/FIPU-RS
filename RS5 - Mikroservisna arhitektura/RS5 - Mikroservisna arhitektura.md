@@ -2064,9 +2064,9 @@ Skupina taskova koji se mogu izvršiti paralelno bez ovisnosti naziva se **batch
 
 DAG (_eng. Directed Acyclic Graph_) je matematička struktura koja se često koristi za **modeliranje ovisnosti između taskova**. U DAG-u, **čvorovi** predstavljaju Taskove, a usmjereni **bridovi** predstavljaju ovisnosti između njih. Na ovaj način možemo jasno vidjeti koje taskove možemo izvršiti paralelno i koje taskove moramo čekati da se završe prije nego krenemo s određenim taskom. Aciklični graf nema ciklusa (što znači da ne možemo imati situaciju gdje task A ovisi o tasku B, a task B ovisi o tasku A).
 
-<img src="./screenshots/DAG.png" style="width:60%; box-shadow: none !important; "></img>
+<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/DAG.png?raw=true" style="width:60%; box-shadow: none !important; "></img>
 
-> Izvor slike: https://www.astronomer.io/docs/learn/dags
+> Directed Acyclic Graph (DAG) primjer s ovisnostima između taskova, izvor: https://www.astronomer.io/docs/learn/dags
 
 U stvarnom svijetu, upravljanje ovakvim ovisnostima može biti vrlo složeno. Postoje specijalizirani alati i biblioteke (npr. [Apache Airflow](https://en.wikipedia.org/wiki/Apache_Airflow), [Luigi](https://luigi.readthedocs.io/en/stable/), [Prefect](https://www.prefect.io/)) koji pomažu u upravljanju ovakvim DAG-ovima i izvršavanju taskova na temelju njihovih ovisnosti.
 
