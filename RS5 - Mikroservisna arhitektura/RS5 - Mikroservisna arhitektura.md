@@ -12,6 +12,7 @@
 <img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/RS_5.png?raw=true" style="width:9%; border-radius: 8px; float:right;"></img>
 
 <div style="float: clear; margin-right:5px;">
+
 Mikroservisna arhitektura predstavlja pristup dizajnu softvera u kojem se aplikacija razvija kao skup manjih, neovisnih servisa koji međusobno komuniciraju putem mreže. Svaki servis djeluje kao zasebna cjelina zadužena za jasno definiranu funkcionalnost, a komunikacija se najčešće odvija korištenjem standardiziranih protokola poput HTTP-a. Za razliku od tradicionalne monolitne arhitekture, gdje su sve komponente objedinjene u jedinstven sustav, mikroservisna arhitektura razdvaja ključne elemente poput poslovne logike, baza podataka, autentifikacije i drugih funkcionalnosti u samostalne servise.
 
 Takav način izgradnje sustava donosi niz prednosti: omogućuje jednostavnije skaliranje, povećava otpornost na greške, olakšava rad većim razvojnim timovima te ubrzava razvoj, testiranje i implementaciju novih funkcionalnosti. Zbog svoje prilagodljivosti i održivosti, mikroservisna arhitektura predstavlja snažan temelj za dugoročno uspješan razvoj softverskih rješenja, ali istovremeno zahtijeva pažljivo planiranje i upravljanje kako bi se izbjegli izazovi povezani s kompleksnošću raspodijeljenih sustava.
@@ -65,7 +66,7 @@ Takav način izgradnje sustava donosi niz prednosti: omogućuje jednostavnije sk
   - [Zadatak 7: Računske operacije](#zadatak-7-računske-operacije)
   - [Zadatak 8: Mikroservisna obrada - CatFacts API](#zadatak-8-mikroservisna-obrada---catfacts-api)
 
-<div style="page-break-after: always; break-after: page;"></div>
+<div class="page-break"></div>
 
 # 1. Što je mikroservisna arhitektura?
 
@@ -78,7 +79,7 @@ Ne postoji jedinstvena definicija mikroservisne arhitekture, međutim s vremenom
 - Glavna ideja mikroservisa je omogućiti njihovu **neovisnu implementaciju i razvoj**. To znači da svaki servis može koristiti različite tehnologije, programske jezike ili baze podataka, ovisno o tome što najbolje odgovara njegovim specifičnim potrebama.
 - **Mikroservisi su obično kompaktni**, kako po broju linija kôda, tako i po resursima koje koriste. Razvijaju se i **autonomno isporučuju kroz automatizirane procese**, poput sustava za kontinuiranu integraciju i isporuku ([CI/CD](https://en.wikipedia.org/wiki/CI/CD)), što omogućava bržu i fleksibilniju iteraciju.
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/microservices_1.png?raw=true" style="width:40%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/microservices_1.png" style="width:50%;"></img>
 
 > Ilustracija podjele sustava na distribuiranu mikroservisnu arhitekturu
 
@@ -110,7 +111,7 @@ Neki od čestih problema s kojima se susreću razvojni timovi prilikom razvoja m
 
 i tako dalje...
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/monolithic_vs_microservice.png?raw=true" style="width:60%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/monolithic_vs_microservice.png" style="width:60%;"></img>
 
 > Monolitna vs. mikroservisna arhitektura razvoja aplikacija: _high-level_ prikaz aplikacijskih komponenti
 
@@ -122,7 +123,7 @@ Dizajn orijentiran na mikroservise (_eng. service-oriented design)_ dobiva na po
 
 **Amazon** je nekoliko svojih ključnih proizvoda, poput Amazon Primea, prebacio na mikroservisnu arhitekturu, dok je za neke druge proizvode zadržao monolitnu arhitekturu. Kroz vlastiti razvoj i uspon mikroservisnih tehnologija, Amazon prepoznaje poslovnu priliku u pružanju mikroservisne arhitekture kao usluge drugim tvrtkama, što rezultira razvojem platforme **AWS** (_Amazon Web Services_). Danas je [AWS vodeći globalni pružatelj cloud usluga](https://en.wikipedia.org/wiki/Amazon_Web_Services) i jedan od najvećih izvora prihoda Amazon grupe. S druge strane, **Netflix** je [potpuno migrirao na mikroservisnu arhitekturu](https://netflixtechblog.com/tagged/microservices) i danas je jedan od najvećih korisnika AWS-a, ističući se kao primjer uspješne transformacije s monolitne na mikroservisnu arhitekturu. Navodi se da Netflix ima preko 1000 aktivnih mikroservisa koji se izvršavaju u oblaku.
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/netflix_microservices.png?raw=true" style="width:50%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/netflix_microservices.png" style="width:50%;"></img>
 
 > Apstraktna ilustracija mikroservisne arhitekture Netflixa, izvor: [zdnet.com](https://www.zdnet.com/article/to-be-a-microservice-how-smaller-parts-of-bigger-applications-could-remake-it/)
 
@@ -138,7 +139,7 @@ Dizajn orijentiran na mikroservise (_eng. service-oriented design)_ dobiva na po
 4. **[Api-first design](https://www.postman.com/api-first/):** Clear contracts should be established between services through well-defined APIs.
 5. **[Polyglot programming](<https://en.wikipedia.org/wiki/Polyglot_(computing)>)** : Different services can be implemented using different programming languages and technologies based on their specific requirements.
 
-<div style="page-break-after: always; break-after: page;"></div>
+<div class="page-break"></div>
 
 # 2. Definiranje poslužitelja koristeći `aiohttp`
 
@@ -261,7 +262,7 @@ Možete otvoriti web preglednik i posjetiti adresu `http://localhost:8080` kako 
 
 Koristeći jedan od alata, pošaljite zahtjev na adresu `http://localhost:8080` i provjerite je li poslužitelj uspješno pokrenut.
 
-<div style="page-break-after: always; break-after: page;"></div>
+<div class="page-break"></div>
 
 ## 2.3 Definiranje HTTP poslužiteljskih ruta (endpoints)
 
@@ -368,7 +369,7 @@ Pomoću naredbe `curl` možete poslati HTTP zahtjev direktno iz terminala:
 
 Nakon svake promjene u kôdu poslužitelja potrebno je ponovno pokrenuti skriptu kako bi se promjene primijenile. To je zato što jednom kad se skripta pokrene, unutar terminala se pokreće proces koji sluša na definiranoj adresi i portu. Svakom izmjenom poslužitelja, potrebno je prekinuti trenutačni proces (npr. pritiskom `Ctrl/CMD + C`) i ponovno pokrenuti skriptu.
 
-<div style="page-break-after: always; break-after: page;"></div>
+<div class="page-break"></div>
 
 ### 2.3.2 Automatsko ponovno pokretanje poslužitelja (hot/live reloading)
 
@@ -407,7 +408,7 @@ Pokretanje:
 
 > Preporuka je koristiti `aiohttp-devtools` ili `nodemon` jer su jednostavniji za postavljanje i korištenje.
 
-<div style="page-break-after: always; break-after: page;"></div>
+<div class="page-break"></div>
 
 ### 2.3.3 HTTP GET - slanje JSON odgovora
 
@@ -551,7 +552,7 @@ Očekivani odgovor (isti podaci kao u zahtjevu):
 
 Puno jednostavnije je slanje kroz HTTP klijent jer ne moramo eksplicitno navoditi zaglavlja u zahtjevu.
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/thunderclient_post_example.png?raw=true" style="width:90%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/thunderclient_post_example.png" style="width:90%;"></img>
 
 > Primjer slanja POST zahtjeva s JSON tijelom na `http://localhost:8080` kroz Thunder Client VS Code ekstenziju
 
@@ -599,13 +600,13 @@ app.router.add_routes([
 web.run_app(app, port=8080)
 ```
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/thunderclient_get_korisnici_example.png?raw=true" style="width:90%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/thunderclient_get_korisnici_example.png" style="width:90%;"></img>
 
 > Primjer slanja GET zahtjeva na `http://localhost:8080/korisnici` kroz Thunder Client ekstenziju; odgovor je lista korisnika
 
 > Rute možemo definirati na još načina, o tome više u nastavku...
 
-<div style="page-break-after: always; break-after: page;"></div>
+<div class="page-break"></div>
 
 ## 2.4 Zadaci za vježbu: Definiranje jednostavnih `aiohttp` poslužitelja
 
@@ -632,7 +633,7 @@ korisnici = [
 ]
 ```
 
-<div style="page-break-after: always; break-after: page;"></div>
+<div class="page-break"></div>
 
 # 3. Klijent-Poslužitelj komunikacija koristeći `aiohttp` biblioteku
 
@@ -860,7 +861,7 @@ Task was destroyed but it is pending!
 - **nepredvidivi redoslijed izvršavanja dretvi/procesa/korutina**
 - **programi se "natječu" s izvršenjem njihovih operacija**, a konačno stanje se može razlikovati ovisno o tome koja je dretva/proces/korutina prva završila
 
-<div style="page-break-after: always; break-after: page;"></div>
+<div class="page-break"></div>
 
 ## 3.2 `AppRunner` klasa - konkurentno pokretanje poslužitelja unutar postojećeg event loopa
 
@@ -1059,7 +1060,7 @@ To je to! Uspjeli smo pokrenuti "dva pozadinska beskonačna zadatka" unutar isto
 {"korisnici": ["Ivo", "Ana", "Marko", "Maja", "Iva", "Ivan"]}
 ```
 
-<div style="page-break-after: always; break-after: page;"></div>
+<div class="page-break"></div>
 
 ## 3.3 HTTP GET ruta s URL (route) parametrima
 
@@ -1175,7 +1176,7 @@ rezultat = await session.get('http://localhost:8080/korisnici/6')
     print(rezultat_dict) # {'error': 'Korisnik s traženim ID-em ne postoji'}
 ```
 
-<div style="page-break-after: always; break-after: page;"></div>
+<div class="page-break"></div>
 
 ## 3.4 Zadaci za vježbu: Interna Klijent-Poslužitelj komunikacija
 
@@ -1216,7 +1217,7 @@ Vaš konačni poslužitelj mora sadržavati 3 rute: `/proizvodi`, `/proizvodi/{i
 
 Testirajte poslužitelj na sve slučajeve kroz klijentsku sesiju unutar `main` korutine iste skripte.
 
-<div style="page-break-after: always; break-after: page;"></div>
+<div class="page-break"></div>
 
 # 4. WebSocket protokol u `aiohttp` biblioteci
 
@@ -1224,7 +1225,7 @@ Do sad smo definirali jedan poslužitelj, međutim moguće ih je **unutar jednog
 
 > [WebSocket](https://en.wikipedia.org/wiki/WebSocket) je protokol koji omogućuje dvosmjernu komunikaciju između klijenta i poslužitelja preko jedne TCP veze, što omogućuje _real-time_ interakciju i prijenos podataka bez potrebe za ponovnim uspostavljanjem veze.
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/ws.png?raw=true" style="width:10%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/ws.png" style="width:10%;"></img>
 
 WebSocket protokol omogućuje klijentima i poslužiteljima da uspostave trajnu vezu (eng. _persistent connection_) i razmjenjuju podatke u stvarnom vremenu bez potrebe za ponovnim uspostavljanjem veze za svaki zahtjev. Ovo je posebno korisno za aplikacije koje zahtijevaju brzu i kontinuiranu razmjenu podataka, poput chat aplikacija, online igara, financijskih aplikacija i drugih _real-time_ sustava.
 
@@ -1363,7 +1364,7 @@ Ono što je ključno - do sad se sve izvršavalo u jednom threadu, odnosno **unu
 
 Naš sljedeći _challenge_ je - **podijeliti kôd u više datoteka**, odnosno definirati poslužitelje i klijentske sesije u zasebnim skriptama.
 
-<div style="page-break-after: always; break-after: page;"></div>
+<div class="page-break"></div>
 
 ## 5.1 Jednostavna simulacija mikroservisne arhitekture
 
@@ -1504,11 +1505,11 @@ if __name__ == "__main__":
 
 Ako koristite VS Code, terminale možete jednostavno podijeliti koristeći opciju `Split Terminal` (`Ctrl/CMD` + `Shift` + `5`).
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/split_terminal.png?raw=true" style="width:80%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/split_terminal.png" style="width:80%;"></img>
 
 Podijelite terminal na tri dijela, jedan za svaki mikroservis i jedan za klijenta.
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/split_terminal_3.png?raw=true" style="width:80%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/split_terminal_3_run.png" style="width:80%;"></img>
 
 Pokrenite svaki mikroservis u zasebnom terminalu:
 
@@ -1523,7 +1524,7 @@ Možete pokrenuti i klijenta:
 python3 client.py # Terminal 3
 ```
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/split_terminal_3_run.png?raw=true" style="width:80%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/split_terminal_3_run.png" style="width:80%;"></img>
 
 Na ovaj način, sve smo podijelili u **zasebne datoteke**, a samim tim i **zasebne procese**. Sada ćemo mikroservise pustiti na miru te implementirati slanje zahtjeva iz `client.py`.
 
@@ -1827,7 +1828,7 @@ asyncio.run(main())
 
 Ako pokrenete kôd vidjet ćete da je vrijeme izvršavanja `~2 sekunde`, a ne `~3 sekunde` kako bi bilo da se zahtjevi šalju sekvencijalno.
 
-<div style="page-break-after: always; break-after: page;"></div>
+<div class="page-break"></div>
 
 ## 5.2 Simulacija mikroservisne arhitekture: Računske operacije
 
@@ -1924,7 +1925,7 @@ async def handle_zbroj(request):
   return web.json_response({"zbroj": zbroj})
 ```
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/microservice_sum_post.png?raw=true" style="width:80%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/microservice_sum_post.png" style="width:80%;"></img>
 
 U HTTP klijentu radi. Još moramo stvari prebaciti u `client.py`:
 
@@ -2064,7 +2065,7 @@ Skupina taskova koji se mogu izvršiti paralelno bez ovisnosti naziva se **batch
 
 DAG (_eng. Directed Acyclic Graph_) je matematička struktura koja se često koristi za **modeliranje ovisnosti između taskova**. U DAG-u, **čvorovi** predstavljaju Taskove, a usmjereni **bridovi** predstavljaju ovisnosti između njih. Na ovaj način možemo jasno vidjeti koje taskove možemo izvršiti paralelno i koje taskove moramo čekati da se završe prije nego krenemo s određenim taskom. Aciklični graf nema ciklusa (što znači da ne možemo imati situaciju gdje task A ovisi o tasku B, a task B ovisi o tasku A).
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/DAG.png?raw=true" style="width:60%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/DAG.png" style="width:60%;"></img>
 
 > Directed Acyclic Graph (DAG) primjer s ovisnostima između taskova, izvor: https://www.astronomer.io/docs/learn/dags
 
@@ -2167,7 +2168,7 @@ Zbroj korijena: 22.4682781862041
 Ukupni zbroj: 407.4682781862041
 ```
 
-<div style="page-break-after: always; break-after: page;"></div>
+<div class="page-break"></div>
 
 # 6. Zadaci za vježbu: Mikroservisna arhitektura - razvoj aiohttp poslužitelja i klijenata
 
