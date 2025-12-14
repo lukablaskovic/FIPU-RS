@@ -5,21 +5,21 @@
 
 **Ustanova**: Sveučilište Jurja Dobrile u Puli, Fakultet informatike u Puli
 
-<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-PJS/main/0.%20Template/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-PJS/main/0.%20Template/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; float:left;"></img>
 
 # (5) Mikroservisna arhitektura
 
 <img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/RS_5.png?raw=true" style="width:9%; border-radius: 8px; float:right;"></img>
 
 <div style="float: clear; margin-right:5px;">
-Mikroservisna arhitektura predstavlja pristup dizajnu softvera u kojem se aplikacija razvija kao skup manjih, neovisnih servisa koji međusobno komuniciraju putem mreže. Svaki servis djeluje kao zasebna cjelina zadužena za jasno definiranu funkcionalnost, a komunikacija se najčešće odvija korištenjem standardiziranih protokola poput HTTP-a. Za razliku od tradicionalne monolitne arhitekture, gdje su sve komponente objedinjene u jedinstven sustav, mikroservisna arhitektura razdvaja ključne elemente poput poslovne logike, baza podataka, autentifikacije i drugih funkcionalnosti u samostalne servise.
+Mikroservisna arhitektura predstavlja suvremeni pristup dizajnu softvera, gdje se aplikacija gradi kao skup manjih, samostalnih servisa koji međusobno komuniciraju putem mreže. Svaki od tih servisa može se promatrati kao zasebna jedinica koja obavlja jednu specifičnu funkciju, pri čemu komunikacija najčešće koristi standardizirane protokole poput HTTP-a. Za razliku od tradicionalne monolitne arhitekture, u kojoj su svi dijelovi aplikacije objedinjeni u jednoj cjelini, mikroservisna arhitektura razdvaja ključne funkcionalnosti poput poslovne logike, baza podataka, autentifikacije i drugih komponenti u odvojene servise.
 
-Takav način izgradnje sustava donosi niz prednosti: omogućuje jednostavnije skaliranje, povećava otpornost na greške, olakšava rad većim razvojnim timovima te ubrzava razvoj, testiranje i implementaciju novih funkcionalnosti. Zbog svoje prilagodljivosti i održivosti, mikroservisna arhitektura predstavlja snažan temelj za dugoročno uspješan razvoj softverskih rješenja, ali istovremeno zahtijeva pažljivo planiranje i upravljanje kako bi se izbjegli izazovi povezani s kompleksnošću raspodijeljenih sustava.
+Ovakav pristup donosi brojne prednosti: omogućuje veću skalabilnost i pouzdanost sustava, olakšava organizaciju velikih razvojnih timova te ubrzava proces implementacije i unapređenja rješenja. Mikroservisi tako postaju temelj fleksibilnog, održivog i modernog razvoja softvera.
 
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 14.12.2025.**
+**🆙 Posljednje ažurirano: 12.12.2025.**
 
 ## Sadržaj
 
@@ -33,19 +33,19 @@ Takav način izgradnje sustava donosi niz prednosti: omogućuje jednostavnije sk
 - [2. Definiranje poslužitelja koristeći `aiohttp`](#2-definiranje-poslužitelja-koristeći-aiohttp)
   - [2.1 Ponavljanje: `aiohttp` klijentska sesija](#21-ponavljanje-aiohttp-klijentska-sesija)
   - [2.2 `aiohttp.web` modul](#22-aiohttpweb-modul)
-  - [2.3 Definiranje HTTP poslužiteljskih ruta (endpoints)](#23-definiranje-http-poslužiteljskih-ruta-endpoints)
+  - [2.3 Definiranje HTTP poslužiteljskih ruta](#23-definiranje-http-poslužiteljskih-ruta)
     - [2.3.1 HTTP GET ruta](#231-http-get-ruta)
-    - [2.3.2 Automatsko ponovno pokretanje poslužitelja (hot/live reloading)](#232-automatsko-ponovno-pokretanje-poslužitelja-hotlive-reloading)
+    - [2.3.2 Automatsko ponovno pokretanje poslužitelja (hot/live reload)](#232-automatsko-ponovno-pokretanje-poslužitelja-hotlive-reload)
     - [2.3.3 HTTP GET - slanje JSON odgovora](#233-http-get---slanje-json-odgovora)
     - [2.3.4 HTTP POST ruta](#234-http-post-ruta)
-  - [2.4 Zadaci za vježbu: Definiranje jednostavnih `aiohttp` poslužitelja](#24-zadaci-za-vježbu-definiranje-jednostavnih-aiohttp-poslužitelja)
+  - [2.4 Zadaci za vježbu: Definiranje jednostavnih aiohttp poslužitelja](#24-zadaci-za-vježbu-definiranje-jednostavnih-aiohttp-poslužitelja)
     - [Zadatak 1: `GET /proizvodi`](#zadatak-1-get-proizvodi)
     - [Zadatak 2: `POST /proizvodi`](#zadatak-2-post-proizvodi)
     - [Zadatak 3: `GET /punoljetni`](#zadatak-3-get-punoljetni)
 - [3. Klijent-Poslužitelj komunikacija koristeći `aiohttp` biblioteku](#3-klijent-poslužitelj-komunikacija-koristeći-aiohttp-biblioteku)
   - [3.1 Izvršavanje pozadinske korutine s poslužiteljem](#31-izvršavanje-pozadinske-korutine-s-poslužiteljem)
     - [Race-condition problem](#race-condition-problem)
-  - [3.2 `AppRunner` klasa - konkurentno pokretanje poslužitelja unutar postojećeg event loopa](#32-apprunner-klasa---konkurentno-pokretanje-poslužitelja-unutar-postojećeg-event-loopa)
+  - [3.2 `AppRunner` klasa - pokretanje poslužitelja unutar postojećeg event loopa](#32-apprunner-klasa---pokretanje-poslužitelja-unutar-postojećeg-event-loopa)
   - [3.3 HTTP GET ruta s URL (route) parametrima](#33-http-get-ruta-s-url-route-parametrima)
   - [3.4 Zadaci za vježbu: Interna Klijent-Poslužitelj komunikacija](#34-zadaci-za-vježbu-interna-klijent-poslužitelj-komunikacija)
     - [Zadatak 4: Dohvaćanje proizvoda](#zadatak-4-dohvaćanje-proizvoda)
@@ -53,7 +53,7 @@ Takav način izgradnje sustava donosi niz prednosti: omogućuje jednostavnije sk
 - [4. WebSocket protokol u `aiohttp` biblioteci](#4-websocket-protokol-u-aiohttp-biblioteci)
   - [4.1 WebSocket poslužitelj](#41-websocket-poslužitelj)
   - [4.2 WebSocket klijent](#42-websocket-klijent)
-- [5. Podjela kôda u više datoteka (1 servis = 1 datoteka)](#5-podjela-kôda-u-više-datoteka-1-servis--1-datoteka)
+- [5. Podjela kôda u više datoteka](#5-podjela-kôda-u-više-datoteka)
   - [5.1 Jednostavna simulacija mikroservisne arhitekture](#51-jednostavna-simulacija-mikroservisne-arhitekture)
     - [5.1.1 Pokretanje više mikroservisa](#511-pokretanje-više-mikroservisa)
     - [5.1.2 Konkurentno slanje zahtjeva](#512-konkurentno-slanje-zahtjeva)
@@ -69,12 +69,12 @@ Takav način izgradnje sustava donosi niz prednosti: omogućuje jednostavnije sk
 
 # 1. Što je mikroservisna arhitektura?
 
-U softverskom inženjerstvu, **mikroservisna arhitektura** (_eng. microservice architecture_) predstavlja arhitekturalni stil u kojem se aplikacija sastoji od više manjih granularnih servisa, koji komuniciraju putem određenih [mrežnih](https://en.wikipedia.org/wiki/HTTP) ili [RPC](https://en.wikipedia.org/wiki/Remote_procedure_call) protokola. Arhitektura bazirana na mikroservisima omogućava razvojnim timovima da razvijaju i održavaju servise neovisno jedan o drugome, čime se smanjuje interna složenost aplikacije i ovisnost između različitih komponenti, a time i povećava skalabilnost, modularnost i složenost upravljanja razvojnim procesom.
+U softverskom inženjerstvu, **mikroservisna arhitektura** (_eng. microservice architecture_) predstavlja arhitekturalni stil u kojem se aplikacija sastoji od više manjih granularnih servisa, koji komuniciraju putem određenih protokola. Arhitektura bazirana na mikroservisima omogućava razvojnim timovima da razvijaju i održavaju servise neovisno jedan o drugome, čime se smanjuje interna složenost aplikacije i ovisnost između različitih komponenti, a time i povećava skalabilnost i modularnost sustava.
 
-Ne postoji jedinstvena definicija mikroservisne arhitekture, međutim s vremenom je došlo do uspostavljanja konvencija i dobrih praksi koje se primjenjuju u većini slučajeva prilikom njihova razvoja, testiranja i održavanja. Prema tome, možemo definirati nekoliko **ključnih karakteristika mikroservisne arhitekture**:
+Ne postoji jedinstvena definicija mikroservisne arhitekture, međutim s vremenom je došlo do uspostavljanja konvencija i dobrih praksi koje se primjenjuju u većini slučajeva. Tako možemo definirati nekoliko **ključnih karakteristika mikroservisne arhitekture**:
 
-- U mikroservisnoj arhitekturi, servisi se obično implementiraju kao **odvojeni procesi** koji međusobno komuniciraju putem mreže ili RPC protokola, za razliku od klasičnih monolitnih aplikacija, gdje su sve (ili većina) komponente objedinjene unutar jednog procesa.
-- Servisi su osmišljeni tako da se organiziraju oko **poslovnih funkcionalnosti** ili **domenskih entiteta**. Na primjer, možemo imati zasebne servise za upravljanje korisnicima aplikacije, proizvode (_inventor management_) ili narudžbe (_order processing_), pri čemu svaki servis pokriva određeni aspekt poslovanja. Ipak, ne treba pretjerivati i svaki mali dio aplikacije pretvarati u zaseban mikroservis - na taj način bismo brzo bankrotirali zbog prevelikih troškova upravljanja infrastrukturom.
+- U mikroservisnoj arhitekturi, servisi se obično implementiraju kao **odvojeni procesi** koji međusobno komuniciraju putem mreže, za razliku od klasičnih biblioteka ili modula unutar jednog procesa.
+- Servisi su osmišljeni tako da se organiziraju oko **poslovnih funkcionalnosti** ili **domenskih entiteta**. Na primjer, možemo imati zasebne servise za korisnike, proizvode ili narudžbe, pri čemu svaki servis pokriva određeni aspekt poslovanja. Ipak, ne treba pretjerivati i svaki mali dio aplikacije pretvarati u zaseban mikroservis - na taj način bismo brzo bankrotirali.
 - Glavna ideja mikroservisa je omogućiti njihovu **neovisnu implementaciju i razvoj**. To znači da svaki servis može koristiti različite tehnologije, programske jezike ili baze podataka, ovisno o tome što najbolje odgovara njegovim specifičnim potrebama.
 - **Mikroservisi su obično kompaktni**, kako po broju linija kôda, tako i po resursima koje koriste. Razvijaju se i **autonomno isporučuju kroz automatizirane procese**, poput sustava za kontinuiranu integraciju i isporuku ([CI/CD](https://en.wikipedia.org/wiki/CI/CD)), što omogućava bržu i fleksibilniju iteraciju.
 
@@ -90,15 +90,13 @@ Kao i svaki arhitekturalni stil, mikroservisna arhitektura ima svoje prednosti i
 
 **Monolitna arhitektura** (eng. _monolithic architecture_) je stil arhitekture u kojem je cijela aplikacija dizajnirana kao "jedinstvena" povezana cjelina. To znači da su svi moduli i komponente aplikacije, poput korisničkog sučelja, poslovne logike, pristupa podacima, postojani u unutar jedne aplikacije. Monolitna aplikacija se obično implementira kao jedan veliki "programski paket" ili proces koji se izvozi i pokreće samostalno.
 
-Softverska rješenja koja ste do sad razvijali na kolegijima [Programsko inženjerstvo](https://github.com/azuzic/FIPU-PI) i [Web aplikacije](https://github.com/lukablaskovic/FIPU-WA), mogla bi se opisati kao monolitne aplikacije, iako ona to nisu u pravom smislu definicije monolitnosti. Naime, monolitna arhitektura je često povezana s klasičnim _desktop_ aplikacijama, gdje se cijela aplikacija izvršava na korisnikovom računalu, bez potrebe za dodatnim komponentama ili servisima - cijela poslovna logika, pristup podacima i korisničko sučelje su objedinjeni unutar jedne aplikacije - prisjetite se npr. _Java Swing_ ili _WPF_ aplikacija.
+Softverska rješenja koja ste do sad razvijali na kolegijima [Programsko inženjerstvo](https://fipu.unipu.hr/fipu/predmet/proinz_a) i [Web aplikacije](https://fipu.unipu.hr/fipu/predmet/webapl), mogla bi se opisati kao monolitne aplikacije, iako ona to nisu u pravom smislu definicije. Naime, monolitna arhitektura je često povezana s klasičnim _desktop_ aplikacijama, gdje se cijela aplikacija izvršava na korisnikovom računalu, bez potrebe za dodatnim komponentama ili servisima.
 
-Kako smo na **Programskom inženjerstvu** aplikaciju razvijali u okviru jednog razvojnog okvira (Vue.js), koristeći jedan programski jezik (JavaScript) te koristili Firebase kao servis za autentifikaciju i bazu podataka na način da smo ga integrirali direktno u aplikaciju, možemo argumentirati da smo razvijali aplikaciju u monolitnoj arhitekturi. Međutim, **Firebase je PaaS** (_Platform-as-a-Service_) **usluga**, odnosno platforma u oblaku koja omogućava korištenje udaljenih poslužitelja i nudi razne funkcionalnosti kroz skup Google-ovih mikroservisa koji rade na GCP (_eng. Google Cloud Platform_). Glavna prednost Firebasea je što eliminira potrebu za brigom o infrastrukturi, upravljanju bazama podataka, skaliranju aplikacije i sl. - sve to rješava Firebase. Stoga se može reći da ste, na određeni način, svoju aplikaciju razvijali u okviru mikroservisne arhitekture, ali na višem nivou apstrakcije, gdje je sama platforma (Firebase) bila zadužena za upravljanje mikroservisima u oblaku i skaliranju vaše aplikacije.
+Kako smo na **Programskom inženjerstvu** aplikaciju razvijali u okviru jednog razvojnog okvira (Vue.js), koristeći jedan programski jezik (JavaScript) te koristili Firebase kao servis za autentifikaciju i bazu podataka na način da smo ga integrirali direktno u aplikaciju, možemo argumentirati da smo razvijali aplikaciju u monolitnoj arhitekturi. Međutim, **Firebase je PaaS** (_Platform-as-a-Service_) **usluga**, odnosno platforma u oblaku koja omogućava korištenje udaljenih poslužitelja i nudi razne funkcionalnosti kroz skup mikroservisa. Njegova glavna prednost je što eliminira potrebu za brigom o infrastrukturi, upravljanju bazama podataka, skalabilnosti i sličnim tehničkim aspektima, jer sve to rješava sama platforma. Stoga se može reći da ste, na određeni način, svoju aplikaciju razvijali u okviru mikroservisne arhitekture, ali na višem nivou apstrakcije.
 
-Što se tiče **Web aplikacija**, kolegij obuhvaća razvoj klijentske i **poslužiteljske strane aplikacije**. Poslužiteljska strana aplikacije razvijana je prema monolitnoj arhitekturi budući da je sadržavala sve komponente potrebne za uspješan rad aplikacije (poslovnu logiku, pristup podacima, autentifikaciju korisnika i sl.) unutar jedne aplikacije, bez razdvajanja na manje, samostalne servise. Ipak, u praksi se često koristi vanjski servis za pohranu podataka (npr. baza podataka na nekom udaljenom poslužitelju), što može donekle narušiti čistu definiciju monolitne arhitekture.
+Što se tiče **Web aplikacija**, kolegij obuhvaća razvoj klijentske i **poslužiteljske strane aplikacije**. Poslužiteljska strana aplikacije razvijana je prema monolitnoj arhitekturi budući da je sadržavala sve komponente potrebne za uspješan rad aplikacije (poslovnu logiku, pristup podacima, korisničko sučelje) unutar jednog backend sustava (npr. Express.js).
 
-Izazovi povezani s ovakvim pristupom već su prethodno spomenuti: skalabilnost, održavanje, testiranje, razvoj itd.
-
-Neki od čestih problema s kojima se susreću razvojni timovi prilikom razvoja monolitnih i semi-monolitnih aplikacija uključuju:
+Izazovi povezani s ovakvim pristupom već su prethodno spomenuti: skalabilnost, održavanje, testiranje, razvoj i sl.
 
 - _Što ako broj korisnika aplikacije naglo poraste, a postojeća infrastruktura ne može podnijeti opterećenje?_
 - _Kako se učinkovito nositi s velikom količinom podataka u bazi?_
@@ -112,11 +110,11 @@ i tako dalje...
 
 <img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/monolithic_vs_microservice.png?raw=true" style="width:60%; box-shadow: none !important; "></img>
 
-> Monolitna vs. mikroservisna arhitektura razvoja aplikacija: _high-level_ prikaz aplikacijskih komponenti
+> Monolitna vs. mikroservisna arhitektura razvoja aplikacija
 
 ## 1.2 Mikroservisna arhitektura
 
-**Mikroservisna arhitektura** (_eng. microservice architecture_) nastoji riješiti navedene izazove razdvajanjem aplikacije na manje, samostalne servise koji se mogu neovisno razvijati, testirati, implementirati i skalirati. Ipak, s mikroservisima dolaze i novi izazovi, poput: složenosti upravljanja raspodijeljenim sustavima, komunikacije između servisa, sigurnosti i nadzora pojedinih komponenti sustava. Česšće se mogu javljati problemi koji su povezani s mrežom, poput latencije, gubitka paketa i sl. Također, razvojni timovi moraju biti spremni na promjene u načinu rada, jer mikroservisna arhitektura zahtijeva drugačiji pristup razvoju, testiranju i implementaciji aplikacija.
+Mikroservisna arhitektura nastoji riješiti navedene izazove razdvajanjem aplikacije na manje, samostalne servise koji se mogu neovisno razvijati, testirati, implementirati i skalirati. Ipak, s mikroservisima dolaze i novi izazovi, poput složenosti upravljanja distribuiranim sustavima, komunikacije između servisa, sigurnosti i nadzora. Česšće se mogu javljati problemi koji su povezani s mrežom, poput latencije, gubitka paketa i sl. Također, razvojni timovi moraju biti spremni na promjene u načinu rada, jer mikroservisna arhitektura zahtijeva drugačiji pristup razvoju, testiranju i implementaciji aplikacija.
 
 Dizajn orijentiran na mikroservise (_eng. service-oriented design)_ dobiva na popularnosti sredinom 2010-ih godina, kada su _early-adopteri_ poput Netlifxa i Amazona počeli javno dijeliti svoja iskustva s prijelazom s monolitne na mikroservisnu arhitekturu. 2015. . godine, [James Lewis](https://martinfowler.com/articles/microservices.html) i [Martin Fowler](https://martinfowler.com/) objavili su članak pod nazivom ["Microservices"](https://martinfowler.com/articles/microservices.html) koji je postao jedan od najutjecajnijih izvora informacija o mikroservisnoj arhitekturi. U članku su definirali ključne karakteristike mikroservisne arhitekture i istaknuli prednosti koje ona donosi u odnosu na tradicionalne monolitne pristupe. Popularizacijom **Docker** i **Kubernetes** tehnologija, koje olakšavaju implementaciju i upravljanje mikroservisima, mikroservisna arhitektura postaje široko prihvaćena praksa u industriji softverskog razvoja.
 
@@ -124,11 +122,9 @@ Dizajn orijentiran na mikroservise (_eng. service-oriented design)_ dobiva na po
 
 <img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/netflix_microservices.png?raw=true" style="width:50%; box-shadow: none !important; "></img>
 
-> Apstraktna ilustracija mikroservisne arhitekture Netflixa, izvor: [zdnet.com](https://www.zdnet.com/article/to-be-a-microservice-how-smaller-parts-of-bigger-applications-could-remake-it/)
+> Ilustracija mikroservisne arhitekture Netflixa, izvor: [zdnet.com](https://www.zdnet.com/article/to-be-a-microservice-how-smaller-parts-of-bigger-applications-could-remake-it/)
 
 **Važno je naglasiti** da mikroservisna arhitektura nije univerzalno rješenje koje automatski otklanja izazove u razvoju kvalitetnog softvera. Ako se ne primjenjuje pažljivo i promišljeno, vrlo lako može dovesti do dodatne složenosti te stvoriti nove izazove u razvoju, održavanju i upravljanju sustavom, što naposljetku povećava potrebu za financijskim, vremenskim i ljudskim resursima. Zbog toga je ključno jasno razumjeti kada i na koji način primijeniti mikroservise, uzimajući u obzir specifične potrebe i kontekst projekta, veličinu i kompetencije razvojnog tima, raspoloživi budžet te kratkoročne i dugoročne ciljeve organizacije.
-
-> Dobar Medium članak na ovu temu: [When to Use and When NOT to Use Microservices: No Silver Bullet](https://medium.com/design-microservices-architecture-with-patterns/when-to-use-and-when-not-to-use-microservices-no-silver-bullet-3ae293faf6d)
 
 ### Core principi mikroservisne arhitekture
 
@@ -142,25 +138,21 @@ Dizajn orijentiran na mikroservise (_eng. service-oriented design)_ dobiva na po
 
 # 2. Definiranje poslužitelja koristeći `aiohttp`
 
-U ovoj skripti dotaknuti ćemo se razvoja HTTP poslužitelja koristeći `aiohttp` biblioteku. `aiohttp` omogućuje razvoj _lightweight_ asinkronih poslužitelja kojima možemo "otvoriti" naše poslovne aplikacije prema mreži te na taj način omogućiti komunikaciju između različitih servisa, odnosno čvorova u našem raspodijeljenom sustavu.
-
-**Mikroservis** zamišljamo kao malu _lightweight_ aplikaciju koja dobro i samostalno obavlja jednu specifičnu ili skup srodnih poslovnih funkcionalnosti koji ima smisla grupirati, a svoje usluge nudi putem nekog komunikacijskog protokola, odnosno u našem slučaju **HTTP poslužitelja**.
+U ovoj skripti dotaknuti ćemo se razvoja HTTP poslužitelja koristeći `aiohttp` biblioteku. Aiohttp omogućuje razvoj _lightweight_ asinkronih poslužitelja kojima možemo "otvoriti" naše poslovne aplikacije prema mreži te na taj način omogućiti komunikaciju između različitih servisa, odnosno čvorova u našem raspodijeljenom sustavu.
 
 Na budućim vježbama bavit ćemo se drugim aspektima mikroservisne arhitekture, poput njihova testiranja, nadzora, skaliranja, kontejnerizacije i orkestracije. Stay tuned!
 
-Nakon ovog teorijskog uvoda u mikroservisnu, u nastavku ove skripte ćemo se baviti implementacijom jednostavnog HTTP poslužitelja koristeći `aiohttp.web` Python modul.
+Nakon ovog teorijskog uvoda, u nastavku ćemo se baviti implementacijom jednostavnog HTTP poslužitelja koristeći `aiohttp.web` modul.
 
 ## 2.1 Ponavljanje: `aiohttp` klijentska sesija
 
-Do sada smo koristili `aiohttp` biblioteku prvenstveno kroz `ClientSession` klasu za slanje asinkronih HTTP zahtjeva prema vanjskim servisima. Ovdje smo na neki način definirali HTTP klijenta unutar Pythona koji komunicira s vanjskim servisom - npr. CatFact ili JSONPlaceholder servisom u _Cloudu_.
+Do sada smo koristili `aiohttp` biblioteku prvenstveno kroz `ClientSession` klasu za slanje asinkronih HTTP zahtjeva prema vanjskim servisima. Ovdje smo na neki način definirali klijenta unutar Pythona koji komunicira s vanjskim servisom - npr. CatFact API-jem.
 
-**Klijent** je program ili komponenta koja inicira komunikaciju s poslužiteljem kako bi zatražio određene resurse ili usluge. U kontekstu web aplikacija, klijent je obično web preglednik ili aplikacija koja šalje HTTP zahtjeve prema web poslužitelju. U kontekstu mikroservise arhitekture, **klijent može biti bilo koji mikroservis koji šalje zahtjeve prema drugom mikroservisu** (eng. [service-to-service communication](https://learn.microsoft.com/en-us/dotnet/architecture/cloud-native/service-to-service-communication)).
+**Klijent** je program ili komponenta koja inicira komunikaciju s poslužiteljem kako bi zatražio određene resurse ili usluge. U kontekstu web aplikacija, klijent je obično web preglednik ili aplikacija koja šalje HTTP zahtjeve prema web poslužitelju. U kontekstu mikroservise arhitekture, klijent može biti bilo koji mikroservis koji šalje zahtjeve prema drugom mikroservisu (eng. _service-to-service communication_).
 
-Međutim, `aiohttp` je također odličan alat za izgradnju _lightweight_ HTTP poslužitelja, direktno unutar Python aplikacije, to radimo kroz tzv. [Server API](https://docs.aiohttp.org/en/stable/web.html).
+Međutim, `aiohttp` je također odličan alat za izgradnju vlastitih HTTP poslužitelja, direktno unutar Python aplikacije, to radimo kroz tzv. [Server API](https://docs.aiohttp.org/en/stable/web.html).
 
-> Zašto _lightweight_? Zato što `aiohttp` nije memorijski i implementacijski "težak" okvir poput npr. **Django**, **Flask** ili **FastAPI**. `aiohttp` pruža osnovne alate potrebne za razvoj asinkronih HTTP poslužitelja, ali ne dolazi s dodatnim slojevima apstrakcije ili funkcionalnostima koje su često prisutne u većim web okvirima. To znači da programer ima veću kontrolu nad implementacijom i može prilagoditi poslužitelj prema specifičnim potrebama aplikacije, ali također zahtijeva više ručnog rada i razumijevanja osnovnih principa web razvoja.
-
-Prisjetimo se kako definirati **klijentsku sesiju** u `aiohttp`:
+Prisjetimo se kako definirati klijentsku sesiju u `aiohttp`:
 
 ```python
 import asyncio
@@ -199,11 +191,11 @@ U nastavku ćemo vidjeti kako definirati **HTTP poslužitelj** koristeći `aioht
 
 ## 2.2 `aiohttp.web` modul
 
-Kako bi implementirali **poslužitelj** koristeći `aiohttp`, koristimo `aiohttp.web` modul. Ovaj modul pruža sve potrebne alate za definiranje ruta (_endpointa_), obradu zahtjeva i slanje odgovora kroz HTTP protokol.
+Kako bi implementirali **poslužitelj** (_eng. Server_) koristeći `aiohttp`, koristimo `aiohttp.web` modul. Ovaj modul pruža sve potrebne alate za definiranje ruta (_endpointa_), obradu zahtjeva i slanje odgovora kroz HTTP protokol.
 
-U kontekstu mikroservisne arhitekture, poslužitelj je komponenta koja zaprima zahtjeve od drugih mikroservisa, obrađuje ih i vraća odgovore. Zbog prirode mikroservisa, svaki mikroservis trebao bi imati neki oblik vlastitog sučelja koji otvara vrata njegovih funkcionalnosti prema vanjskom svijetu. Bilo da se radi o HTTP (_Express.js, FastAPI, aiohttp, Spring Boot_), gRPC ili nekom drugom, poslužitelj je ključna komponenta koja omogućava komunikaciju između različitih mikroservisa.
+U kontekstu mikroservisne arhitekture, poslužitelj je komponenta koja zaprima zahtjeve od drugih mikroservisa, obrađuje ih i vraća odgovore. Zbog prirode mikroservisa, svaki mikroservis trebao bi imati vlasititi poslužitelj koji otvara vrata njegovih funkcionalnosti prema vanjskom svijetu. Bilo da se radi o HTTP (_Express.js, FastAPI, aiohttp, Spring Boot_), gRPC ili nekom drugom, poslužitelj je ključna komponenta koja omogućava komunikaciju između različitih servisa.
 
-> Zapamti: Možemo zamisliti poslužitelj kao **tehničku implementaciju komunikacijskog sučelja mikroservisa**, dok je mikroservis sama konceptualna jedinica koja obavlja određenu poslovnu (ili strogo tehničku) funkcionalnost.
+> Zapamti: Možemo zamisliti poslužitelj kao **tehničku implementaciju komunikacijskog sučelja mikroservisa**, dok je mikroservis sama konceptualna jedinica koja obavlja određenu poslovnu funkcionalnost.
 
 Modul nije potrebno naknadno instalirati, već je uključen u `aiohttp` paketu.
 
@@ -217,11 +209,9 @@ Ključna komponenta `aiohttp.web` modula je `Application` klasa, koja definira g
 app = web.Application() # u varijablu app pohranjujemo instancu Application klase
 ```
 
-Da bi pokrenuli poslužitelj, nije dovoljno samo pokrenuti Python skriptu, već moramo definirati na kojoj **adresi** i **portu** će poslužitelj slušati HTTP dolazne zahtjeve.
+Da bi pokrenuli poslužitelj, nije dovoljno samo pokrenuti Python skriptu, već moramo definirati na kojoj **adresi (host)** i **portu** će poslužitelj slušati.
 
 Poslužitelj pokrećemo pozivom metode `web.run_app()`:
-
-**Sintaksa:**
 
 ```python
 web.run_app(app, host, port)
@@ -244,8 +234,6 @@ web.run_app(app, host='localhost', port=8080)
 web.run_app(app, port=8080)
 ```
 
-> Podsjetnik: `localhost` je posebna mrežna adresa koja se koristi za usmjeravanje prometa natrag na isti uređaj s kojeg je zahtjev poslan. To znači da kada aplikacija ili usluga koristi `localhost`, ona "komunicira sa sobom", tj. s istim računalom na kojem se izvršava. `localhost` se obično prevodi na IP adresu `127.0.0.1` za IPv4 ili `::1` za IPv6.
-
 Ako je sve ispravno konfigurirano, poslužitelj će se pokrenuti i vidjet ćete ispis u terminalu:
 
 ```
@@ -257,17 +245,17 @@ Možete otvoriti web preglednik i posjetiti adresu `http://localhost:8080` kako 
 
 > Za **HTTP klijent unutar terminala** preporuka je koristiti [curl](https://curl.se/).
 > Kao **Desktop** ili **Web aplikaciju** preporuka je koristiti [Postman](https://www.postman.com/) ili [Insomnia](https://insomnia.rest/), međutim ima ih još mnogo.
-> Praktično je i preporuka koristiti neku od **VS Code HTTP klijent ekstenzija**, primjerice [Thunder Client](https://www.thunderclient.com/) ili [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
+> Praktično je i preporuka koristiti neku od **VS Code HTTP klijent ekstenzija**, primjerice [Thunder Client](https://www.thunderclient.com/), ili [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
 
 Koristeći jedan od alata, pošaljite zahtjev na adresu `http://localhost:8080` i provjerite je li poslužitelj uspješno pokrenut.
 
 <div style="page-break-after: always; break-after: page;"></div>
 
-## 2.3 Definiranje HTTP poslužiteljskih ruta (endpoints)
+## 2.3 Definiranje HTTP poslužiteljskih ruta
 
-Da bi poslužitelj bio funkcionalan i mogao obrađivati dolazne zahtjeve, potrebno je definirati rute (_eng. route/endpoint_) koje će poslužitelj opsluživati (_eng. serve_). **Ruta** predstavlja URL putanju putem koje se pristupa određenom **resursu** ili funkcionalnosti.
+Da bi poslužitelj bio funkcionalan i mogao obrađivati dolazne zahtjeve, potrebno je definirati rute (_eng. route/endpoint_) koje će poslužitelj opsluživati (_eng. serve_). **Ruta** predstavlja URL putanju putem koje se pristupa određenom resursu ili funkcionalnosti.
 
-Ako još niste, preporučuje se da se prisjetite osnova HTTP protokola (vidi skriptu RS4) kako biste bolje razumjeli ostatak skripte.
+Ako još niste, preporučuje se da se prisjetite osnova HTTP protokola (vidi skriptu RS4) kako biste lakše razumjeli gradivo koje slijedi.
 
 ### 2.3.1 HTTP GET ruta
 
@@ -282,22 +270,21 @@ app.router.add_get(path, handler_function) # Dodajemo GET rutu na određenu puta
 
 **Handler funkcija** (U JavaScriptu ekvivalent je _callback_ funkcija) je funkcija koja će se izvršiti kada se zahtjev uputi na definiranu rutu. _Handler_ funkcija može biti **sinkrona** ili **asinkrona** (**korutina**), međutim u praksi je preporučljivo koristiti asinkrone funkcije kako bi se izbjeglo blokiranje glavne dretve.
 
-_Handler_ funkcija prima **ulazni parametar** `request` koji predstavlja HTTP zahtjev koji je klijent napravio prema poslužitelju. Ovaj Python objekt sadrži sve informacije o HTTP zahtjevu, poput: URL putanje, HTTP metode, zaglavlja, tijela zahtjeva i sl.
+_Handler_ funkcija prima **ulazni parametar** `request` koji predstavlja HTTP zahtjev koji je klijent napravio prema poslužitelju. Ovaj objekt sadrži sve informacije o zahtjevu, poput: URL putanje, HTTP metode, zaglavlja, tijela zahtjeva i sl.
 
 ```python
-def handler_function(request): # Sinkrona handler funkcija koja prima request objekt
-  pass # Placeholder za implementaciju
+def handler_function(request) # Sinkrona handler funkcija koja prima request objekt
 ```
 
-Prikazat ćemo uobičajene podatke o zahtjevu koji su pohranjeni unutar objekta `request`:
+Prikazat ćemo podatke o zahtjevu koji su pohranjeni unutar objekta `request`:
 
 ```python
 from aiohttp import web
 
 def handler_function(request):
-  print(request.method) # HTTP metoda dolaznog zahtjeva
-  print(request.path) # HTTP putanja (URL) na koju je zahtjev upućen
-  print(request.headers) # HTTP zaglavlja dolaznog zahtjeva
+  print(request.method)
+  print(request.path)
+  print(request.headers)
 
 app = web.Application()
 
@@ -306,9 +293,7 @@ app.router.add_get('/', handler_function) # Čitaj: Dodajemo GET rutu na putanju
 web.run_app(app, host='localhost', port=8080)
 ```
 
-> Podsjetnik: Putanju `'/'` nazivamo i _root_ ili korijenskom putanjom poslužitelja.
-
-Ispisuje: GET metodu, URL putanju (`/`), zaglavlja zahtjeva, te **klijenta s kojeg je zahtjev poslan** - u našem slučaju `curl`:
+- Ispisuje: GET metodu, URL putanju (`/`), zaglavlja zahtjeva:
 
 ```
 GET
@@ -325,7 +310,7 @@ def handler_function(request):
 
 Nema više greške! Međutim, odgovor je prazan. Klasa `web.Response` omogućava nam da precizno definiramo HTTP odgovor koji će poslužitelj vratiti klijentu. Na primjer, možemo postaviti statusni kôd, zaglavlja i tijelo odgovora.
 
-**Sintaksa** `web.Response` klasnog konstruktora:
+**Sintaksa** `web.Response` konstruktora:
 
 ```python
 aiohttp.web.Response(
@@ -361,7 +346,7 @@ Pomoću naredbe `curl` možete poslati HTTP zahtjev direktno iz terminala:
 ```bash
 → curl http://localhost:8080
 
-# ili s eksplicitnim naglašavanjem HTTP metode opcijom/zastavicom "X"
+# ili s naglašavanjem HTTP metode opcijom -X
 
 → curl -X GET http://localhost:8080
 ```
@@ -370,20 +355,19 @@ Nakon svake promjene u kôdu poslužitelja potrebno je ponovno pokrenuti skriptu
 
 <div style="page-break-after: always; break-after: page;"></div>
 
-### 2.3.2 Automatsko ponovno pokretanje poslužitelja (hot/live reloading)
+### 2.3.2 Automatsko ponovno pokretanje poslužitelja (hot/live reload)
 
 Tijekom razvoja, ovo brzo postaje nepraktično i zamorno, pa je topla preporuka instalirati jedan od alata koji omogućuju **automatsko ponovno pokretanje poslužitelja nakon promjena u kôdu**, tzv. _hot/live reloading_.
 
 U tu svrhu, možete instalirati neki od sljedećih alata:
 
-1. [Nodemon](https://nodemon.io/) - prvenstveno za Node.js aplikacije, ali može se koristiti i za Python. Nodemon se instalira u globalnom okruženju i pokreće se iz terminala.
+1. [Nodemon](https://nodemon.io/) - prvenstveno za Node.js aplikacije, ali može se koristiti i za Python. Nodemon se instalira u globalnom okruženju i pokreće se iz terminala. Naravno, potrebno je instalirati i [Node.js runtime](https://nodejs.org/en).
 
 ```bash
-→ npm install -g nodemon # slobodno instalirajte iz bilo koje terminal sesije
+→ npm install -g nodemon
 ```
 
 - ako ne radi, provjerite je li dodan u PATH globalnu varijablu i ponovno pokrenite VS Code/terminal
-- naravno, potrebno je instalirati i [Node.js runtime](https://nodejs.org/en).
 
 Pokretanje:
 
@@ -403,7 +387,7 @@ Pokretanje:
 → adev runserver index.py
 ```
 
-3. [watchdog](https://github.com/gorakhargosh/watchdog) - generalni alat za praćenje promjena u datotekama. Kompleksniji za postavljanje budući da je, osim instalacije, potrebno napisati skriptu koja će pokrenuti poslužitelj.
+3. [watchdog](https://github.com/gorakhargosh/watchdog) - općeniti alat za praćenje promjena u datotekama. Kompleksniji za postavljanje budući da je, osim instalacije, potrebno napisati skriptu koja će pokrenuti poslužitelj.
 
 > Preporuka je koristiti `aiohttp-devtools` ili `nodemon` jer su jednostavniji za postavljanje i korištenje.
 
@@ -411,7 +395,7 @@ Pokretanje:
 
 ### 2.3.3 HTTP GET - slanje JSON odgovora
 
-Jednom kad ste uspješno podesili _hot-reload_ funkcionalnost, možemo se vratiti na razvoj poslužitelja. U praksi, često ćete (gotovo uvijek) se susresti s potrebom slanja JSON odgovora iz poslužitelja, budući da je JSON format postao de facto standard za razmjenu podataka između web servisa.
+Jednom kad ste uspješno podesili _hot-reload_ funkcionalnost, možemo se vratiti na razvoj poslužitelja. U praksi, često ćete (gotovo uvijek) se susresti s potrebom slanja JSON odgovora iz poslužitelja, budući da je JSON format najčešće korišten za razmjenu podataka između klijenta i poslužitelja.
 
 Rekli smo da format odgovora možemo definirati kroz `web.Response` objekt:
 
@@ -422,12 +406,12 @@ def handler_function(request):
 
 Ako želimo poslati JSON odgovor, stvari su nešto kompliciranije jer moramo odraditi serijalizaciju podataka u JSON format prije samog slanja.
 
-Podsjetnik (u grubo):
+Podsjetnik:
 
 - **Serijalizacija** - pretvaranje Python objekta u JSON format
 - **Deserijalizacija** - pretvaranje JSON formata u Python kolekciju (objekt)
 
-Za pretvaranja Python objekta u JSON format, možemo upotrijebiti ugrađeni modul `json`:
+Za pretvaranja Python objekta u JSON format, možemo upotrijebiti ugrađeni modul JSON:
 
 Za serijalizaciju koristimo metodu `dumps()`:
 
@@ -436,7 +420,7 @@ import json
 
 data = {'ime': 'Ivo', 'prezime': 'Ivić', 'godine': 25}
 
-json_data = json.dumps(data) # Serijalizacija Python objekta u JSON string
+json_data = json.dumps(data)
 
 # JSON format je tipa string
 print(type(json_data)) # <class 'str'>
@@ -450,7 +434,7 @@ def handler_function(request):
   return web.Response(text=json.dumps(data), content_type='application/json')
 ```
 
-**Drugi i preporučeni način** je korištenje metode `json_response()` koja **automatski serijalizira Python objekt u JSON format** prilikom slanja odgovora:
+**Drugi i preporučeni način** je korištenje metode `json_response()` koja automatski serijalizira Python objekt u JSON format:
 
 ```python
 def handler_function(request):
@@ -458,13 +442,13 @@ def handler_function(request):
   return web.json_response(data) # Automatska serijalizacija u JSON format, preporučeno
 ```
 
-Ovdje ne koristimo generičku `web.Response` klasu, već specijaliziranu `web.json_response()` funkciju koja automatski serijalizira Python objekt u JSON format i **postavlja odgovarajuće zaglavlje HTTP odgovora (`Content-Type: application/json`)**.
+Ovdje ne koristimo generičku `web.Response` klasu, već specijaliziranu `web.json_response()` funkciju koja automatski serijalizira Python objekt u JSON format i **postavlja odgovarajuće zaglavlje (`Content-Type: application/json`)**.
 
 > U praksi, preporučuje se koristiti `web.json_response()` funkciju jer je kôd kraći i čitljiviji
 
 ---
 
-**Rezime:**
+> **Kratki rezime**
 
 Do sad smo definirali sljedeće dijelove `aiohttp` poslužitelja:
 
@@ -496,11 +480,7 @@ def handler_function(request):
 
 Za razliku od GET metode koja se koristi za dohvaćanje podataka, **POST metoda** se koristi za **slanje podataka prema poslužitelju**.
 
-Kod web aplikacija, podaci koji se šalju POST metodom najčešće su iz forme koju je korisnik popunio.
-
-_Na primjer_: prilikom registracije korisnika, unos korisničkog imena, lozinke i e-mail adrese šalje se prema poslužitelju POST metodom. Takvi podaci najčešće se šalju u JSON formatu.
-
-Kod mikroservisa, POST metoda i srodne metode (PUT, PATCH, DELETE) koriste se za razmjenu podataka između različitih mikroservisa. Na primjer, `servis_1` može poslati POST zahtjev prema `servis_2` kako bi zatražio provedbu plaćanja, pri čemu `servis_1` šalje podatke o transakciji u JSON formatu unutar tijela HTTP zahtjeva.
+Kod web aplikacija, podaci koji se šalju POST metodom najčešće su iz forme koju je korisnik popunio. Na primjer: prilikom registracije korisnika, unos korisničkog imena, lozinke i e-mail adrese šalje se prema poslužitelju POST metodom. Takvi podaci najčešće se šalju u JSON formatu.
 
 U `aiohttp.web` modulu, POST rutu definiramo kroz metodu `add_post()` na objektu `router`:
 
@@ -508,13 +488,11 @@ U `aiohttp.web` modulu, POST rutu definiramo kroz metodu `add_post()` na objektu
 app.router.add_post(path, handler_function)
 ```
 
-**_Handler_ funkcija** koja obrađuje POST zahtjev prima dodatni parametar `request` jednako kao kod GET metode. Međutim, POST metoda omogućava pristup tijelu zahtjeva (eng. _request body_) koje sadrži podatke koje je klijent poslao prema poslužitelju.
+**Handler funkcija** koja obrađuje POST zahtjev prima dodatni parametar `request` jednako kao kod GET metode. Međutim, POST metoda omogućava pristup tijelu zahtjeva (eng. _request body_) koje sadrži podatke koje je klijent poslao prema poslužitelju.
 
 > U nastavku ćemo _handler_ funkcije definirati kao **korutine** kako bismo mogli asinkrono obrađivati zahtjeve.
 
-**Deserijalizaciju podataka** iz JSON formata u Python objekt možemo obaviti kroz metodu `json()` objekta `request`, na isti način kao što smo to radili prilikom slanja zahtjeva prema vanjskim servisima kod klijentske sesije.
-
-> Uočite: ne koristimo ugrađeni `json` modul kao kod serijalizacije, već **metodu** `.json()` objekta `Request`.
+**Deserijalizaciju podataka** iz JSON formata u Python objekt možemo obaviti kroz metodu `json()` objekta `request`, na isti način kao što smo to radili prilikom slanja zahtjeva prema vanjskim servisima kod klijentske sesije. **Uočite**, ne koristimo JSON modul kao kod serijalizacije, već **metodu** `json()` objekta `request`.
 
 ```python
 data = await request.json()
@@ -549,11 +527,11 @@ Očekivani odgovor (isti podaci kao u zahtjevu):
 {'ime': 'Ivo', 'prezime': 'Ivić', 'godine': 25}
 ```
 
-Puno jednostavnije je slanje kroz HTTP klijent jer ne moramo eksplicitno navoditi zaglavlja u zahtjevu.
+Puno jednostavnije je poslati kroz HTTP klijent jer ne moramo eksplicitno navoditi zaglavlja:
 
 <img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/thunderclient_post_example.png?raw=true" style="width:90%; box-shadow: none !important; "></img>
 
-> Primjer slanja POST zahtjeva s JSON tijelom na `http://localhost:8080` kroz Thunder Client VS Code ekstenziju
+> Primjer slanja POST zahtjeva s JSON tijelom na `http://localhost:8080` kroz Thunder Client ekstenziju
 
 ---
 
@@ -564,18 +542,6 @@ Za dodavanje preostalih HTTP metoda (PUT, DELETE, PATCH) koristimo odgovarajuće
 - `router.add_delete()` - dodavanje DELETE rute
 
 Ali možemo koristiti i generičku metodu `router.add_routes()` koja prima **listu ruta koje želimo dodati**.
-
-**Sintaksa:**
-
-```python
-app.router.add_routes([
-  web.get(path, handler_function), # Dodavanje GET rute
-  web.post(path, handler_function), # Dodavanje POST rute
-  web.put(path, handler_function), # Dodavanje PUT rute
-  web.delete(path, handler_function) # Dodavanje DELETE rute
-  ... # itd.
-])
-```
 
 _Primjer, definirat ćemo poslužitelj s dvije rute_: `GET /korisnici` i `POST /korisnici`:
 
@@ -607,7 +573,7 @@ web.run_app(app, port=8080)
 
 <div style="page-break-after: always; break-after: page;"></div>
 
-## 2.4 Zadaci za vježbu: Definiranje jednostavnih `aiohttp` poslužitelja
+## 2.4 Zadaci za vježbu: Definiranje jednostavnih aiohttp poslužitelja
 
 ### Zadatak 1: `GET /proizvodi`
 
@@ -636,21 +602,19 @@ korisnici = [
 
 # 3. Klijent-Poslužitelj komunikacija koristeći `aiohttp` biblioteku
 
-[Klijent-poslužitelj](https://en.wikipedia.org/wiki/Client%E2%80%93server_model) (eng. _client-server_) arhitektura je komunikacijski model u kojem klijent (npr. web preglednik ili aplikacija) šalje zahtjeve prema poslužitelju (npr. web serveru) koji obrađuje te zahtjeve i vraća odgovore natrag klijentu.
-
 U prethodnom poglavlju smo definirali `aiohttp` pozlužitelj koji sluša na definiranoj adresi i portu te obrađuje dolazne zahtjeve, dok smo u skripti `RS4` vidjeli kako se koristi `aiohttp` klijentska sesija za slanje asinkronih i konkurentnih HTTP zahtjeva koristeći `ClientSession` klasu.
 
 U ovom dijelu ćemo spojiti ta dva koncepta i pokazati **kako unutar Python kôda možemo simulirati komunikaciju između klijenta i poslužitelja** koristeći `aiohttp` klijentsku sesiju i poslužitelj definiran kroz `aiohttp.web` modul.
 
-> **Zašto bismo ovo radili**? Mikroservise koje gradimo na ovom kolegiju ćemo kroz lokalno razvojno okruženje (localhost) izlagati putem `aiohttp` poslužitelja. Međutim, kako mikroservisna arhitektura nije klasična _klijent-poslužitelj_ arhitektura, već je **_service-to-service_** komunikacija, jako često ćemo imati situaciju gdje mikroservis šalje zahtjeve prema drugom mikroservisu. U tom slučaju, mikroservis koji šalje zahtjev ponaša se kao klijent, dok se mikroservis koji prima zahtjev i obrađuje ga ponaša kao poslužitelj.
+> **Zašto bismo ovo radili**? Mikroservise koje gradimo na ovom kolegiju ćemo kroz lokalno razvojno okruženje (localhost) izlagati kroz `aiohttp` poslužitelje. Međutim, kako mikroservisna arhitektura nije klasična _klijent-poslužitelj_ arhitektura, već je **_service-to-service_** komunikacija, jako često ćemo imati situaciju gdje mikroservis šalje zahtjeve prema drugom mikroservisu. U tom slučaju, mikroservis koji šalje zahtjev ponaša se kao klijent, dok mikroservis koji prima zahtjev i obrađuje ga ponaša se kao poslužitelj.
 
-Krenut ćemo od definicije jednostavnog poslužitelja koji sluša na adresi `localhost` i portu `8080` te na putanji `/korisnici` vraća listu korisnika u JSON formatu:
+**Krenut ćemo od definicije jednostavnog poslužitelja** koji sluša na adresi `localhost` i portu `8080` te na putanji `/korisnici` vraća listu korisnika u JSON formatu:
 
 ```python
 from aiohttp import web
 
 async def get_users(request):
-  return web.json_response({'korisnici': ['Ivo', 'Ana', 'Marko', 'Maja', 'Iva', 'Ivan']}) #hardkodirani podaci - stvarni će bit u bazi podataka
+  return web.json_response({'korisnici': ['Ivo', 'Ana', 'Marko', 'Maja', 'Iva', 'Ivan']}) #hardkodirani podaci
 
 app = web.Application()
 
@@ -699,30 +663,27 @@ Koji problem uočavate?
 <details>
   <summary>Spoiler alert! Odgovor na pitanje</summary>
   <p>Kad pokrenemo skriptu, pokrenut će se poslužitelj i <b>blokirati izvođenje ostatka kôda</b>. <b>Klijentska sesija nikada neće biti otvorena jer se kôd nikada neće izvršiti</b>.</p>
-  <p>Ako pokrenemo prvo poslužitelj u jednom terminalu, otvorimo novi terminal i pokušamo pokrenuti skriptu ponovo, isto neće raditi jer je poslužitelj-proces već zauzeo proces.</p>
+  <p>Međutim, ako pokrenemo prvo poslužitelj u jednom terminalu, otvorimo novi terminal i pokušamo pokrenuti skriptu ponovo, isto neće raditi jer je poslužitelj-proces već zauzeo proces.</p>
 </details>
 
 ---
 
-Problem je što **ako pokrenemo poslužitelj, on će blokirati izvođenje ostatka kôda**, uključujući otvaranje klijentske sesije. Ovo je zato što funkcija `web.run_app()` blokira izvršavanje ostatka kôda **okupuacijom glavne dretve procesa** sve dok poslužitelj radi.
+Dakle, problem je što **ako pokrenemo poslužitelj, on će blokirati izvođenje ostatka kôda**, uključujući otvaranje klijentske sesije. Ovo je zato što funkcija `web.run_app()` blokira izvršavanje ostatka kôda okupuacijom glavne dretve procesa sve dok poslužitelj radi.
 
 > Zamislite da naš mikroservis s aktivnim poslužiteljem želi poslati zahtjev prema drugom mikroservisu - ne želimo prekinuti rad poslužitelja da bismo poslali zahtjev, već želimo da poslužitelj i klijentska sesija rade istovremeno (**konkurentno**).
-> _Primjer:_ `microservice_1` ima otvoreni poslužitelj koji prima zahtjeve od `microservice_2`, međutim, primitkom zahtjeva, `microservice_1` treba poslati zahtjeve prema `microservice_3` koji obrađuje neku treću funkcionalnost. Prekid rada poslužitelja `microservice_1` kako bi poslao zahtjeve nije prihvatljiva opcija, budući da za vrijeme prekida poslužitelj ne može obrađivati potencijalne dolazne zahtjeve od `microservice_2`.
 
-Idemo pokušati ovo riješiti. U Pythonu možemo iskoristiti specijalnu varijablu `__name__`, koja uvijek sadrži naziv trenutnog modula. Kada skriptu pokrenemo direktno, vrijednost `__name__` bit će `__main__`. S druge strane, ako skriptu uvezemo u neki drugi modul, `__name__` će sadržavati naziv tog modula.
+U Pythonu možemo iskoristiti specijalnu varijablu `__name__`, koja uvijek sadrži naziv trenutnog modula. Kada skriptu pokrenemo direktno, vrijednost `__name__` bit će `__main__`. S druge strane, ako skriptu uvezemo u neki drugi modul, `__name__` će sadržavati naziv tog modula.
 
 Korištenjem uvjetnog izraza `if __name__ == '__main__':` možemo definirati blok kôda koji će se izvršiti samo ako skriptu pokrenemo direktno, a neće se izvršiti ako je uvezemo kao modul u neki drugi kôd.
 
-**Sintaksa:**
-
 ```python
 if __name__ == '__main__':
-  # Blok kôda koji se izvršava samo ako skriptu pokrenemo direktno (npr. python index.py)
+  # Blok kôda koji se izvršava samo ako skriptu pokrenemo direktno (python index.py)
 ```
 
 - isto će raditi za pokretanje kroz `nodemon` ili `aiohttp-devtools`
 
-_Primjerice, možemo premjestiti pokretanje poslužitelja unutar ovog bloka_:
+_Primjerice, možemo definirati pokretanje poslužitelja unutar ovog bloka_:
 
 ```python
 if __name__ == '__main__':
@@ -730,9 +691,9 @@ if __name__ == '__main__':
   web.run_app(app, host='localhost', port=8080)
 ```
 
-Hoćemo li sada pokrenuti klijentsku sesiju i poslužitelj zajedno?
+Ukupan kôd:
 
-Primjer ukupnog kôda:
+Hoćemo li sada pokrenuti klijentsku sesiju i poslužitelj zajedno?
 
 ```python
 from aiohttp import web
@@ -748,7 +709,6 @@ app.router.add_get('/korisnici', get_users)
 async def main():
   async with aiohttp.ClientSession() as session:
     print("Klijentska sesija otvorena")
-
 asyncio.run(main()) # pokreće klijentsku sesiju
 
 if __name__ == '__main__':
@@ -758,9 +718,7 @@ if __name__ == '__main__':
 
 Kôd iznad će svakako prvo otvoriti klijentsku sesiju, obzirom da se `asyncio.run` poziva prije pokretanja poslužitelja. Ako ne želimo pokrenuti poslužitelj, možemo samo zakomentirati liniju `web.run_app(app, host='localhost', port=8080)`.
 
-Međutim je li moguće na ovaj način pokrenuti poslužitelj, **a nakon toga** pozvati `main` korutinu koja otvara klijentsku sesiju? Više nam ima smisla prvo pokrenuti poslužitelj, a zatim otvoriti klijentsku sesiju koja će slati zahtjeve prema tom poslužitelju (**ili u praksi - drugom mikroservisu**).
-
-Premjestimo `asyncio.run(main())` unutar bloka `if __name__ == '__main__':`:
+Međutim je li moguće na ovaj način pokrenuti poslužitelj, **a nakon toga** pozvati `main` korutinu koja otvara klijentsku sesiju? Više nam ima smisla prvo pokrenuti poslužitelj, a zatim otvoriti klijentsku sesiju koja će slati zahtjeve prema tom poslužitelju (**ili sasvim drugom mikroservisu**).
 
 ```python
 from aiohttp import web
@@ -790,15 +748,15 @@ if __name__ == '__main__':
   <p>Dakle, problem ostaje i dalje budući da će <code>web.run_app()</code> blokirati izvršavanje ostatka kôda <b>zauzimanjem glavne dretve procesa</b>.</p>
 </details>
 
-Kako bismo onda riješili ovaj problem? Potrebno je koristiti drugačiji pristup za pokretanje poslužitelja koji **ne blokira izvršavanje ostatka kôda**, odnosno **potrebno je pokrenuti poslužitelj i druge asinkrone operacije** unutar istog _event loopa_. Na ovaj način možemo **konkurentno izvršavati zadatke** na razini poslužitelja (_server-tasks_) i klijentske sesije (_client-tasks_).
+Kako bismo onda riješili ovaj problem? Potrebno je koristiti drugačiji pristup za pokretanje poslužitelja koji **ne blokira izvršavanje ostatka kôda**, odnosno **potrebno je pokrenuti poslužitelj i druge asinkrone operacije** unutar istog _event loopa_. Na ovaj način možemo konkurentno izvršavati zadatke na razini poslužitelja (_server-tasks_) i klijentske sesije (_client-tasks_).
 
 ## 3.1 Izvršavanje pozadinske korutine s poslužiteljem
 
-Na primjeru iznad vidjeli smo da `web.run_app()` blokira izvršavanje ostatka kôda, međutim, što ako moramo implementirati da naš mikroservis održava pozadinski zadatak koji se izvršava periodično, čeka na događaje ili obrađuje poruke iz reda poruka (_eng. message queue_)? U tom slučaju, trebamo način da pokrenemo poslužitelj i istovremeno izvršavamo druge asinkrone zadatke unutar istog _event loopa_ - oblik _background processinga_.
+Na primjeru iznad vidjeli smo da `web.run_app()` blokira izvršavanje ostatka kôda, međutim, što ako moramo implementirati da naš mikroservis održava pozadinski zadatak koji se izvršava periodično, čeka na događaje ili obrađuje poruke iz reda poruka (_message queue_)? U tom slučaju, trebamo način da pokrenemo poslužitelj i istovremeno izvršavamo druge asinkrone zadatke unutar istog _event loopa_ - oblik _background processinga_.
 
 _Primjer:_ Mikroservis koji ima definirani HTTP poslužitelj i istovremene obrađuje poruke iz _mock RabbitMQ_ reda poruka.
 
-> Napomena: [RabbitMQ](https://www.cloudamqp.com/blog/part1-rabbitmq-for-beginners-what-is-rabbitmq.html) je popularni sustav za razmjenu poruka koji omogućuje mikroservisima da komuniciraju asinkrono putem slanja i primanja poruka (eng. _message broker_). U ovom primjeru nećemo implementirati stvarnu integraciju s RabbitMQ-om, već ćemo simulirati pozadinsku obradu poruka kroz jednostavnu korutinu koja periodično ispisuje poruke u terminal.
+> Napomena: RabbitMQ je popularni sustav za razmjenu poruka koji omogućuje mikroservisima da komuniciraju asinkrono putem slanja i primanja poruka.
 
 ```python
 from aiohttp import web
@@ -824,21 +782,21 @@ if __name__ == '__main__':
   web.run_app(app, host='localhost', port=8080) # pokretanje poslužitelja (hoće li se pokrenuti?)
 ```
 
-Poslužitelj na mikroservisu iznad neće se pokrenuti jer će se izvršenje kôda blokirati na liniji `asyncio.run(main())`, tj. pokrenuti će se _event loop_ koji izvodi _blocking_ `process_messages` korutinu i time **nikada neće doći do linije** `web.run_app(...)`.
+Poslužitelj na mikroservisu iznad neće se pokrenuti jer će se izvršenje koda blokirati na liniji `asyncio.run(main())`, tj. pokrenuti će se _event loop_ koji izvodi _blocking_ `process_messages` korutinu i nikada neće doći do linije `web.run_app(...)`.
 
 Što ako bismo pokušali pokrenuti korutine konkurentno, koristeći `asyncio.create_task()` unutar `main` korutine? Ideja je da pokrenemo `process_messages` kao pozadinski zadatak na način da ga rasporedimo prvo unutar _event loopa_, a zatim pokrenemo poslužitelj.
 
 ```python
 async def main():
   asyncio.create_task(process_messages()) # pokretanje pozadinskog process_messages zadatka raspoređivanjem unutar event loopa
-  print(asyncio.get_running_loop().is_running()) # Ispisuje: True - event loop je pokrenut i radi
+  print(asyncio.get_running_loop().is_running()) # Ispisuje: True
   web.run_app(app, host='localhost', port=8080) # pokušat će pokrenuti novi event loop (GREŠKA!)
 
 if __name__ == '__main__':
   asyncio.run(main()) # pokretanje glavne korutine
 ```
 
-**Ovo također neće raditi**, ali iz nešto drugačijeg razloga. Ovaj kôd nastojat će pokrenuti dva _event loopa_ unutar istog procesa: jedan kroz `asyncio.run(main())` i drugi kroz `web.run_app()`, što nije dozvoljeno u jednodretvneom Python procesu. Razlog ovome je što `web.run_app()` interno poziva `asyncio.run()`, što znači da pokušavamo pokrenuti novi _event loop_ dok je već jedan aktivan.
+**Ovo također neće raditi**, ali iz nešto drugačijeg razloga. Ovaj kod nastojat će pokrenuti dva _event loopa_ unutar istog procesa: jedan kroz `asyncio.run(main())` i drugi kroz `web.run_app()`, što nije dozvoljeno u jednodretvneom Python procesu. Razlog ovome je što `web.run_app()` interno poziva `asyncio.run()`, što znači da pokušavamo pokrenuti novi _event loop_ dok je već jedan aktivan.
 
 ```text
 RuntimeError: Cannot run the event loop while another loop is running
@@ -847,13 +805,11 @@ Task was destroyed but it is pending!
 
 > **Zapamtite**: Mikroservisi često trebaju održavati pozadinske zadatke dok istovremeno služe zahtjeve putem poslužitelja. Pozadinski zadaci mogu uključivati obradu poruka iz redova poruka, periodične zadatke ili druge asinkrone operacije koje ne smiju blokirati glavni tok izvršavanja poslužitelja. Također, mikroservisi često mogu pokretati mini-izolirana radna okruženja unutar istog procesa, što zahtijeva fleksibilnost u upravljanju _event loopom_ kako ne bi došlo do sukoba između različitih komponenti ili _race-condition_ situacija.
 
-> Stvarni _production-ready_ mikroservisi velikih IT tvrtki, deployani u cloudu i dostupni za najam, često nude više programskih sučelja putem kojih ih korisnici mogu koristiti. Primjerice, [AWS mikroservisi](https://en.wikipedia.org/wiki/Amazon_Web_Services) često imaju REST i SDK sučelja, što omogućava jednostavnu integraciju u različite aplikacije i sisteme.
-
 ### Race-condition problem
 
-[Race-condition](https://en.wikipedia.org/wiki/Race_condition) problem predstavlja softversku grešku gdje rezultat (ishod) neke operacije ovisi o nizu nepredvidivih događaja, poput redoslijeda izvršavanja dretvi/procesa ili korutina i promjenu stanja zajedničkih resursa. Kod mikroservisa, **ovaj se problem često javlja** kada više komponenti pokušava istovremeno pristupiti ili mijenjati zajedničke resurse, poput baze podataka, datoteka ili mrežnih veza, bez odgovarajuće sinkronizacije i česti je _challenge_ prilikom razvoja raspodijeljenih sustavima.
+Predstavlja softversku grešku gdje rezultat (ishod) neke operacije ovisi o nizu nepredvidivih događaja, poput redoslijeda izvršavanja dretvi/procesa ili korutina i promjenu stanja zajedničkih resursa. Kod mikroservisa, ovaj se problem nerijetko javlja kada više komponenti pokušava istovremeno pristupiti ili mijenjati zajedničke resurse, poput baze podataka, datoteka ili mrežnih veza, bez odgovarajuće sinkronizacije i česti je _challenge_ u raspodijeljenim sustavima koji moramo svladati.
 
-**Najčešći razlozi za pojavu race-condition problema su**:
+**Najčešći razlozi:**
 
 - **priroda konkurentnog izvršavanja**: više dretvi/procesa/korutina istovremeno pristupa zajedničkim resursima
 - **dijeljeni resursi bez odgovarajuće sinkronizacije** (npr. stanje na bankovnom računu, računalna datoteka, stanje varijable u memoriji, web poslužitelji)
@@ -862,11 +818,11 @@ Task was destroyed but it is pending!
 
 <div style="page-break-after: always; break-after: page;"></div>
 
-## 3.2 `AppRunner` klasa - konkurentno pokretanje poslužitelja unutar postojećeg event loopa
+## 3.2 `AppRunner` klasa - pokretanje poslužitelja unutar postojećeg event loopa
 
-**AppRunner** klasu koristimo kada nam je potrebna veća kontrola nad životnim ciklusom poslužitelja, primjerice kada želimo pokrenuti poslužitelj unutar aktivnog _event loopa_, istovremeno pokrenuti više poslužitelja na različitim adresama ili ih pokrenuti na različitim mrežnim sučeljima (_eng. network interfaces_).
+**AppRunner** klasu koristimo kada nam je potrebna veća kontrola nad životnim ciklusom poslužitelja, primjerice kada želimo pokrenuti poslužitelj unutar aktivnog event loopa, istovremeno pokrenuti više poslužitelja na različitim adresama ili ih pokrenuti na različitim mrežnim sučeljima (_eng. network interfaces_).
 
-Prednost `AppRunner` klase je što, za razliku od funkcije `web.run_app()`, **ne blokira izvršavanje glavne dretve**, odnosno omogućuje _non-blocking_ pokretanje poslužitelja. U tom slučaju, _event loop_ može nastaviti istovremeno izvršavati druge asinkrone zadatke, poput otvaranja djelomičnih klijentskih sesija, obrade poruka iz redova poruka ili drugih periodičkih _cron-like_ zadataka - npr. slanje izvještaja o stanju mikroservisa na određeni interval ili provjera zdravlja povezanih servisa.
+Prednost `AppRunner` klase je što, za razliku od funkcije `web.run_app()`, **ne blokira izvršavanje glavne dretve**, odnosno omogućuje _non-blocking_ pokretanje poslužitelja. U tom slučaju, event loop može nastaviti istovremeno izvršavati druge asinkrone zadatke, poput otvaranja djelomičnih klijentskih sesija, obrade poruka iz redova poruka ili drugih periodičkih zadataka.
 
 `AppRunner` se obično koristi zajedno s `TCPSite`, što omogućuje povezivanje poslužitelja s određenim mrežnim sučeljem i portom.
 
@@ -909,7 +865,7 @@ site = TCPSite(runner, 'localhost', 8080)  # 3. Poveži poslužitelj s localhost
 await site.start()               # 4. Pokreni poslužitelj
 ```
 
-Ova četiri koraka često se ponavljaju, pa ih je **praktično spakirati u zasebnu korutinu**, npr. `start_server`:
+Ova četiri koraka često se ponavljaju, pa ih je **praktično spakirati u zasebnu korutinu** `start_server`.
 
 ```python
 async def start_server():
@@ -922,7 +878,7 @@ async def start_server():
 await start_server()  # Hoće li se pokrenuti?
 ```
 
-Ako želimo pokrenuti poslužitelj i istovremeno izvršavati druge zadatke unutar `main` korutine, koristimo _asyncio_ Taskove:
+Ako želimo pokrenuti poslužitelj i istovremeno izvršavati druge zadatke unutar `main` korutine, koristimo `asyncio.create_task()`:
 
 > Možemo pozvati korutinu `start_server` unutar `main` korutine
 
@@ -985,11 +941,11 @@ Poslužitelj sluša na http://localhost:8080
 {"korisnici": ["Ivo", "Ana", "Marko", "Maja", "Iva", "Ivan"]}
 ```
 
-**Važno**: Nakon završetka `main()` korutine, poslužitelj se gasi. **Pokušaj ponovnog slanja zahtjeva iz terminala ili drugog HTTP klijenta neće uspjeti**.
+**Važno**: Nakon završetka `main()` korutine, poslužitelj se gasi. Pokušaj ponovnog slanja zahtjeva iz terminala ili drugog HTTP klijenta neće uspjeti.
 
 ---
 
-Idemo vidjeti primjer s **periodičnim pozadinskim zadatkom koji se izvršava istovremeno s poslužiteljem**:
+Idemo vidjeti primjer s pozadinskim zadatkom koji se izvršava istovremeno s poslužiteljem:
 
 ```python
 from aiohttp import web
@@ -1002,7 +958,6 @@ async def get_users(request):
     )
 
 
-# periodična obrada poruka iz reda
 async def process_messages():
     while True:
         print("Obrađujem poruke iz reda...")
@@ -1027,9 +982,9 @@ async def main():
 asyncio.run(main()) # Pokrećemo event loop
 ```
 
-Pokrenite gore navedeni kôd i u terminalu ćete vidjet ćete ispis korutine `process_messages`, međutim **poslužitelj neće raditi jer se `main()` korutina završava odmah nakon pokretanja pozadinskih zadataka (korutina)**. Obje korutine su beskonačnog trajanja i glavna `main()` korutina se završava odmah nakon njihovoh raspoređivanja u _event loop_.
+Pokrenite gore navedeni kôd i u terminalu ćete vidjet ćete ispis korutine `process_messages`, međutim poslužitelj neće raditi jer se `main()` korutina završava odmah nakon pokretanja pozadinskih zadataka. Obje korutine su beskonačnog trajanja i `main()` korutina se završava odmah nakon pokretanja pozadinskih zadataka.
 
-Da bismo to riješili, moramo naglasiti _event loopu_ da ostane aktivan. Ovo je najbolje riješiti korištenjem `await asyncio.Event().wait()` unutar `main()` korutine, što će natjerati event loop da ostane aktivan **dok god se ne dogodi neki vanjski prekid** (npr. `KeyboardInterrupt` signal od korisnika).
+Da bismo to riješili, moramo naglasiti _event loopu_ da ostane aktivan. Ovo je najbolje riješiti korištenjem `await asyncio.Event().wait()` unutar `main()` korutine, što će natjerati event loop da ostane aktivan dok god se ne dogodi neki vanjski prekid (npr. `KeyboardInterrupt`):
 
 **Sintaksa:**
 
@@ -1037,7 +992,7 @@ Da bismo to riješili, moramo naglasiti _event loopu_ da ostane aktivan. Ovo je 
 async def main():
     asyncio.create_task(process_messages())
     asyncio.create_task(start_server())
-    await asyncio.Event().wait()  # Održava event loop aktivnim dok se ne dogodi neki oblik prekida, npr. KeyboardInterrupt
+    await asyncio.Event().wait()  # Održava event loop aktivnim dok se ne dogodi neki oblik prekida
 ```
 
 _Rezultat:_
@@ -1063,7 +1018,7 @@ To je to! Uspjeli smo pokrenuti "dva pozadinska beskonačna zadatka" unutar isto
 
 ## 3.3 HTTP GET ruta s URL (route) parametrima
 
-**_Route_ parametar** (ili URL parametar) je dinamički dio URL-a koji se koristi za prosljeđivanje podataka unutar same putanje URL-a. Obično se koristi za identifikaciju resursa ili specificiranje dodatnih informacija potrebnih za obradu zahtjeva.
+Route parametar (ili URL parametar) je dinamički dio URL-a koji se koristi za prosljeđivanje podataka unutar same putanje URL-a. Obično se koristi za identifikaciju resursa ili specificiranje dodatnih informacija potrebnih za obradu zahtjeva.
 
 Uobičajeno je kada šaljemo HTTP odgovor unutar _handler funkcije_, koristiti `web.json_response()` funkciju te definirati statusni kôd odgovora `status`.
 
@@ -1102,11 +1057,11 @@ Ako sad pokrenemo kôd dobit ćemo error `500`: `KeyError: 'id'`.
 
 To je zato što nismo definirali:
 
-- _route_ parameter `id` u definiciji rute
+- route parameter `id` u definiciji rute
 - slučaj kad korisnik s traženim ID-em ne postoji
 - slučaj kad se `id` ne proslijedi u zahtjevu
 
-Dodajemo još jednu definiciju GET rute, ovaj put s _route_ parametrom `id`:
+Dodajemo još jednu definiciju GET rute, ovaj put s route parametrom `id`:
 
 ```python
 app.router.add_get('/korisnici/{id}', get_users) # Sada očekujemo route parametar 'id'
@@ -1116,7 +1071,7 @@ Možemo upotrijebiti `get()` metodu rječnika kako bismo izbjegli `KeyError`:
 
 > Hint: `get()` metoda vraća `None` ako ključ ne postoji, a možemo definirati i zadani rezultat ako ključ ne postoji
 
-Dakle sljedeći izrazi su ekvivalentni: `request.match_info['id']` → `request.match_info.get('id')`, ali `get()` **metoda je "sigurnija".**
+Dakle ekvivalentno je: `request.match_info['id']` → `request.match_info.get('id')`, ali `get()` **metoda je sigurnija**
 
 ```python
 async def get_users(request):
@@ -1232,15 +1187,12 @@ Unutar `aiohttp` biblioteke, WebSocket podrška je ugrađena i omogućuje jednos
 
 Protokol je dostupan unutar modula `aiohttp.web_ws` za poslužitelje i `aiohttp.ClientWebSocketResponse` za klijente.
 
-> Napomena: Ako uključite `web` modul iz `aiohttp` paketa, WebSocket podršku možete koristiti direktno kroz `web.WebSocketResponse` i `web.WSMsgType`, bez potrebe za dodatnim uvozom `web_ws` modula. Ipak, moguće je navesti: `from aiohttp import web_ws` ako želite eksplicitno koristiti samo WebSocket klase i funkcije iz tog modula.
-
 ## 4.1 WebSocket poslužitelj
 
 Primjer mikroservisa s WebSocket **poslužiteljem**:
 
 ```python
 from aiohttp import web
-# ili: from aiohttp import web_ws - za eksplcitni uvoz WebSocket modula
 import asyncio
 
 async def websocket_handler(request):
@@ -1345,7 +1297,7 @@ async def main():
 asyncio.run(main())
 ```
 
-Rezultat:
+Ispisuje:
 
 ```text
 Poslužitelj pokrenut na http://localhost:8080
@@ -1353,7 +1305,7 @@ Klijent primio: Primljena poruka: Pozdrav, WebSocket poslužitelju!
 WebSocket veza zatvorena
 ```
 
-# 5. Podjela kôda u više datoteka (1 servis = 1 datoteka)
+# 5. Podjela kôda u više datoteka
 
 Naučili smo kako definirati `aiohttp` poslužitelje i klijentske sesije, kako definirati rute i _handler_ funkcije, kako slati HTTP zahtjeve i obrađivati odgovore. Međutim, sve smo to radili unutar jedne skripte - `index.py`.
 
@@ -1371,11 +1323,11 @@ Neka nam trenutna asocijacija za mikroservis bude **web poslužitelj**, odnosno 
 
 Izradimo novi direktorij `microservice_simulation`.
 
-U direktoriju `microservice_simulation` izradite sljedeće datoteke:
+U direktoriju `microservice_simulation` kreirajte sljedeće datoteke:
 
 - `client.py` - ovdje ćemo definirati klijentsku sesiju
-- `microservice_1.py` - ovdje ćemo definirati prvi mikroservis (i njegov poslužitelj)
-- `microservice_2.py` - ovdje ćemo definirati drugi mikroservis (i njegov poslužitelj)
+- `microservice_1.py` - ovdje ćemo definirati prvi mikroservis (poslužitelj)
+- `microservice_2.py` - ovdje ćemo definirati drugi mikroservis (poslužitelj)
 
 ```bash
 → mkdir microservice_simulation
@@ -1384,7 +1336,7 @@ U direktoriju `microservice_simulation` izradite sljedeće datoteke:
 → touch client.py, microservice_1.py, microservice_2.py
 ```
 
-Krenimo s definicijom poslužitelja u `microservice_1.py` datoteci. Svaki servis će imati jednostavnu korijensku rutu `/` koja vraća poruku `"Hello from Microservice X"`.
+Krenimo s definicijom poslužitelja u `microservice_1.py` datoteci. Svaki servis će imati jednostavnu rutu `/` koja vraća poruku `"Hello from Microservice X"`.
 
 `microservice_1` neka sluša na portu `8081`:
 
@@ -1401,7 +1353,7 @@ app.router.add_get('/', handle_service1)
 web.run_app(app, port=8081)
 ```
 
-U `microservice_2.py` datoteci ćemo definirati drugi mikroservis koji sluša na portu `8082`:
+U `microservice_2.py` datoteci definirajmo drugi mikroservis koji sluša na portu `8082`:
 
 ```python
 # microservice_2.py
@@ -1416,7 +1368,7 @@ app.router.add_get('/', handle_service2)
 web.run_app(app, port=8082)
 ```
 
-U klijentskoj sesiji tj. `client.py` datoteci ćemo prvo definirati glavnu korutinu `main`.
+U klijentskoj sesiji `client.py` datoteci ćemo prvo definirati glavnu korutinu `main`.
 
 ```python
 # client.py
@@ -1436,8 +1388,8 @@ asyncio.run(main())
 # client.py
 import aiohttp
 import asyncio
-import microservice_1 # ? NIKAKO
-import microservice_2 # ? NIKAKO
+import microservice_1 # ?
+import microservice_2 # ?
 
 async def main():
   print("Pokrećem main korutinu")
@@ -1446,7 +1398,7 @@ async def main():
 asyncio.run(main())
 ```
 
-Ako pokrenete `client.py`, vidjet ćete sljedeći ispis u terminalu:
+Ako pokrenemo `client.py`, vidjet ćete sljedeći ispis u terminalu:
 
 ```bash
 ======== Running on http://0.0.0.0:8081 ========
@@ -1458,13 +1410,13 @@ Ako pokrenete `client.py`, vidjet ćete sljedeći ispis u terminalu:
 Pokrećem main korutinu
 ```
 
-Na ovaj način, jednostavno smo "kopirali" kôd iz ova dva poslužitelja i zaljepili ga na početak `client.py` datoteke. Pokretanjem skripte vidimo da se oba poslužitelja pokreću, ali tek nakon što ih ugasimo pokreće se `main` korutina u `client.py`.
+Na ovaj način, jednostavno smo "kopirali" kôd iz ova dva poslužitelja i zaljepili ga na početak `client.py` datoteke. Pokretanjem skripte vidimo da se oba poslužitelja pokreću, ali tek nakon što ih gasimo pokreće se `main` korutina u `client.py`.
 
-Već smo rekli mikroservisnu arhitekturu ne želimo zamišljati kao "jedan veliki monolitni kôd", odnosno veliki program koji putem vanjskih biblioteka/modula dobiva na složenosti/raspodijeljenosti, već **želimo pokrenuti više manjih i jednostavnijih servisa koji međusobno komuniciraju preko mreže** (kroz HTTP/WS ili neki treći komunikacijski protokol).
+Dakle, već smo rekli da mikroservisnu arhitekturu ne želimo zamišljati kao "jedan veliki monolitni kôd", odnosno veliki program koji putem vanjskih biblioteka/modula dobiva na složenosti/raspodijeljenosti, već **želimo pokrenuti više manjih i jednostavnijih programa i komunicirati između njih**.
 
 ### 5.1.1 Pokretanje više mikroservisa
 
-Potrebno je pokrenuti poslužitelje mikroservisa samostalno iz terminala, a zatim pokrenuti klijentsku sesiju iz `client.py` datoteke. Međutim, do sad ste vidjeli da kad pokrenemo jedan poslužitelj, on blokira izvođenje ostatka kôda. **Rješenje je sljedeće**: pokrenuti svaki poslužitelj u zasebnom procesu, a to je najlakše postići **pokretanjem više terminal sesija**.
+Potrebno je pokrenuti poslužitelje samostalno iz terminala, a zatim pokrenuti klijentsku sesiju iz `client.py` datoteke. Međutim, do sad ste vidjeli da kad pokrenemo jedan poslužitelj, on blokira izvođenje ostatka kôda. **Rješenje je** - pokrenuti svaki poslužitelj u zasebnom procesu, a to je najlakše postići **kroz više terminala**.
 
 Skriptu pokrećemo naredbom `python microservice_1.py` u jednom terminalu, a drugu skriptu u drugom terminalu.
 
@@ -1502,7 +1454,7 @@ if __name__ == "__main__":
     web.run_app(app, port=8082)
 ```
 
-Ako koristite VS Code, terminale možete jednostavno podijeliti koristeći opciju `Split Terminal` (`Ctrl/CMD` + `Shift` + `5`).
+Ako koristite VS Code, terminale možete jednostavno podijeliti koristeći opciju `Split Terminal` (`Ctrl` + `Shift` + `5`).
 
 <img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/split_terminal.png?raw=true" style="width:80%; box-shadow: none !important; "></img>
 
@@ -1616,11 +1568,11 @@ U `main` korutini jednostavno pozivamo ovu korutinu:
 ```python
 async def main():
   print("Pokrećem main korutinu")
-  service1_response, service2_response = await fetch_service() # kôd nije konkurentan, ali je napisan asinkrono.
+  service1_response, service2_response = await fetch_service() # kôd nije konkurentan, ali je asinkron!
   print(service1_response, service2_response)
 ```
 
-Ovaj kôd nije konkurentan jer se zahtjevi u korutini `fetch_service` šalju i čekaju sekvencijalno, a ne konkurentno.
+Ovaj kôd nije konkurentan jer se zahtjevi u korutini `fetch_service` šalju sekvencijalno, a ne konkurentno.
 
 Što ako dodamo `gather` u main korutinu?
 
@@ -1637,7 +1589,7 @@ Nije. Zašto? Zato što se unutar `fetch_service()` korutine zahtjevi i dalje š
 
 Međutim, zašto ne bi mogli koristiti `gather` u `fetch_service()` korutini?
 
-Ideja je sljedeća: **idemo otvoriti jednu klijentsku sesiju i unutar nje slati zahtjeve na oba mikroservisa**, budući da možemo definirati različiti URL za svaki `session.get()` poziv.
+Ideja je sljedeća: **idemo otvoriti jednu klijentsku sesiju i unutar nje slati zahtjeve na oba mikroservisa**, budući da možemo definirati različiti URL za svaki `session.get()`.
 
 ```python
 # client.py
@@ -1682,7 +1634,7 @@ TypeError: An asyncio.Future, a coroutine or an awaitable is required
 [nodemon] app crashed - waiting for file changes before starting...
 ```
 
-Kako pročitati grešku? **TypeError: An asyncio.Future, a coroutine or an awaitable is required** (proslijedili smo krivi input u `gather` funkciju, mora biti korutina ili `awaitable` objekt korutine ili Task)
+Kako pročitati grešku? **TypeError: An asyncio.Future, a coroutine or an awaitable is required** (Proslijedili smo krivi input u `gather` funkciju, mora biti korutina ili `awaitable` objekt)
 
 Rješenje je jednostavno: `service_1` i `service_2` su objekti tipa `ClientResponse`, a ne korutine (zato što smo ih već _awaitali_, tj. korutine su se izvršile). Ako odradimo deserijalizaciju odgovora, možemo vidjeti da su to rječnici.
 
@@ -1759,7 +1711,7 @@ Ako pokrenete korutinu s drugom `return` dobit ćete grešku: `SyntaxError: 'awa
 
 Problem je što `await` ustvari koristimo unutar funkcije `map` koja nije korutina, niti je funkcija namijenjena za asinkrono izvršavanje. `lambda` koju prosljeđujemo `map` funkciji nije korutina već je sinkrona funkcija. **Zato je bolje koristiti list comprehension**.
 
-Kako možemo dokazati da je ovaj kôd uistinu konkurentan? Simulacijom čekanja (`asyncio.sleep` i mjerenjm vremena: `time` modul).
+Kako možemo dokazati da je ovaj kôd uistinu konkurentan? Simulacijom čekanja (`asyncio.sleep` i mjerenjm vremena `time` modul).
 
 > Pokušajte prvo sami, a zatim provjerite rješenje u nastavku.
 
@@ -1839,8 +1791,8 @@ Ovu arhitekturu definirat ćemo unutar direktorija `microservice_calculations`.
 
 Ideja je sljedeća:
 
-- definirat **ćemo dva mikroservisa i njihove HTTP poslužitelje** koji obavljaju računske operacije
-- definirat **ćemo jednog HTTP klijenta** koji šalje zahtjeve u obliku lista brojeva
+- definirat **ćemo 2 mikroservisa** koji obavljaju računske operacije
+- definirat **ćemo klijenta** koji šalje zahtjeve u obliku lista brojeva
 
 1. mikroservis će računati zbroj svih brojeva i vratiti rezultat
 2. mikroservis će upotrijebiti rezultat prvog mikroservisa i izračunati omjer svakog broja s ukupnim zbrojem
@@ -1848,9 +1800,9 @@ Ideja je sljedeća:
 Prvo ćemo definirati klijenta:
 
 ```bash
-→ mkdir microservice_calculations
-→ cd microservice_calculations
-→ touch client.py
+mkdir microservice_calculations
+cd microservice_calculations
+touch client.py
 ```
 
 U `client.py` datoteci definirajmo `main` korutinu.
@@ -1871,7 +1823,7 @@ asyncio.run(main())
 Idemo definirati prvi mikroservis koji će računati zbroj svih brojeva.
 
 ```bash
-→ touch microservice_sum.py
+touch microservice_sum.py
 ```
 
 ```python
@@ -1900,7 +1852,9 @@ app.router.add_post('/zbroj', handle_zbroj)
 web.run_app(app, host='localhost', port=8081)
 ```
 
-Testirat ćemo prvo ovaj mikroservis kroz HTTP klijent. Kako poslati podatke?
+Testirat ćemo prvo ovaj mikroservis kroz HTTP klijent.
+
+> Kako poslati podatke?
 
 HTTP zahtjeve želimo pisati u JSON formatu, a **uobičajeno je da JSON format sadrži uvijek barem 1 ključ**.
 
@@ -1952,7 +1906,7 @@ Pokrećem main korutinu
 Sada ćemo definirati drugi mikroservis koji će koristiti rezultat prvog mikroservisa i izračunati omjer svakog broja s ukupnim zbrojem.
 
 ```bash
-→ touch microservice_ratio.py
+touch microservice_ratio.py
 ```
 
 Stvari su vrlo slične, samo naš POST endpoint sad zaprima 2 ključa: `'podaci'` i `'zbroj'`.
@@ -2045,34 +1999,27 @@ Razlog tomu je što svakako moramo dobiti rezultat izvođenja prvog mikroservisa
 
 Bez obzira što je taj rezultat u ovom slučaju vrlo banalan (običan zbroj brojeva u listi) **u stvarnosti se radi o puno složenijim operacijama**.
 
-**Glavni izazov u konkurentnom izvršavanju** slanja zahtjeva koji smo do sada uočili je upravo ova **nekonzistentnost u obradi podataka**. Zamislite da, zbog performansi sustava, želimo poslati 10 000 zahtjeva kroz 10 različitih mikroservisa (npr. kako bismo ubrzali obradu rezultata za onih ~80%), od kojih neki ovise o rezultatima drugih. U tom slučaju, konkurentno slanje zahtjeva koje smo dosad radili nije dovoljno, jer se zahtjevi šalju i čekaju nasumično (puno parametra je van naše kontrole, npr. propusnost mreže, latencija, opterećenje poslužitelja itd.).
+**Glavni nedostatak konkurentnog** slanja zahtjeva koji smo do sada uočili je upravo ova **nekonzistentnost u obradi podataka**. Zamislite da, zbog performansi, želimo poslati 10 000 zahtjeva kroz 10 različitih mikroservisa (npr. kako bismo ubrzali obradu rezultata za onih ~80%), od kojih neki ovise o rezultatima drugih. U tom slučaju, konkurentno slanje zahtjeva koje smo dosad radili nije dovoljno, jer se zahtjevi šalju i čekaju nasumično (puno parametra je van naše kontrole, npr. propusnost).
 
 _Primjerice, definiramo listu od 10 taskova_:
 
 ```python
 tasks = [task1, task2, task3, task4, task5, task6, task7, task8, task9, task10]
 
-# Ali postoje ovisnosti među taskovima:
-# Npr. Taskovi 5-10 ovise o taskovima 1-4
-
-rezultati = await asyncio.gather(*tasks) # konkurentno slanje zahtjeva
+results = await asyncio.gather(*tasks) # konkurentno slanje zahtjeva
 ```
 
 Što nas muči? Recimo da taskovi 5-10 ovise o rezultatima taskova 1-4. Kako osigurati da se taskovi 5-10 izvrše tek nakon što se izvrše taskovi 1-4? Odnosno, bolje pitanje bi glasilo: **Kako upravljati konkurentnom egzekucijom međusobno ovisnih taskova?**
 
-Skupina taskova koji se mogu izvršiti paralelno bez ovisnosti naziva se **batch**. U našem slučaju, taskovi 1-4 mogu se izvršiti paralelno, a tek nakon što se svi ti taskovi završe, možemo krenuti s izvršavanjem taskova 5-10. Ipak, na ovaj način gubimo na performansama jer čekamo da se svi taskovi iz batcha 1 završe prije nego krenemo s batchom 2. Također, ovisnosti između taskova mogu biti složenije prirode (npr. task 6 ovisi o tasku 2, task 7 ovisi o tasku 3, task 2 ovisi o tasku 9 itd.). Upravljanje ovakvim ovisnostima može postati vrlo složeno.
+Skupina srodnih problema sinkronizacije u literaturi se naziva _Producer-Consumer_ problem. Ako vas zanima više, na internetu možete pronaći mnogo materijala na ovu temu, a i u budućim vježbama ćemo se pozabaviti ovim problemom. Ukratko, radi se o problemu kod konkurentnog programiranja gdje jedan ili više "proizvođača" (producers) generira podatke i stavlja ih u zajednički spremnik (buffer), dok jedan ili više "potrošača" (consumers) preuzima te podatke iz spremnika i obrađuje ih. Ključni izazov je osigurati da proizvođači i potrošači pravilno koordiniraju svoj rad kako bi se izbjegle situacije poput preljeva spremnika (kada proizvođači pokušavaju dodati podatke u pun spremnik) ili praznog spremnika (kada potrošači pokušavaju preuzeti podatke iz praznog spremnika).
 
-DAG (_eng. Directed Acyclic Graph_) je matematička struktura koja se često koristi za **modeliranje ovisnosti između taskova**. U DAG-u, **čvorovi** predstavljaju Taskove, a usmjereni **bridovi** predstavljaju ovisnosti između njih. Na ovaj način možemo jasno vidjeti koje taskove možemo izvršiti paralelno i koje taskove moramo čekati da se završe prije nego krenemo s određenim taskom. Aciklični graf nema ciklusa (što znači da ne možemo imati situaciju gdje task A ovisi o tasku B, a task B ovisi o tasku A).
+<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/producer-consumer.png?raw=true" style="width:80%; box-shadow: none !important; "></img>
 
-<img src="./screenshots/DAG.png" style="width:60%; box-shadow: none !important; "></img>
+> Ilustracija Producer-Consumer problema
 
-> Izvor slike: https://www.astronomer.io/docs/learn/dags
+**Ovim problemom bavit ćemo se na budućim vježbama, za sada ćemo izmijeniti naš kôd kako bi mikroservisi bili nezavisni jedan o drugome.**
 
-U stvarnom svijetu, upravljanje ovakvim ovisnostima može biti vrlo složeno. Postoje specijalizirani alati i biblioteke (npr. [Apache Airflow](https://en.wikipedia.org/wiki/Apache_Airflow), [Luigi](https://luigi.readthedocs.io/en/stable/), [Prefect](https://www.prefect.io/)) koji pomažu u upravljanju ovakvim DAG-ovima i izvršavanju taskova na temelju njihovih ovisnosti.
-
-Ovoga ćemo se dotaknuti na budućim vježbama, a za sada ćemo izmijeniti naš kod kako bi mikroservisi (Taskovi) bili nezavisni jedan o drugom.
-
-- Neka prvi mikroservis vraća kvadrate brojeva, a drugi mikroservis vraća njihove kvadratne korijene.
+- Neka prvi mikroservis vraća kvadrate brojeva, a drugi mikroservis vraća kvadratne korijene brojeva.
 
 Sada imamo **isti resurs za oba mikroservisa**, a to su brojevi. Kao rezultat na klijentskoj strani želimo zbrojiti **zbroj kvadrata** i **zbroj kvadratnih korijena**.
 
@@ -2100,7 +2047,7 @@ web.run_app(app, host='localhost', port=8083)
 Mikroservis `microservice_sqrt.py` koji računa i vraća korijene brojeva:
 
 ```bash
-→ touch microservice_sqrt.py
+touch microservice_sqrt.py
 ```
 
 ```python
