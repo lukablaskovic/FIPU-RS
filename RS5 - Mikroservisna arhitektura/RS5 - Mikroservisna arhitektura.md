@@ -15,7 +15,7 @@
 
 Mikroservisna arhitektura predstavlja pristup dizajnu softvera u kojem se aplikacija razvija kao skup manjih, neovisnih servisa koji međusobno komuniciraju putem mreže. Svaki servis djeluje kao zasebna cjelina zadužena za jasno definiranu funkcionalnost, a komunikacija se najčešće odvija korištenjem standardiziranih protokola poput HTTP-a. Za razliku od tradicionalne monolitne arhitekture, gdje su sve komponente objedinjene u jedinstven sustav, mikroservisna arhitektura razdvaja ključne elemente poput poslovne logike, baza podataka, autentifikacije i drugih funkcionalnosti u samostalne servise.
 
-Takav način izgradnje sustava donosi niz prednosti: omogućuje jednostavnije skaliranje, povećava otpornost na greške, olakšava rad većim razvojnim timovima te ubrzava razvoj, testiranje i implementaciju novih funkcionalnosti. Zbog svoje prilagodljivosti i održivosti, mikroservisna arhitektura predstavlja snažan temelj za dugoročno uspješan razvoj softverskih rješenja, ali istovremeno zahtijeva pažljivo planiranje i upravljanje kako bi se izbjegli izazovi povezani s kompleksnošću raspodijeljenih sustava.
+Takav način izgradnje sustava donosi niz prednosti: omogućuje jednostavnije skaliranje, povećava otpornost na greške, olakšava rad većim razvojnim timovima te ubrzava razvoj, testiranje i implementaciju novih funkcionalnosti. Zbog svoje prilagodljivosti i održivosti, mikroservisna arhitektura predstavlja snažan temelj za dugoročno uspješan razvoj softverskih rješenja, ali istovremeno zahtijeva pažljivo planiranje i upravljanje kako bi se reducirali izazovi povezani s kompleksnošću raspodijeljenih sustava.
 
 </div>
 <br>
@@ -75,7 +75,7 @@ U softverskom inženjerstvu, **mikroservisna arhitektura** (_eng. microservice a
 Ne postoji jedinstvena definicija mikroservisne arhitekture, međutim s vremenom je došlo do uspostavljanja konvencija i dobrih praksi koje se primjenjuju u većini slučajeva prilikom njihova razvoja, testiranja i održavanja. Prema tome, možemo definirati nekoliko **ključnih karakteristika mikroservisne arhitekture**:
 
 - U mikroservisnoj arhitekturi, servisi se obično implementiraju kao **odvojeni procesi** koji međusobno komuniciraju putem mreže ili RPC protokola, za razliku od klasičnih monolitnih aplikacija, gdje su sve (ili većina) komponente objedinjene unutar jednog procesa.
-- Servisi su osmišljeni tako da se organiziraju oko **poslovnih funkcionalnosti** ili **domenskih entiteta**. Na primjer, možemo imati zasebne servise za upravljanje korisnicima aplikacije, proizvode (_inventor management_) ili narudžbe (_order processing_), pri čemu svaki servis pokriva određeni aspekt poslovanja. Ipak, ne treba pretjerivati i svaki mali dio aplikacije pretvarati u zaseban mikroservis - na taj način bismo brzo bankrotirali zbog prevelikih troškova upravljanja infrastrukturom.
+- Servisi su osmišljeni tako da se organiziraju oko **poslovnih funkcionalnosti** ili **domenskih entiteta**. Na primjer, možemo imati zasebne servise za upravljanje korisnicima aplikacije, proizvode (_inventory management_) ili narudžbe (_order processing_), pri čemu svaki servis pokriva određeni aspekt poslovanja. Ipak, ne treba pretjerivati i svaki mali dio aplikacije pretvarati u zaseban mikroservis - na taj način bismo brzo bankrotirali zbog prevelikih troškova upravljanja infrastrukturom.
 - Glavna ideja mikroservisa je omogućiti njihovu **neovisnu implementaciju i razvoj**. To znači da svaki servis može koristiti različite tehnologije, programske jezike ili baze podataka, ovisno o tome što najbolje odgovara njegovim specifičnim potrebama.
 - **Mikroservisi su obično kompaktni**, kako po broju linija kôda, tako i po resursima koje koriste. Razvijaju se i **autonomno isporučuju kroz automatizirane procese**, poput sustava za kontinuiranu integraciju i isporuku ([CI/CD](https://en.wikipedia.org/wiki/CI/CD)), što omogućava bržu i fleksibilniju iteraciju.
 
@@ -85,15 +85,15 @@ Ne postoji jedinstvena definicija mikroservisne arhitekture, međutim s vremenom
 
 Kao i svaki arhitekturalni stil, mikroservisna arhitektura ima svoje prednosti i nedostatke, samim tim **nije uvijek najbolje rješenje za svaki problem**. Razvoj aplikacije oko mikroservisa često zahtijeva dodatne **inicijalne troškove** i napore u postavljanju infrastrukture, automatizaciji te upravljanju servisima (ali i ljudskim resursima koji stoje iza razvoja).
 
-**Monolitna arhitektura**, kao klasična alternativa mikroservisnom pristupu, predstavlja način razvoja aplikacije kao jedinstvene, povezane cjeline, obično objedinjene u jednom procesu ili aplikaciji. Ovaj pristup nudi brojne prednosti, uključujući jednostavnost u razvoju, održavanju i testiranju. Ipak, kako aplikacija postaje sve složenija zbog povećanja funkcionalnosti i broja korisnika, mogu se javiti izazovi povezani sa skalabilnošću i prilagodljivošću.
+**Monolitna arhitektura**, kao klasična alternativa mikroservisnom pristupu, predstavlja način razvoja aplikacije kao jedinstvene, povezane cjeline, obično objedinjene u jednom procesu ili aplikaciji. Ovaj pristup nudi brojne prednosti, uključujući jednostavnost razvoja, održavanja i testiranja. Ipak, kako aplikacija postaje sve složenija zbog povećanja funkcionalnosti i broja korisnika, mogu se javiti izazovi povezani sa skalabilnošću i prilagodljivošću.
 
 ## 1.1 Monolitna arhitektura
 
-**Monolitna arhitektura** (eng. _monolithic architecture_) je stil arhitekture u kojem je cijela aplikacija dizajnirana kao "jedinstvena" povezana cjelina. To znači da su svi moduli i komponente aplikacije, poput korisničkog sučelja, poslovne logike, pristupa podacima, postojani u unutar jedne aplikacije. Monolitna aplikacija se obično implementira kao jedan veliki "programski paket" ili proces koji se izvozi i pokreće samostalno.
+**Monolitna arhitektura** (eng. _monolithic architecture_) je stil arhitekture u kojem je cijela aplikacija dizajnirana kao "jedinstvena" povezana cjelina. To znači da su svi moduli i komponente aplikacije, poput korisničkog sučelja, poslovne logike, pristupa podacima, postojani u unutar jedne aplikacije. Čista monolitna aplikacija se obično implementira kao jedan veliki "programski paket" ili proces koji se izvozi i pokreće samostalno.
 
-Softverska rješenja koja ste do sad razvijali na kolegijima [Programsko inženjerstvo](https://github.com/azuzic/FIPU-PI) i [Web aplikacije](https://github.com/lukablaskovic/FIPU-WA), mogla bi se opisati kao monolitne aplikacije, iako ona to nisu u pravom smislu definicije monolitnosti. Naime, monolitna arhitektura je često povezana s klasičnim _desktop_ aplikacijama, gdje se cijela aplikacija izvršava na korisnikovom računalu, bez potrebe za dodatnim komponentama ili servisima - cijela poslovna logika, pristup podacima i korisničko sučelje su objedinjeni unutar jedne aplikacije - prisjetite se npr. _Java Swing_ ili _WPF_ aplikacija.
+Softverska rješenja koja ste do sad razvijali na kolegijima [Programsko inženjerstvo](https://github.com/azuzic/FIPU-PI) i [Web aplikacije](https://github.com/lukablaskovic/FIPU-WA), mogla bi se opisati kao monolitne aplikacije, iako one to nisu u pravom smislu definicije monolitnosti. Naime, monolitna arhitektura je često povezana s klasičnim _desktop_ aplikacijama, gdje se cijela aplikacija izvršava na korisnikovom računalu, bez potrebe za dodatnim komponentama ili servisima - cijela poslovna logika, pristup podacima i korisničko sučelje su objedinjeni unutar jedne aplikacije - prisjetite se npr. _Java Swing_ ili _WPF_ aplikacija.
 
-Kako smo na **Programskom inženjerstvu** aplikaciju razvijali u okviru jednog razvojnog okvira (Vue.js), koristeći jedan programski jezik (JavaScript) te koristili Firebase kao servis za autentifikaciju i bazu podataka na način da smo ga integrirali direktno u aplikaciju, možemo argumentirati da smo razvijali aplikaciju u monolitnoj arhitekturi. Međutim, **Firebase je PaaS** (_Platform-as-a-Service_) **usluga**, odnosno platforma u oblaku koja omogućava korištenje udaljenih poslužitelja i nudi razne funkcionalnosti kroz skup Google-ovih mikroservisa koji rade na GCP (_eng. Google Cloud Platform_). Glavna prednost Firebasea je što eliminira potrebu za brigom o infrastrukturi, upravljanju bazama podataka, skaliranju aplikacije i sl. - sve to rješava Firebase. Stoga se može reći da ste, na određeni način, svoju aplikaciju razvijali u okviru mikroservisne arhitekture, ali na višem nivou apstrakcije, gdje je sama platforma (Firebase) bila zadužena za upravljanje mikroservisima u oblaku i skaliranju vaše aplikacije.
+Kako smo na **Programskom inženjerstvu** aplikaciju razvijali u okviru jednog razvojnog okvira (Vue.js), koristeći jedan programski jezik (JavaScript) te koristili Firebase kao servis za autentifikaciju i bazu podataka na način da smo ga integrirali direktno u aplikaciju, možemo argumentirati da smo razvijali aplikaciju u monolitnoj arhitekturi. Međutim, **Firebase je PaaS** (_Platform-as-a-Service_) **usluga**, odnosno platforma u oblaku koja omogućava korištenje udaljenih poslužitelja i nudi razne funkcionalnosti kroz skup Google-ovih mikroservisa koji rade na GCP (_eng. Google Cloud Platform_). Glavna prednost Firebasea je što eliminira potrebu za brigom o infrastrukturi, upravljanju bazama podataka, skaliranju aplikacije i sl. - sve to rješava sam GCP/Firebase. Stoga se može reći da ste, na određeni način, svoju aplikaciju razvijali u okviru mikroservisne arhitekture, ali na višem nivou apstrakcije, gdje je sama platforma (Firebase) bila zadužena za upravljanje mikroservisima u oblaku i skaliranju vaše aplikacije.
 
 Što se tiče **Web aplikacija**, kolegij obuhvaća razvoj klijentske i **poslužiteljske strane aplikacije**. Poslužiteljska strana aplikacije razvijana je prema monolitnoj arhitekturi budući da je sadržavala sve komponente potrebne za uspješan rad aplikacije (poslovnu logiku, pristup podacima, autentifikaciju korisnika i sl.) unutar jedne aplikacije, bez razdvajanja na manje, samostalne servise. Ipak, u praksi se često koristi vanjski servis za pohranu podataka (npr. baza podataka na nekom udaljenom poslužitelju), što može donekle narušiti čistu definiciju monolitne arhitekture.
 
@@ -117,17 +117,17 @@ i tako dalje...
 
 ## 1.2 Mikroservisna arhitektura
 
-**Mikroservisna arhitektura** (_eng. microservice architecture_) nastoji riješiti navedene izazove razdvajanjem aplikacije na manje, samostalne servise koji se mogu neovisno razvijati, testirati, implementirati i skalirati. Ipak, s mikroservisima dolaze i novi izazovi, poput: složenosti upravljanja raspodijeljenim sustavima, komunikacije između servisa, sigurnosti i nadzora pojedinih komponenti sustava. Česšće se mogu javljati problemi koji su povezani s mrežom, poput latencije, gubitka paketa i sl. Također, razvojni timovi moraju biti spremni na promjene u načinu rada, jer mikroservisna arhitektura zahtijeva drugačiji pristup razvoju, testiranju i implementaciji aplikacija.
+**Mikroservisna arhitektura** (_eng. microservice architecture_) nastoji riješiti navedene izazove razdvajanjem aplikacije na manje, samostalne servise koji se mogu neovisno razvijati, testirati, implementirati i skalirati. Ipak, s mikroservisima dolaze i novi izazovi, poput: složenosti upravljanja raspodijeljenim sustavima, komunikacije između servisa, sigurnosti i nadzora pojedinih komponenti sustava. Česšće se mogu javljati problemi koji su povezani s mrežom, poput latencije, gubitka paketa i sl. Također, razvojni timovi moraju biti spremni na promjene u načinu rada, jer mikroservisna arhitektura zahtijeva drugačiji pristup razvoju, testiranju i implementaciji softvera.
 
-Dizajn orijentiran na mikroservise (_eng. service-oriented design)_ dobiva na popularnosti sredinom 2010-ih godina, kada su _early-adopteri_ poput Netlifxa i Amazona počeli javno dijeliti svoja iskustva s prijelazom s monolitne na mikroservisnu arhitekturu. 2015. . godine, [James Lewis](https://martinfowler.com/articles/microservices.html) i [Martin Fowler](https://martinfowler.com/) objavili su članak pod nazivom ["Microservices"](https://martinfowler.com/articles/microservices.html) koji je postao jedan od najutjecajnijih izvora informacija o mikroservisnoj arhitekturi. U članku su definirali ključne karakteristike mikroservisne arhitekture i istaknuli prednosti koje ona donosi u odnosu na tradicionalne monolitne pristupe. Popularizacijom **Docker** i **Kubernetes** tehnologija, koje olakšavaju implementaciju i upravljanje mikroservisima, mikroservisna arhitektura postaje široko prihvaćena praksa u industriji softverskog razvoja.
+Dizajn orijentiran na mikroservise (_eng. service-oriented design)_ dobiva na popularnosti sredinom 2010-ih godina, kada su _early-adopteri_ poput Netlifxa i Amazona počeli javno dijeliti svoja iskustva prijelazom s monolitne na mikroservisnu arhitekturu. 2015. . godine, [James Lewis](https://martinfowler.com/articles/microservices.html) i [Martin Fowler](https://martinfowler.com/) objavili su članak pod nazivom ["Microservices"](https://martinfowler.com/articles/microservices.html) koji je postao jedan od najutjecajnijih izvora informacija o mikroservisnoj arhitekturi. U članku su definirali ključne karakteristike mikroservisne arhitekture i istaknuli prednosti koje ona donosi u odnosu na tradicionalne monolitne pristupe. Popularizacijom **Docker** i **Kubernetes** tehnologija, koje olakšavaju implementaciju i upravljanje mikroservisima, mikroservisna arhitektura postaje široko prihvaćena praksa u industriji softverskog razvoja.
 
-**Amazon** je nekoliko svojih ključnih proizvoda, poput Amazon Primea, prebacio na mikroservisnu arhitekturu, dok je za neke druge proizvode zadržao monolitnu arhitekturu. Kroz vlastiti razvoj i uspon mikroservisnih tehnologija, Amazon prepoznaje poslovnu priliku u pružanju mikroservisne arhitekture kao usluge drugim tvrtkama, što rezultira razvojem platforme **AWS** (_Amazon Web Services_). Danas je [AWS vodeći globalni pružatelj cloud usluga](https://en.wikipedia.org/wiki/Amazon_Web_Services) i jedan od najvećih izvora prihoda Amazon grupe. S druge strane, **Netflix** je [potpuno migrirao na mikroservisnu arhitekturu](https://netflixtechblog.com/tagged/microservices) i danas je jedan od najvećih korisnika AWS-a, ističući se kao primjer uspješne transformacije s monolitne na mikroservisnu arhitekturu. Navodi se da Netflix ima preko 1000 aktivnih mikroservisa koji se izvršavaju u oblaku.
+**Amazon** je nekoliko svojih ključnih proizvoda, poput Amazon Primea, prebacio na mikroservisnu arhitekturu, dok je za neke druge proizvode zadržao monolitnu arhitekturu. Kroz vlastiti razvoj i uspon mikroservisnih tehnologija, Amazon prepoznaje poslovnu priliku u pružanju mikroservisne arhitekture kao usluge (_Microservice as a Service - MaaS_, spominje se i kao _Function as a Service - FaaS_) drugim tvrtkama, što rezultira razvojem platforme **AWS** (_Amazon Web Services_). Danas je [AWS vodeći globalni pružatelj cloud usluga](https://en.wikipedia.org/wiki/Amazon_Web_Services) i jedan od najvećih izvora prihoda Amazon grupe. S druge strane, **Netflix** je [potpuno migrirao na mikroservisnu arhitekturu](https://netflixtechblog.com/tagged/microservices) i danas je jedan od najvećih korisnika AWS-a, ističući se kao primjer uspješne transformacije s monolitne na mikroservisnu arhitekturu. Navodi se da Netflix ima preko 1000 aktivnih mikroservisa koji se izvršavaju u oblaku.
 
 <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/netflix_microservices.png" style="width:50%;"></img>
 
 > Apstraktna ilustracija mikroservisne arhitekture Netflixa, izvor: [zdnet.com](https://www.zdnet.com/article/to-be-a-microservice-how-smaller-parts-of-bigger-applications-could-remake-it/)
 
-**Važno je naglasiti** da mikroservisna arhitektura nije univerzalno rješenje koje automatski otklanja izazove u razvoju kvalitetnog softvera. Ako se ne primjenjuje pažljivo i promišljeno, vrlo lako može dovesti do dodatne složenosti te stvoriti nove izazove u razvoju, održavanju i upravljanju sustavom, što naposljetku povećava potrebu za financijskim, vremenskim i ljudskim resursima. Zbog toga je ključno jasno razumjeti kada i na koji način primijeniti mikroservise, uzimajući u obzir specifične potrebe i kontekst projekta, veličinu i kompetencije razvojnog tima, raspoloživi budžet te kratkoročne i dugoročne ciljeve organizacije.
+**Važno je naglasiti** da mikroservisna arhitektura nije univerzalno rješenje koje automatski otklanja sve izazove u razvoju kvalitetnog softvera. Ako se ne primjenjuje pažljivo i promišljeno, vrlo lako može dovesti do dodatne složenosti te stvoriti nove izazove u razvoju, održavanju i upravljanju sustavom, što naposljetku povećava potrebu za financijskim, vremenskim i ljudskim resursima. Zbog toga je ključno jasno razumjeti kada i na koji način primijeniti mikroservise, uzimajući u obzir specifične potrebe i kontekst projekta, veličinu i kompetencije razvojnog tima, raspoloživi budžet te kratkoročne i dugoročne ciljeve organizacije.
 
 > Dobar Medium članak na ovu temu: [When to Use and When NOT to Use Microservices: No Silver Bullet](https://medium.com/design-microservices-architecture-with-patterns/when-to-use-and-when-not-to-use-microservices-no-silver-bullet-3ae293faf6d)
 
@@ -147,9 +147,13 @@ U ovoj skripti dotaknuti ćemo se razvoja HTTP poslužitelja koristeći `aiohttp
 
 **Mikroservis** zamišljamo kao malu _lightweight_ aplikaciju koja dobro i samostalno obavlja jednu specifičnu ili skup srodnih poslovnih funkcionalnosti koji ima smisla grupirati, a svoje usluge nudi putem nekog komunikacijskog protokola, odnosno u našem slučaju **HTTP poslužitelja**.
 
-Na budućim vježbama bavit ćemo se drugim aspektima mikroservisne arhitekture, poput njihova testiranja, nadzora, skaliranja, kontejnerizacije i orkestracije. Stay tuned!
+<img src="./screenshots/microservices-w-exposed-http.png" style="width:50%;"></img>
 
-Nakon ovog teorijskog uvoda u mikroservisnu, u nastavku ove skripte ćemo se baviti implementacijom jednostavnog HTTP poslužitelja koristeći `aiohttp.web` Python modul.
+> Prikaz dva mikroservisa (A i B) s internim bazama podataka koji izlažu svoje funkcionalnosti putem HTTP poslužitelja definiranog preko [AWS API Gateway servisa](https://aws.amazon.com/api-gateway/). Mikroservisi mogu i ne moraju koristiti HTTP protokol izlaganje svojih funkcionalnosti (ovisno o prirodi mikroservisa, komunikacija se može odvijati i drugim protokolima)
+
+Na budućim vježbama bavit ćemo se drugim aspektima mikroservisne arhitekture, poput njihova testiranja, nadzora, skaliranja, kontejnerizacije i orkestracije. _Stay tuned!_
+
+Nakon ovog teorijskog uvoda u mikroservisnu arhitekturu, u nastavku ove skripte ćemo se baviti implementacijom HTTP poslužitelja koji možemo otvarati prema mreži koristeći `aiohttp` biblioteku.
 
 ## 2.1 Ponavljanje: `aiohttp` klijentska sesija
 
@@ -268,7 +272,7 @@ Koristeći jedan od alata, pošaljite zahtjev na adresu `http://localhost:8080` 
 
 Da bi poslužitelj bio funkcionalan i mogao obrađivati dolazne zahtjeve, potrebno je definirati rute (_eng. route/endpoint_) koje će poslužitelj opsluživati (_eng. serve_). **Ruta** predstavlja URL putanju putem koje se pristupa određenom **resursu** ili funkcionalnosti.
 
-Ako još niste, preporučuje se da se prisjetite osnova HTTP protokola (vidi skriptu RS4) kako biste bolje razumjeli ostatak skripte.
+Ako još niste, preporučuje se da se prisjetite osnova HTTP protokola (skripta RS4) kako biste bolje razumjeli ostatak skripte.
 
 ### 2.3.1 HTTP GET ruta
 
@@ -377,7 +381,7 @@ Tijekom razvoja, ovo brzo postaje nepraktično i zamorno, pa je topla preporuka 
 
 U tu svrhu, možete instalirati neki od sljedećih alata:
 
-1. [Nodemon](https://nodemon.io/) - prvenstveno za Node.js aplikacije, ali može se koristiti i za Python. Nodemon se instalira u globalnom okruženju i pokreće se iz terminala.
+1. [Nodemon](https://nodemon.io/) - prvenstveno za Node.js aplikacije, ali može se koristiti i za Python. Nodemon se instalira u globalnom okruženju (flag `-g`) i pokreće se iz terminala.
 
 ```bash
 → npm install -g nodemon # slobodno instalirajte iz bilo koje terminal sesije
@@ -412,9 +416,9 @@ Pokretanje:
 
 ### 2.3.3 HTTP GET - slanje JSON odgovora
 
-Jednom kad ste uspješno podesili _hot-reload_ funkcionalnost, možemo se vratiti na razvoj poslužitelja. U praksi, često ćete (gotovo uvijek) se susresti s potrebom slanja JSON odgovora iz poslužitelja, budući da je JSON format postao de facto standard za razmjenu podataka između web servisa.
+Jednom kad ste uspješno podesili _hot-reload_ funkcionalnost, možemo se vratiti na razvoj poslužitelja. U praksi, često ćete (gotovo uvijek) se susresti s potrebom slanja JSON odgovora iz poslužitelja, budući da je JSON format postao de _facto standard_ za razmjenu podataka između web servisa.
 
-Rekli smo da format odgovora možemo definirati kroz `web.Response` objekt:
+Rekli smo da format HTTP odgovora možemo definirati kroz `web.Response` objekt:
 
 ```python
 def handler_function(request):
@@ -426,11 +430,11 @@ Ako želimo poslati JSON odgovor, stvari su nešto kompliciranije jer moramo odr
 Podsjetnik (u grubo):
 
 - **Serijalizacija** - pretvaranje Python objekta u JSON format
-- **Deserijalizacija** - pretvaranje JSON formata u Python kolekciju (objekt)
+- **Deserijalizacija** - pretvaranje JSON formata u Python kolekciju (_npr. list, dict, str_)
 
 Za pretvaranja Python objekta u JSON format, možemo upotrijebiti ugrađeni modul `json`:
 
-Za serijalizaciju koristimo metodu `dumps()`:
+Za serijalizaciju koristimo metodu `json.dumps()`:
 
 ```python
 import json
@@ -443,7 +447,9 @@ json_data = json.dumps(data) # Serijalizacija Python objekta u JSON string
 print(type(json_data)) # <class 'str'>
 ```
 
-U `web.Response` moramo precizirati da se radi o JSON formatu kako bi klijent znao kako interpretirati odgovor. To radimo kroz parametar `content_type`:
+U `web.Response` **moramo precizirati da se radi o JSON formatu** kako bi klijent znao kako interpretirati odgovor.
+
+- to radimo kroz parametar `content_type`:
 
 ```python
 def handler_function(request):
@@ -489,19 +495,21 @@ app.router.add_get(path, handler_function)
 def handler_function(request):
   return web.json_response(data) # Automatska serijalizacija u JSON format
 
-def handler_function(request):
+def handler_function_dva(request):
   return web.Response(text='Pozdrav Raspodijeljeni sustavi!') # Vraćanje tekstualnog odgovora kroz standardni web.Response objekt
 ```
 
 ### 2.3.4 HTTP POST ruta
 
-Za razliku od GET metode koja se koristi za dohvaćanje podataka, **POST metoda** se koristi za **slanje podataka prema poslužitelju**.
+Za razliku od GET metode koja se koristi za dohvaćanje podataka, **POST metoda** se prvenstveno koristi za **slanje podataka prema poslužitelju**.
 
 Kod web aplikacija, podaci koji se šalju POST metodom najčešće su iz forme koju je korisnik popunio.
 
-_Na primjer_: prilikom registracije korisnika, unos korisničkog imena, lozinke i e-mail adrese šalje se prema poslužitelju POST metodom. Takvi podaci najčešće se šalju u JSON formatu.
+_Na primjer_: prilikom registracije korisnika, unos korisničkog imena, lozinke i e-mail adrese šalje se prema poslužitelju POST metodom. Takvi podaci se danas najčešće šalju u JSON formatu.
 
-Kod mikroservisa, POST metoda i srodne metode (PUT, PATCH, DELETE) koriste se za razmjenu podataka između različitih mikroservisa. Na primjer, `servis_1` može poslati POST zahtjev prema `servis_2` kako bi zatražio provedbu plaćanja, pri čemu `servis_1` šalje podatke o transakciji u JSON formatu unutar tijela HTTP zahtjeva.
+Kod poslužitelja mikroservisa, POST metoda i srodne metode (PUT, PATCH, DELETE) mogu se koristiti za razmjenu podataka između različitih mikroservisa.
+
+_Primjer:_ `servis_1` može poslati POST zahtjev prema `servis_2` kako bi zatražio provedbu plaćanja, pri čemu `servis_1` šalje podatke o transakciji u JSON formatu unutar tijela HTTP zahtjeva.
 
 U `aiohttp.web` modulu, POST rutu definiramo kroz metodu `add_post()` na objektu `router`:
 
@@ -511,11 +519,13 @@ app.router.add_post(path, handler_function)
 
 **_Handler_ funkcija** koja obrađuje POST zahtjev prima dodatni parametar `request` jednako kao kod GET metode. Međutim, POST metoda omogućava pristup tijelu zahtjeva (eng. _request body_) koje sadrži podatke koje je klijent poslao prema poslužitelju.
 
-> U nastavku ćemo _handler_ funkcije definirati kao **korutine** kako bismo mogli asinkrono obrađivati zahtjeve.
+> U nastavku ćemo _handler_ funkcije definirati kao **korutine** kako bismo mogli asinkrono obrađivati HTTP zahtjeve.
 
 **Deserijalizaciju podataka** iz JSON formata u Python objekt možemo obaviti kroz metodu `json()` objekta `request`, na isti način kao što smo to radili prilikom slanja zahtjeva prema vanjskim servisima kod klijentske sesije.
 
 > Uočite: ne koristimo ugrađeni `json` modul kao kod serijalizacije, već **metodu** `.json()` objekta `Request`.
+
+**Sintaksa:**
 
 ```python
 data = await request.json()
@@ -550,7 +560,7 @@ Očekivani odgovor (isti podaci kao u zahtjevu):
 {'ime': 'Ivo', 'prezime': 'Ivić', 'godine': 25}
 ```
 
-Puno jednostavnije je slanje kroz HTTP klijent jer ne moramo eksplicitno navoditi zaglavlja u zahtjevu.
+Puno jednostavnije je slanje kroz HTTP klijent jer ne moramo eksplicitno navoditi zaglavlja u zahtjevu (Postman, Insomnia, Thunder Client, REST Client i slični alati to rade za nas).
 
 <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/thunderclient_post_example.png" style="width:90%;"></img>
 
@@ -604,8 +614,6 @@ web.run_app(app, port=8080)
 
 > Primjer slanja GET zahtjeva na `http://localhost:8080/korisnici` kroz Thunder Client ekstenziju; odgovor je lista korisnika
 
-> Rute možemo definirati na još načina, o tome više u nastavku...
-
 <div class="page-break"></div>
 
 ## 2.4 Zadaci za vježbu: Definiranje jednostavnih `aiohttp` poslužitelja
@@ -639,11 +647,11 @@ korisnici = [
 
 [Klijent-poslužitelj](https://en.wikipedia.org/wiki/Client%E2%80%93server_model) (eng. _client-server_) arhitektura je komunikacijski model u kojem klijent (npr. web preglednik ili aplikacija) šalje zahtjeve prema poslužitelju (npr. web serveru) koji obrađuje te zahtjeve i vraća odgovore natrag klijentu.
 
-U prethodnom poglavlju smo definirali `aiohttp` pozlužitelj koji sluša na definiranoj adresi i portu te obrađuje dolazne zahtjeve, dok smo u skripti `RS4` vidjeli kako se koristi `aiohttp` klijentska sesija za slanje asinkronih i konkurentnih HTTP zahtjeva koristeći `ClientSession` klasu.
+U prethodnom poglavlju smo definirali `aiohttp` pozlužitelj koji sluša na definiranoj adresi i portu te obrađuje dolazne zahtjeve, dok smo u skripti RS4 vidjeli kako se koristi `aiohttp` klijentska sesija za slanje asinkronih i konkurentnih HTTP zahtjeva koristeći `ClientSession` klasu.
 
 U ovom dijelu ćemo spojiti ta dva koncepta i pokazati **kako unutar Python kôda možemo simulirati komunikaciju između klijenta i poslužitelja** koristeći `aiohttp` klijentsku sesiju i poslužitelj definiran kroz `aiohttp.web` modul.
 
-> **Zašto bismo ovo radili**? Mikroservise koje gradimo na ovom kolegiju ćemo kroz lokalno razvojno okruženje (localhost) izlagati putem `aiohttp` poslužitelja. Međutim, kako mikroservisna arhitektura nije klasična _klijent-poslužitelj_ arhitektura, već je **_service-to-service_** komunikacija, jako često ćemo imati situaciju gdje mikroservis šalje zahtjeve prema drugom mikroservisu. U tom slučaju, mikroservis koji šalje zahtjev ponaša se kao klijent, dok se mikroservis koji prima zahtjev i obrađuje ga ponaša kao poslužitelj.
+> **Zašto bismo ovo radili**? Mikroservise koje gradimo na ovom kolegiju ćemo kroz lokalno razvojno okruženje (`localhost`) izlagati putem `aiohttp` poslužitelja. Međutim, kako mikroservisna arhitektura nije klasični _klijent-poslužitelj_ komunikacijski model, već je **_service-to-service_** komunikacija, jako često ćemo imati situaciju gdje mikroservis šalje zahtjeve prema drugom mikroservisu. U tom slučaju, mikroservis koji šalje zahtjev "ponaša se kao klijent", dok se mikroservis koji prima zahtjev i obrađuje ga "ponaša kao poslužitelj".
 
 Krenut ćemo od definicije jednostavnog poslužitelja koji sluša na adresi `localhost` i portu `8080` te na putanji `/korisnici` vraća listu korisnika u JSON formatu:
 
@@ -701,14 +709,15 @@ Koji problem uočavate?
   <summary>Spoiler alert! Odgovor na pitanje</summary>
   <p>Kad pokrenemo skriptu, pokrenut će se poslužitelj i <b>blokirati izvođenje ostatka kôda</b>. <b>Klijentska sesija nikada neće biti otvorena jer se kôd nikada neće izvršiti</b>.</p>
   <p>Ako pokrenemo prvo poslužitelj u jednom terminalu, otvorimo novi terminal i pokušamo pokrenuti skriptu ponovo, isto neće raditi jer je poslužitelj-proces već zauzeo proces.</p>
+
+  <p>Problem je što <b>ako pokrenemo poslužitelj, on će blokirati izvođenje ostatka kôda</b>, uključujući otvaranje klijentske sesije. Ovo je zato što funkcija <code>web.run_app()</code> blokira izvršavanje ostatka kôda <b>okupuacijom glavne dretve procesa</b> sve dok poslužitelj radi.</p>
 </details>
 
 ---
 
-Problem je što **ako pokrenemo poslužitelj, on će blokirati izvođenje ostatka kôda**, uključujući otvaranje klijentske sesije. Ovo je zato što funkcija `web.run_app()` blokira izvršavanje ostatka kôda **okupuacijom glavne dretve procesa** sve dok poslužitelj radi.
-
 > Zamislite da naš mikroservis s aktivnim poslužiteljem želi poslati zahtjev prema drugom mikroservisu - ne želimo prekinuti rad poslužitelja da bismo poslali zahtjev, već želimo da poslužitelj i klijentska sesija rade istovremeno (**konkurentno**).
-> _Primjer:_ `microservice_1` ima otvoreni poslužitelj koji prima zahtjeve od `microservice_2`, međutim, primitkom zahtjeva, `microservice_1` treba poslati zahtjeve prema `microservice_3` koji obrađuje neku treću funkcionalnost. Prekid rada poslužitelja `microservice_1` kako bi poslao zahtjeve nije prihvatljiva opcija, budući da za vrijeme prekida poslužitelj ne može obrađivati potencijalne dolazne zahtjeve od `microservice_2`.
+> _Primjer:_ `microservice_1` ima otvoreni poslužitelj koji prima zahtjeve od `microservice_2`, međutim, primitkom zahtjeva, `microservice_1` treba poslati zahtjeve prema `microservice_3` koji obrađuje neku treću funkcionalnost. **Prekid rada poslužitelja `microservice_1` (kako bi poslao zahtjeve) nije prihvatljiva opcija**, budući da za vrijeme prekida poslužitelj ne može obrađivati potencijalne dolazne zahtjeve od `microservice_2`.
+> Opisano je na neki način nedostatak čistog HTTP klijent-poslužitelj modela u kontekstu mikroservisne arhitekture.
 
 Idemo pokušati ovo riješiti. U Pythonu možemo iskoristiti specijalnu varijablu `__name__`, koja uvijek sadrži naziv trenutnog modula. Kada skriptu pokrenemo direktno, vrijednost `__name__` bit će `__main__`. S druge strane, ako skriptu uvezemo u neki drugi modul, `__name__` će sadržavati naziv tog modula.
 
@@ -761,7 +770,7 @@ Kôd iznad će svakako prvo otvoriti klijentsku sesiju, obzirom da se `asyncio.r
 
 Međutim je li moguće na ovaj način pokrenuti poslužitelj, **a nakon toga** pozvati `main` korutinu koja otvara klijentsku sesiju? Više nam ima smisla prvo pokrenuti poslužitelj, a zatim otvoriti klijentsku sesiju koja će slati zahtjeve prema tom poslužitelju (**ili u praksi - drugom mikroservisu**).
 
-Premjestimo `asyncio.run(main())` unutar bloka `if __name__ == '__main__':`:
+Premjestit ćemo `asyncio.run(main())` unutar bloka `if __name__ == '__main__':`:
 
 ```python
 from aiohttp import web
@@ -799,7 +808,8 @@ Na primjeru iznad vidjeli smo da `web.run_app()` blokira izvršavanje ostatka k�
 
 _Primjer:_ Mikroservis koji ima definirani HTTP poslužitelj i istovremene obrađuje poruke iz _mock RabbitMQ_ reda poruka.
 
-> Napomena: [RabbitMQ](https://www.cloudamqp.com/blog/part1-rabbitmq-for-beginners-what-is-rabbitmq.html) je popularni sustav za razmjenu poruka koji omogućuje mikroservisima da komuniciraju asinkrono putem slanja i primanja poruka (eng. _message broker_). U ovom primjeru nećemo implementirati stvarnu integraciju s RabbitMQ-om, već ćemo simulirati pozadinsku obradu poruka kroz jednostavnu korutinu koja periodično ispisuje poruke u terminal.
+> Napomena: [RabbitMQ](https://www.cloudamqp.com/blog/part1-rabbitmq-for-beginners-what-is-rabbitmq.html) je popularni sustav za razmjenu poruka koji omogućuje mikroservisima da komuniciraju asinkrono putem slanja i primanja poruka (eng. _message broker_). Radi se o sustavu baziranom na [_Advanced Message Queuing Protocol_ (AMQP)](https://en.wikipedia.org/wiki/Advanced_Message_Queuing_Protocol) standardu koji omogućuje pouzdanu i skalabilnu razmjenu poruka između različitih komponenti. Aplikacija koja šalje poruke naziva se _producer_, dok aplikacija koja prima i obrađuje poruke naziva se _consumer_. RabbitMQ omogućuje kreiranje redova poruka (eng. _message queues_) gdje se poruke pohranjuju dok ih _consumeri_ ne preuzmu i obrade.
+> U ovom primjeru nećemo implementirati stvarnu integraciju s RabbitMQ-om, već ćemo simulirati pozadinsku obradu poruka kroz jednostavnu korutinu koja periodično ispisuje da obrađuje pristigle poruke (nije _event-driven_ niti asinkrono, već obična simulacija pozadinskog zadatka koji postoji).
 
 ```python
 from aiohttp import web
@@ -825,7 +835,7 @@ if __name__ == '__main__':
   web.run_app(app, host='localhost', port=8080) # pokretanje poslužitelja (hoće li se pokrenuti?)
 ```
 
-Poslužitelj na mikroservisu iznad neće se pokrenuti jer će se izvršenje kôda blokirati na liniji `asyncio.run(main())`, tj. pokrenuti će se _event loop_ koji izvodi _blocking_ `process_messages` korutinu i time **nikada neće doći do linije** `web.run_app(...)`.
+Poslužitelj na mikroservisu iznad neće se pokrenuti jer će se izvršenje kôda blokirati na liniji `asyncio.run(main())`, tj. pokrenuti će se _event loop_ koji izvodi _blocking_ `process_messages` korutinu i na taj način **nikada neće doći do linije** `web.run_app(...)`.
 
 Što ako bismo pokušali pokrenuti korutine konkurentno, koristeći `asyncio.create_task()` unutar `main` korutine? Ideja je da pokrenemo `process_messages` kao pozadinski zadatak na način da ga rasporedimo prvo unutar _event loopa_, a zatim pokrenemo poslužitelj.
 
@@ -848,13 +858,13 @@ Task was destroyed but it is pending!
 
 > **Zapamtite**: Mikroservisi često trebaju održavati pozadinske zadatke dok istovremeno služe zahtjeve putem poslužitelja. Pozadinski zadaci mogu uključivati obradu poruka iz redova poruka, periodične zadatke ili druge asinkrone operacije koje ne smiju blokirati glavni tok izvršavanja poslužitelja. Također, mikroservisi često mogu pokretati mini-izolirana radna okruženja unutar istog procesa, što zahtijeva fleksibilnost u upravljanju _event loopom_ kako ne bi došlo do sukoba između različitih komponenti ili _race-condition_ situacija.
 
-> Stvarni _production-ready_ mikroservisi velikih IT tvrtki, deployani u cloudu i dostupni za najam, često nude više programskih sučelja putem kojih ih korisnici mogu koristiti. Primjerice, [AWS mikroservisi](https://en.wikipedia.org/wiki/Amazon_Web_Services) često imaju REST i SDK sučelja, što omogućava jednostavnu integraciju u različite aplikacije i sisteme.
+> Stvarni _production-ready_ mikroservisi velikih IT tvrtki, deployani u cloudu i dostupni za najam, često nude **više programskih sučelja putem kojih ih korisnici mogu koristiti**. Primjerice, [AWS mikroservisi](https://en.wikipedia.org/wiki/Amazon_Web_Services) često imaju REST i SDK sučelja, što omogućava jednostavnu integraciju u različite aplikacije i sisteme.
 
 ### Race-condition problem
 
 [Race-condition](https://en.wikipedia.org/wiki/Race_condition) problem predstavlja softversku grešku gdje rezultat (ishod) neke operacije ovisi o nizu nepredvidivih događaja, poput redoslijeda izvršavanja dretvi/procesa ili korutina i promjenu stanja zajedničkih resursa. Kod mikroservisa, **ovaj se problem često javlja** kada više komponenti pokušava istovremeno pristupiti ili mijenjati zajedničke resurse, poput baze podataka, datoteka ili mrežnih veza, bez odgovarajuće sinkronizacije i česti je _challenge_ prilikom razvoja raspodijeljenih sustavima.
 
-**Najčešći razlozi za pojavu race-condition problema su**:
+**Najčešći razlozi za pojavu _race-condition_ problema su**:
 
 - **priroda konkurentnog izvršavanja**: više dretvi/procesa/korutina istovremeno pristupa zajedničkim resursima
 - **dijeljeni resursi bez odgovarajuće sinkronizacije** (npr. stanje na bankovnom računu, računalna datoteka, stanje varijable u memoriji, web poslužitelji)
@@ -1064,7 +1074,9 @@ To je to! Uspjeli smo pokrenuti "dva pozadinska beskonačna zadatka" unutar isto
 
 ## 3.3 HTTP GET ruta s URL (route) parametrima
 
-**_Route_ parametar** (ili URL parametar) je dinamički dio URL-a koji se koristi za prosljeđivanje podataka unutar same putanje URL-a. Obično se koristi za identifikaciju resursa ili specificiranje dodatnih informacija potrebnih za obradu zahtjeva.
+Nastavljamo nadograđivati naš HTTP poslužitelj.
+
+**_Route_ parametar** (ili URL parametar) je dinamički dio URL-a koji se koristi za prosljeđivanje podataka unutar same putanje URL-a. Obično se koristi za identifikaciju resursa ili specificiranje dodatnih informacija potrebnih za obradu zahtjeva. Route parametar se ne koristi za filtriranje, sortiranje ili paginaciju podataka (za to se koriste _query_ parametri).
 
 Uobičajeno je kada šaljemo HTTP odgovor unutar _handler funkcije_, koristiti `web.json_response()` funkciju te definirati statusni kôd odgovora `status`.
 
@@ -1431,7 +1443,7 @@ async def main():
 asyncio.run(main())
 ```
 
-Što dalje? **Uobičajena greška** bila bi uključiti ove dvije datoteke unutar `client.py` datoteke koristeći `import` naredbu.
+Što dalje? **Velika greška** bila bi uključiti ove dvije datoteke unutar `client.py` datoteke koristeći `import` naredbu.
 
 ```python
 # client.py
@@ -1634,7 +1646,10 @@ async def main():
 
 Je li kôd sada konkurentan?
 
-Nije. Zašto? Zato što se unutar `fetch_service()` korutine zahtjevi i dalje šalju sekvencijalno.
+<details>
+  <summary>Spoiler alert! Odgovor na pitanje</summary>
+  <p>Nije. Zašto? Zato što se unutar <code>fetch_service()</code> korutine zahtjevi i dalje šalju sekvencijalno.</p>
+</details>
 
 Međutim, zašto ne bi mogli koristiti `gather` u `fetch_service()` korutini?
 
