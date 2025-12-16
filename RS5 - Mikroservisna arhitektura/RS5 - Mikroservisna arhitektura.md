@@ -147,7 +147,7 @@ U ovoj skripti dotaknuti ćemo se razvoja HTTP poslužitelja koristeći `aiohttp
 
 **Mikroservis** zamišljamo kao malu _lightweight_ aplikaciju koja dobro i samostalno obavlja jednu specifičnu ili skup srodnih poslovnih funkcionalnosti koji ima smisla grupirati, a svoje usluge nudi putem nekog komunikacijskog protokola, odnosno u našem slučaju **HTTP poslužitelja**.
 
-<img src="./screenshots/microservices-w-exposed-http.png" style="width:50%;"></img>
+<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/screenshots/microservices-w-exposed-http.png?raw=true" style="width:50%;"></img>
 
 > Prikaz dva mikroservisa (A i B) s internim bazama podataka koji izlažu svoje funkcionalnosti putem HTTP poslužitelja definiranog preko [AWS API Gateway servisa](https://aws.amazon.com/api-gateway/). Mikroservisi mogu i ne moraju koristiti HTTP protokol izlaganje svojih funkcionalnosti (ovisno o prirodi mikroservisa, komunikacija se može odvijati i drugim protokolima)
 
