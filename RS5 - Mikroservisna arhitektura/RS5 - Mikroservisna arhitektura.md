@@ -1340,7 +1340,7 @@ async def run_client():
             msg = await ws.receive()
 
             if msg.type == web.WSMsgType.TEXT:
-                print(f"Klijent primio: {msg.data}")
+                print(f"Klijent: {msg.data}")
             else:
                 print(f"Neočekivana poruka: {msg}")
 
