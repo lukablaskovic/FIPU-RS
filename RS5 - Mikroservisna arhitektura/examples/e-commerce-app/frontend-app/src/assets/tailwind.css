@@ -1,0 +1,14 @@
+@import 'tailwindcss';
+
+:root {
+  --c-bg: #f6f7f9;
+  --c-surface: #ffffff;
+  --fipu_blue: #6fcef8;
+  --c-accent: var(--fipu_blue);
+}
+
+@layer base {
+  body {
+    background: var(--c-bg);
+  }
+}
