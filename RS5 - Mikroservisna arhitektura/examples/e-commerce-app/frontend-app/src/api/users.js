@@ -79,3 +79,4 @@ export function inferConnectionFromAuthUser(authUser) {
   if (sub.includes('|')) return sub.split('|')[0]
   return sub || 'auth0'
 }
+

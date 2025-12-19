@@ -64,3 +64,4 @@ export const useUiStore = defineStore('ui', () => {
     error,
   }
 })
+

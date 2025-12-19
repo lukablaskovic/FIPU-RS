@@ -15,3 +15,4 @@ async def cors_middleware(request: web.Request, handler):
     resp.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     resp.headers["Access-Control-Max-Age"] = "86400"
     return resp
+

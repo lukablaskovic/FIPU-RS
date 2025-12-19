@@ -5,7 +5,7 @@ conda activate order-service
 
 # provjera ista
 
-which python3
+which python3 (bash)
 
 pip install -r requirements.txt
 ```

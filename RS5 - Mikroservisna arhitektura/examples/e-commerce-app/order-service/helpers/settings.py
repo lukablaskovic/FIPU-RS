@@ -17,4 +17,6 @@ def server_port() -> int:
 
 
 def catalog_service_base_url() -> str:
-    return (os.getenv("CATALOG_SERVICE_BASE_URL")).rstrip("/")
+    # In dev, default catalog-service runs on localhost:8002.
+    # Allow overriding via env for deployments.
+    return os.getenv("CATALOG_SERVICE_BASE_URL", "http://localhost:8002").rstrip("/")

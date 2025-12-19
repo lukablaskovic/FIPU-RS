@@ -132,10 +132,32 @@ async def _catalog_post_json(
     url = f"{base}{path}"
     session: aiohttp.ClientSession = request.app["http_session"]
     async with session.post(url, json=payload) as resp:
+        content_type = resp.headers.get("Content-Type", "")
+        raw_text: str | None = None
         try:
             data = await resp.json()
         except Exception:
-            data = None
+            # If catalog returns HTML/text (wrong URL/proxy/etc), surface that to the caller
+            # so frontend has actionable diagnostics instead of `catalog: null`.
+            try:
+                raw_text = await resp.text()
+            except Exception:
+                raw_text = None
+            logger.warning(
+                "Catalog response not JSON: url=%s status=%s content_type=%s body=%s",
+                url,
+                resp.status,
+                content_type,
+                (raw_text[:500] if isinstance(raw_text, str) else None),
+            )
+            data = {
+                "ok": False,
+                "error": "non_json_response",
+                "url": url,
+                "status": resp.status,
+                "content_type": content_type,
+                "body": raw_text,
+            }
         return resp.status, data
 
 

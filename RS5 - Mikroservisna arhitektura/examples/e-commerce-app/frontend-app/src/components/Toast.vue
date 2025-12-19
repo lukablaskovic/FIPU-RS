@@ -76,3 +76,4 @@ function variantClasses(type) {
     </div>
   </div>
 </template>
+
