@@ -26,9 +26,7 @@ ORDER_ITEM_COLUMNS = [
 
 
 def _rows_to_orders(rows: list[tuple]) -> list[dict[str, object]]:
-    """
-    Convert joined (orders LEFT JOIN order_items) rows to a list of orders with `items`.
-    """
+
     by_id: dict[str, dict[str, object]] = {}
 
     for r in rows:
@@ -151,10 +149,7 @@ def list_orders_by_user_id(db_path: Path, *, user_id: str) -> list[dict[str, obj
 
 
 def clear_orders(db_path: Path) -> dict[str, int]:
-    """
-    Delete all orders (and their items via FK cascade).
-    Returns counts of deleted rows (pre-delete counts).
-    """
+
     if not db_path.exists():
         return {"orders_deleted": 0, "order_items_deleted": 0}
 

@@ -30,6 +30,7 @@ logger = logging_setup.get_logger()
 load_dotenv()
 
 
+# background task scheduler helper fun
 def _schedule_bg_task(app: web.Application, coro: object) -> None:
 
     task = asyncio.create_task(coro)
@@ -71,6 +72,11 @@ async def health(_: web.Request) -> web.Response:
     return json_ok({"status": "order-service REST API Server is running just fine."})
 
 
+# --------
+
+
+# Ovo je sve jako natrpano i nezgrapno, na sreću, radit ćemo Pydantic kasnije
+# Ručne validacije su naporne i sklone greškama - Pydantic predstavlja model-based pristup validaciji koji je puno elegantnije rješenje
 def _parse_order_payload(data: dict) -> tuple[dict[str, object] | None, str | None]:
     user_id = require_str(data.get("user_id"))
     name = require_str(data.get("name"))
@@ -133,6 +139,7 @@ async def _catalog_post_json(
         return resp.status, data
 
 
+# POST /orders
 async def create_order(request: web.Request) -> web.Response:
     logger.info("Creating a new order from request url: %s", request.url)
     try:
@@ -204,6 +211,7 @@ async def create_order(request: web.Request) -> web.Response:
         return json_error("internal_error", status=500)
 
 
+# GET /orders
 async def list_orders(request: web.Request) -> web.Response:
     logger.info("Listing orders from request url: %s", request.url)
     try:
@@ -214,6 +222,7 @@ async def list_orders(request: web.Request) -> web.Response:
         return sqlite_error_response(logger, action="listing orders", err=e)
 
 
+# GET /orders/{id}
 async def get_order(request: web.Request) -> web.Response:
     logger.info("Getting an order from request url: %s", request.url)
     order_id = request.match_info.get("id")
@@ -232,6 +241,7 @@ async def get_order(request: web.Request) -> web.Response:
         return sqlite_error_response(logger, action="getting order", err=e)
 
 
+# GET /orders/user/{user_id}
 async def list_orders_by_user(request: web.Request) -> web.Response:
     logger.info("Listing orders by user from request url: %s", request.url)
     user_id = request.match_info.get("user_id")
@@ -248,6 +258,7 @@ async def list_orders_by_user(request: web.Request) -> web.Response:
         return sqlite_error_response(logger, action="listing orders by user", err=e)
 
 
+# DELETE /clear
 async def clear_all_orders(request: web.Request) -> web.Response:
     logger.warning("Clearing ALL orders from request url: %s", request.url)
     try:
@@ -261,6 +272,7 @@ async def clear_all_orders(request: web.Request) -> web.Response:
         return json_error("internal_error", status=500)
 
 
+# POST /sms-test/{number}
 async def sms_test(request: web.Request) -> web.Response:
     logger.info("Sending SMS test from request url: %s", request.url)
     number = request.match_info.get("number")

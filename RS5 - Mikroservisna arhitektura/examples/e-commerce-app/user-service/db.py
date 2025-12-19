@@ -50,10 +50,7 @@ def _get_table_info(conn: sqlite3.Connection, table: str) -> list[dict[str, obje
 
 
 def _schema_matches(conn: sqlite3.Connection) -> bool:
-    """
-    Minimal schema check (beyond just column names) so we can detect migrations
-    like INTEGER id -> TEXT uuid.
-    """
+
     info = _get_table_info(conn, "users")
     by_name = {c["name"]: c for c in info}
 

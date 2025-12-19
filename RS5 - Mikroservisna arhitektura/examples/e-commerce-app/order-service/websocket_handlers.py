@@ -9,6 +9,8 @@ from logging_setup import logging_setup
 
 logger = logging_setup.get_logger()
 
+# helperi
+
 
 def _random_timestamp_iso() -> str:
     now = datetime.now(timezone.utc).astimezone()
@@ -38,6 +40,7 @@ async def _ws_send_tracking_event(
     )
 
 
+# Simulacija praćenja narudžbe putem WebSocket veze - svaki korak se šalje prema klijentu s fiksnom odgodom
 async def _ws_order_tracking_simulation(
     ws: web.WebSocketResponse, *, order_id: str | None
 ) -> None:
