@@ -75,7 +75,6 @@ async def ws_track_order(request: web.Request) -> web.StreamResponse:
         async for msg in ws:
             if msg.type == web.WSMsgType.TEXT:
                 logger.info("WS message order_id=%s: %s", order_id, msg.data)
-                # Optional: allow client to stop tracking explicitly.
                 if str(msg.data).strip().lower() in {"stop", "close", "cancel"}:
                     await ws.close(code=WSCloseCode.OK, message=b"client_closed")
             elif msg.type == web.WSMsgType.ERROR:

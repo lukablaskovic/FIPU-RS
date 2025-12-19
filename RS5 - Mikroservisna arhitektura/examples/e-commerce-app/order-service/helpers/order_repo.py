@@ -164,9 +164,7 @@ def clear_orders(db_path: Path) -> dict[str, int]:
         orders_before = int(conn.execute("SELECT COUNT(*) FROM orders;").fetchone()[0])
         items_before = int(conn.execute("SELECT COUNT(*) FROM order_items;").fetchone()[0])
 
-        # FK cascade will delete order_items rows.
         conn.execute("DELETE FROM orders;")
-        # Optional: reset AUTOINCREMENT counter for order_items ids.
         try:
             conn.execute("DELETE FROM sqlite_sequence WHERE name='order_items';")
         except Exception:
@@ -220,12 +218,10 @@ def create_order(
     if client_request_id is not None:
         client_request_id = str(client_request_id).strip() or None
 
-    # Random UID suitable for URLs and as a primary key.
     order_id = secrets.token_hex(16)
     created_at = datetime.now(timezone.utc).isoformat()
 
     with connect(db_path) as conn:
-        # Idempotency: if client_request_id already exists, return that order.
         if client_request_id:
             existing = conn.execute(
                 "SELECT id FROM orders WHERE client_request_id = ? LIMIT 1;",
