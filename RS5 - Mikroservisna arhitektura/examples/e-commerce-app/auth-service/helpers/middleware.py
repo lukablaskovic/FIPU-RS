@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from aiohttp import web
 
 from .settings import CORS_ALLOW_ORIGIN

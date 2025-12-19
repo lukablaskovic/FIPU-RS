@@ -1,6 +1,5 @@
 # Custom logger komponenta za više razina u boji :)
 
-from __future__ import annotations
 
 import logging
 import os
@@ -73,7 +72,9 @@ class LoggingSetup:
         use_colors = is_tty and not os.getenv("NO_COLOR")
 
         stream_handler.setFormatter(
-            ColorFormatter(DEFAULT_LOG_FORMAT, datefmt=DEFAULT_DATE_FORMAT, use_colors=use_colors)
+            ColorFormatter(
+                DEFAULT_LOG_FORMAT, datefmt=DEFAULT_DATE_FORMAT, use_colors=use_colors
+            )
         )
 
     def get_logger(self) -> logging.Logger:
@@ -87,7 +88,11 @@ logger = logging_setup.get_logger()
 
 if __name__ == "__main__":
     logger.info("Hello, world! I'm logging_setup.py and this is a test INFO message.")
-    logger.warning("Hello, world! I'm logging_setup.py and this is a test WARNING message.")
+    logger.warning(
+        "Hello, world! I'm logging_setup.py and this is a test WARNING message."
+    )
     logger.error("Hello, world! I'm logging_setup.py and this is a test ERROR message.")
-    logger.critical("Hello, world! I'm logging_setup.py and this is a test CRITICAL message.")
+    logger.critical(
+        "Hello, world! I'm logging_setup.py and this is a test CRITICAL message."
+    )
     logger.debug("Hello, world! I'm logging_setup.py and this is a test DEBUG message.")

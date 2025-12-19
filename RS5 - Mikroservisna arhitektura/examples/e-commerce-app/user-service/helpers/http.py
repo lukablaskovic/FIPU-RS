@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import sqlite3
 from aiohttp import web
 
@@ -17,7 +15,9 @@ def is_sqlite_busy_or_locked(err: sqlite3.OperationalError) -> bool:
     return ("locked" in msg) or ("busy" in msg)
 
 
-def sqlite_error_response(logger, *, action: str, err: sqlite3.OperationalError) -> web.Response:
+def sqlite_error_response(
+    logger, *, action: str, err: sqlite3.OperationalError
+) -> web.Response:
     if is_sqlite_busy_or_locked(err):
         logger.warning("SQLite busy/locked while %s: %s", action, err)
         return json_error("db_locked", status=503)

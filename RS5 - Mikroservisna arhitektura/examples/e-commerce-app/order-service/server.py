@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import asyncio
 import sqlite3
 
@@ -18,7 +16,12 @@ from helpers.http import (
     require_str,
     sqlite_error_response,
 )
-from helpers.settings import catalog_service_base_url, db_path as get_db_path, server_host, server_port
+from helpers.settings import (
+    catalog_service_base_url,
+    db_path as get_db_path,
+    server_host,
+    server_port,
+)
 from logging_setup import logging_setup
 from websocket_handlers import register_ws_routes
 
@@ -29,7 +32,7 @@ load_dotenv()
 
 def _schedule_bg_task(app: web.Application, coro: object) -> None:
 
-    task = asyncio.create_task(coro) 
+    task = asyncio.create_task(coro)
     tasks: set[asyncio.Task] = app["bg_tasks"]
     tasks.add(task)
     task.add_done_callback(tasks.discard)
@@ -148,7 +151,9 @@ async def create_order(request: web.Request) -> web.Response:
             payload={"items": list(payload["items"])},  # type: ignore[arg-type]
         )
         if status != 200 or not isinstance(check, dict) or not bool(check.get("ok")):
-            return web.json_response({"error": "items_unavailable", "catalog": check}, status=409)
+            return web.json_response(
+                {"error": "items_unavailable", "catalog": check}, status=409
+            )
 
         async with request.app["db_lock"]:
             order, created = await asyncio.to_thread(
@@ -162,7 +167,9 @@ async def create_order(request: web.Request) -> web.Response:
                 phone_number=str(payload["phone_number"]),
                 email_address=str(payload["email_address"]),
                 client_request_id=(
-                    str(payload["client_request_id"]) if payload.get("client_request_id") else None
+                    str(payload["client_request_id"])
+                    if payload.get("client_request_id")
+                    else None
                 ),
             )
         if created:
@@ -173,13 +180,19 @@ async def create_order(request: web.Request) -> web.Response:
             )
             if dec_status != 200:
                 async with request.app["db_lock"]:
-                    await asyncio.to_thread(order_repo.delete_order, get_db_path(), order_id=str(order["id"]))
+                    await asyncio.to_thread(
+                        order_repo.delete_order,
+                        get_db_path(),
+                        order_id=str(order["id"]),
+                    )
                 return web.json_response(
                     {"error": "catalog_decrement_failed", "catalog": dec}, status=409
                 )
 
             if bool(payload.get("send_sms")):
-                _schedule_bg_task(request.app, send_order_created_sms(order=order, logger=logger))
+                _schedule_bg_task(
+                    request.app, send_order_created_sms(order=order, logger=logger)
+                )
         return json_ok(
             {"created": bool(created), "id": order["id"], "order": order},
             status=(201 if created else 200),
@@ -209,7 +222,9 @@ async def get_order(request: web.Request) -> web.Response:
 
     try:
         async with request.app["db_lock"]:
-            order = await asyncio.to_thread(order_repo.get_order, get_db_path(), order_id=order_id)
+            order = await asyncio.to_thread(
+                order_repo.get_order, get_db_path(), order_id=order_id
+            )
         if order is None:
             return json_error("not_found", status=404)
         return json_ok({"order": order})
@@ -282,7 +297,9 @@ def create_app() -> web.Application:
     return app
 
 
-async def start_server(app: web.Application, host: str | None, port: int) -> web.AppRunner:
+async def start_server(
+    app: web.Application, host: str | None, port: int
+) -> web.AppRunner:
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, host=host, port=port)

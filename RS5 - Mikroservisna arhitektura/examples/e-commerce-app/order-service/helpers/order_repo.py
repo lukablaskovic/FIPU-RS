@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import secrets
 from datetime import datetime, timezone
 from pathlib import Path
@@ -162,7 +160,9 @@ def clear_orders(db_path: Path) -> dict[str, int]:
 
     with connect(db_path) as conn:
         orders_before = int(conn.execute("SELECT COUNT(*) FROM orders;").fetchone()[0])
-        items_before = int(conn.execute("SELECT COUNT(*) FROM order_items;").fetchone()[0])
+        items_before = int(
+            conn.execute("SELECT COUNT(*) FROM order_items;").fetchone()[0]
+        )
 
         conn.execute("DELETE FROM orders;")
         try:
@@ -262,16 +262,19 @@ def create_order(
 
     return (
         {
-        "id": order_id,
-        "user_id": user_id,
-        "name": name,
-        "surname": surname,
-        "delivery_address": delivery_address,
-        "phone_number": phone_number,
-        "email_address": email_address,
-        "client_request_id": client_request_id,
-        "created_at": created_at,
-        "items": [{"item_id": iid, "ordered_quantity": qty} for (iid, qty) in normalized_items],
+            "id": order_id,
+            "user_id": user_id,
+            "name": name,
+            "surname": surname,
+            "delivery_address": delivery_address,
+            "phone_number": phone_number,
+            "email_address": email_address,
+            "client_request_id": client_request_id,
+            "created_at": created_at,
+            "items": [
+                {"item_id": iid, "ordered_quantity": qty}
+                for (iid, qty) in normalized_items
+            ],
         },
         True,
     )

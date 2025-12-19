@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import argparse
 import sqlite3
 from pathlib import Path
@@ -252,10 +250,14 @@ def _validate_products() -> None:
                 raise RuntimeError(f"Product {pid} is missing required field: {col}")
 
         if str(p.get("currency")) != "EUR":
-            raise RuntimeError(f"Product {pid} must have currency EUR, got: {p.get('currency')}")
+            raise RuntimeError(
+                f"Product {pid} must have currency EUR, got: {p.get('currency')}"
+            )
 
         if p.get("public_image_url") is None:
-            raise RuntimeError(f"Product {pid} has public_image_url=None (must be a string)")
+            raise RuntimeError(
+                f"Product {pid} has public_image_url=None (must be a string)"
+            )
 
 
 def fill_db(db_path: Path, *, reset_schema: bool, append: bool) -> int:
@@ -336,11 +338,12 @@ def main() -> int:
     logger.info("Filling database: %s", db_path)
     logger.info("Mode: %s", "APPEND" if args.append else "RESET DATA")
 
-    total = fill_db(db_path, reset_schema=bool(args.reset_schema), append=bool(args.append))
+    total = fill_db(
+        db_path, reset_schema=bool(args.reset_schema), append=bool(args.append)
+    )
 
     logger.info("Done. Total products in DB: %s", total)
     return 0
-
 
 
 #   python3 fill_products.py (dodaje svih 20 gore definiranih proizvoda u sqlite)

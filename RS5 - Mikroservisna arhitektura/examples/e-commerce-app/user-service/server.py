@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import asyncio
 import sqlite3
 from aiohttp import web
@@ -7,14 +5,23 @@ from aiohttp import web
 from db import init_db
 
 from helpers import user_repo
-from helpers.http import json_error, json_ok, normalize_email, require_str, sqlite_error_response
+from helpers.http import (
+    json_error,
+    json_ok,
+    normalize_email,
+    require_str,
+    sqlite_error_response,
+)
 from helpers.settings import db_path as get_db_path, server_host, server_port
 
 from logging_setup import logging_setup
+
 logger = logging_setup.get_logger()
 
 from dotenv import load_dotenv
+
 load_dotenv()
+
 
 async def _init_db(app: web.Application) -> None:
     path = get_db_path()
@@ -23,7 +30,9 @@ async def _init_db(app: web.Application) -> None:
         await asyncio.to_thread(init_db, path, reset=False)
     except RuntimeError as e:
         logger.warning("DB init failed (%s). Recreating users table.", e)
-        await asyncio.to_thread(init_db, path, reset=True) # ako schema nije ista kao očekivana, dropa i rekreira tablicu
+        await asyncio.to_thread(
+            init_db, path, reset=True
+        )  # ako schema nije ista kao očekivana, dropa i rekreira tablicu
 
 
 async def health(_: web.Request) -> web.Response:
@@ -81,12 +90,15 @@ def create_app() -> web.Application:
     return app
 
 
-async def start_server(app: web.Application, host: str | None, port: int) -> web.AppRunner:
+async def start_server(
+    app: web.Application, host: str | None, port: int
+) -> web.AppRunner:
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, host=host, port=port)
     await site.start()
     return runner
+
 
 async def main() -> None:
     host = server_host()
@@ -106,4 +118,3 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
-

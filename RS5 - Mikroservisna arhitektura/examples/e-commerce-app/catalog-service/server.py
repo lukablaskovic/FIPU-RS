@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import asyncio
 import sqlite3
 
@@ -35,14 +33,20 @@ async def _init_db(app: web.Application) -> None:
 
 
 async def health(_: web.Request) -> web.Response:
-    return json_ok({"status": "catalog-service REST API Server is running just fine. Not sure about the microservice itself."})
+    return json_ok(
+        {
+            "status": "catalog-service REST API Server is running just fine. Not sure about the microservice itself."
+        }
+    )
 
 
 async def list_products(request: web.Request) -> web.Response:
     logger.info("Listing products from request url: %s", request.url)
     try:
         async with request.app["db_lock"]:
-            products = await asyncio.to_thread(product_repo.list_products, get_db_path())
+            products = await asyncio.to_thread(
+                product_repo.list_products, get_db_path()
+            )
         return json_ok({"products": products})
     except sqlite3.OperationalError as e:
         return sqlite_error_response(logger, action="listing products", err=e)
@@ -66,7 +70,9 @@ async def get_product(request: web.Request) -> web.Response:
         return sqlite_error_response(logger, action="getting product", err=e)
 
 
-def _parse_product_payload(data: dict, *, allow_partial: bool) -> tuple[dict[str, object] | None, str | None]:
+def _parse_product_payload(
+    data: dict, *, allow_partial: bool
+) -> tuple[dict[str, object] | None, str | None]:
     name = require_str(data.get("name"))
     category = require_str(data.get("category"))
     price = require_float(data.get("price"))
@@ -226,13 +232,17 @@ async def clear_products(request: web.Request) -> web.Response:
     logger.warning("Clearing ALL products from request url: %s", request.url)
     try:
         async with request.app["db_lock"]:
-            deleted = await asyncio.to_thread(product_repo.clear_products, get_db_path())
+            deleted = await asyncio.to_thread(
+                product_repo.clear_products, get_db_path()
+            )
         return json_ok({"cleared": True, "deleted": deleted})
     except sqlite3.OperationalError as e:
         return sqlite_error_response(logger, action="clearing products", err=e)
 
 
-def _parse_inventory_items(data: dict) -> tuple[list[tuple[str, int]] | None, str | None]:
+def _parse_inventory_items(
+    data: dict,
+) -> tuple[list[tuple[str, int]] | None, str | None]:
     items_value = data.get("items")
     if not isinstance(items_value, list) or not items_value:
         return None, "missing_items"
@@ -263,7 +273,9 @@ async def inventory_check(request: web.Request) -> web.Response:
 
     try:
         async with request.app["db_lock"]:
-            result = await asyncio.to_thread(product_repo.check_availability, get_db_path(), items=items)
+            result = await asyncio.to_thread(
+                product_repo.check_availability, get_db_path(), items=items
+            )
         return json_ok(result)
     except sqlite3.OperationalError as e:
         return sqlite_error_response(logger, action="checking inventory", err=e)
@@ -282,9 +294,13 @@ async def inventory_decrement(request: web.Request) -> web.Response:
 
     try:
         async with request.app["db_lock"]:
-            result = await asyncio.to_thread(product_repo.decrement_stock, get_db_path(), items=items)
+            result = await asyncio.to_thread(
+                product_repo.decrement_stock, get_db_path(), items=items
+            )
         if not bool(result.get("ok")):
-            return web.json_response({"error": "insufficient_stock", **result}, status=409)
+            return web.json_response(
+                {"error": "insufficient_stock", **result}, status=409
+            )
         return json_ok(result)
     except sqlite3.OperationalError as e:
         return sqlite_error_response(logger, action="decrementing inventory", err=e)
@@ -309,7 +325,9 @@ def create_app() -> web.Application:
     return app
 
 
-async def start_server(app: web.Application, host: str | None, port: int) -> web.AppRunner:
+async def start_server(
+    app: web.Application, host: str | None, port: int
+) -> web.AppRunner:
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, host=host, port=port)

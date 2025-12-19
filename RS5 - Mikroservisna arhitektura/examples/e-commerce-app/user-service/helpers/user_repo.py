@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import sqlite3
 import uuid
 from pathlib import Path
@@ -18,7 +16,9 @@ def list_users(db_path: Path) -> list[dict[str, object]]:
         return [{"id": r[0], "email": r[1], "connection": r[2]} for r in rows]
 
 
-def ensure_user(db_path: Path, *, email: str, connection: str) -> tuple[bool, str | None]:
+def ensure_user(
+    db_path: Path, *, email: str, connection: str
+) -> tuple[bool, str | None]:
     db_path.parent.mkdir(parents=True, exist_ok=True)
 
     with connect(db_path) as conn:
@@ -35,5 +35,7 @@ def ensure_user(db_path: Path, *, email: str, connection: str) -> tuple[bool, st
             conn.commit()
             return True, user_id
         except sqlite3.IntegrityError:
-            row = conn.execute("SELECT id FROM users WHERE email=?;", (email,)).fetchone()
+            row = conn.execute(
+                "SELECT id FROM users WHERE email=?;", (email,)
+            ).fetchone()
             return False, (str(row[0]) if row else None)

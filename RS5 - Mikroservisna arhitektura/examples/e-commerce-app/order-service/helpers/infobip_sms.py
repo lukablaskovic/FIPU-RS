@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import os
 from typing import Any
 
@@ -14,9 +12,7 @@ load_dotenv()
 
 def _infobip_base_url() -> str | None:
 
-    base_url = (
-        (os.getenv("INFOBIP_API_BASE_URL") or "").strip()
-    )
+    base_url = (os.getenv("INFOBIP_API_BASE_URL") or "").strip()
     if base_url:
         if not base_url.startswith(("http://", "https://")):
             base_url = f"https://{base_url}"
@@ -38,7 +34,9 @@ def _infobip_sender() -> str | None:
     return sender or None
 
 
-async def send_sms(*, to_number: str, text: str, logger: Any | None = None) -> dict[str, object]:
+async def send_sms(
+    *, to_number: str, text: str, logger: Any | None = None
+) -> dict[str, object]:
 
     log = logger or globals().get("logger")
 
@@ -79,7 +77,9 @@ async def send_sms(*, to_number: str, text: str, logger: Any | None = None) -> d
             body_text = await resp.text()
             if log:
                 if resp.status >= 400:
-                    log.warning("Infobip SMS failed (status=%s): %s", resp.status, body_text)
+                    log.warning(
+                        "Infobip SMS failed (status=%s): %s", resp.status, body_text
+                    )
                 else:
                     log.info("Infobip SMS sent (status=%s)", resp.status)
             return {"status": resp.status, "body": body_text}
@@ -91,7 +91,8 @@ async def send_order_created_sms(*, order: dict[str, object], logger: Any) -> No
     to_number = (to_override or order_phone).replace(" ", "")
     if not to_number:
         logger.warning(
-            "Infobip SMS skipped: missing destination number for order_id=%s", order.get("id")
+            "Infobip SMS skipped: missing destination number for order_id=%s",
+            order.get("id"),
         )
         return
 

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import os
 
 from dotenv import load_dotenv  # pyright: ignore[reportMissingImports]
@@ -27,7 +25,9 @@ REDIRECT_URI = os.getenv("REDIRECT_URI")
 POST_LOGIN_REDIRECT_URL = os.getenv("POST_LOGIN_REDIRECT_URL")
 POST_LOGOUT_REDIRECT_URL = os.getenv("POST_LOGOUT_REDIRECT_URL")
 
-COOKIE_SECRET = os.getenv("COOKIE_SECRET", "dev-insecure-change-me-please").encode("utf-8")
+COOKIE_SECRET = os.getenv("COOKIE_SECRET", "dev-insecure-change-me-please").encode(
+    "utf-8"
+)
 
 # Optional: Auth0 Management API (used to resolve the real "connection" name like
 # "username-password-authentication" vs "google-oauth2").
@@ -35,5 +35,7 @@ COOKIE_SECRET = os.getenv("COOKIE_SECRET", "dev-insecure-change-me-please").enco
 # If unset, auth-service will fall back to best-effort inference from `userinfo.sub`.
 AUTH0_MGMT_CLIENT_ID = os.getenv("AUTH0_MGMT_CLIENT_ID")
 AUTH0_MGMT_CLIENT_SECRET = os.getenv("AUTH0_MGMT_CLIENT_SECRET")
-AUTH0_MGMT_AUDIENCE = os.getenv("AUTH0_MGMT_AUDIENCE", f"https://{AUTH0_DOMAIN}/api/v2/")
+AUTH0_MGMT_AUDIENCE = os.getenv(
+    "AUTH0_MGMT_AUDIENCE", f"https://{AUTH0_DOMAIN}/api/v2/"
+)
 AUTH0_MGMT_SCOPE = os.getenv("AUTH0_MGMT_SCOPE", "read:users")

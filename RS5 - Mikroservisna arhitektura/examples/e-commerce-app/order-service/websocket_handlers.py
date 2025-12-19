@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import asyncio
 import random
 from datetime import datetime, timezone
@@ -40,14 +38,22 @@ async def _ws_send_tracking_event(
     )
 
 
-async def _ws_order_tracking_simulation(ws: web.WebSocketResponse, *, order_id: str | None) -> None:
-    await _ws_send_tracking_event(ws, order_id=order_id, step=1, text="Pakiramo tvoju narudžbu…")
+async def _ws_order_tracking_simulation(
+    ws: web.WebSocketResponse, *, order_id: str | None
+) -> None:
+    await _ws_send_tracking_event(
+        ws, order_id=order_id, step=1, text="Pakiramo tvoju narudžbu…"
+    )
     await asyncio.sleep(5)
 
-    await _ws_send_tracking_event(ws, order_id=order_id, step=2, text="Pickup dostavne službe")
+    await _ws_send_tracking_event(
+        ws, order_id=order_id, step=2, text="Pickup dostavne službe"
+    )
     await asyncio.sleep(10)
 
-    await _ws_send_tracking_event(ws, order_id=order_id, step=3, text="Tvoja narudžba je na dostavi…")
+    await _ws_send_tracking_event(
+        ws, order_id=order_id, step=3, text="Tvoja narudžba je na dostavi…"
+    )
     await asyncio.sleep(10)
 
     await _ws_send_tracking_event(
@@ -68,7 +74,9 @@ async def ws_track_order(request: web.Request) -> web.StreamResponse:
     ws = web.WebSocketResponse(heartbeat=20.0)
     await ws.prepare(request)
 
-    logger.info("WebSocket tracking activated for order_id=%s from %s", order_id, request.remote)
+    logger.info(
+        "WebSocket tracking activated for order_id=%s from %s", order_id, request.remote
+    )
 
     sim_task = asyncio.create_task(_ws_order_tracking_simulation(ws, order_id=order_id))
     try:

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import argparse
 import sqlite3
 from pathlib import Path
@@ -157,7 +155,9 @@ def init_db(db_path: Path, *, reset: bool) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Initialize catalog-service SQLite database")
+    parser = argparse.ArgumentParser(
+        description="Initialize catalog-service SQLite database"
+    )
     parser.add_argument(
         "--db",
         dest="db_path",
@@ -175,7 +175,9 @@ def main() -> int:
     init_db(db_path, reset=bool(args.reset))
 
     logger.info("SQLite DB initialized: %s", db_path)
-    logger.info("Ensured table schema: products(%s)", ", ".join(EXPECTED_PRODUCT_COLUMNS))
+    logger.info(
+        "Ensured table schema: products(%s)", ", ".join(EXPECTED_PRODUCT_COLUMNS)
+    )
     return 0
 
 

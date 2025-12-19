@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import argparse
 import sqlite3
 from pathlib import Path
@@ -7,7 +5,7 @@ from pathlib import Path
 from logging_setup import logging_setup
 
 
-DEFAULT_DB_PATH = Path(__file__).with_name("users.db") # Putanja do zadane SQLite baze
+DEFAULT_DB_PATH = Path(__file__).with_name("users.db")  # Putanja do zadane SQLite baze
 
 EXPECTED_USER_COLUMNS = [
     "id",
@@ -36,6 +34,7 @@ def _table_exists(conn: sqlite3.Connection, table: str) -> bool:
 def _get_table_columns(conn: sqlite3.Connection, table: str) -> list[str]:
     rows = conn.execute(f"PRAGMA table_info({table});").fetchall()
     return [r[1] for r in rows]
+
 
 def _get_table_info(conn: sqlite3.Connection, table: str) -> list[dict[str, object]]:
     rows = conn.execute(f"PRAGMA table_info({table});").fetchall()
@@ -110,7 +109,10 @@ def init_db(db_path: Path, *, reset: bool) -> None:
                 if result and result[0].lower() == "wal":
                     logger.info("WAL mode enabled successfully")
                 else:
-                    logger.warning("Could not enable WAL mode, current mode: %s", result[0] if result else "unknown")
+                    logger.warning(
+                        "Could not enable WAL mode, current mode: %s",
+                        result[0] if result else "unknown",
+                    )
         except sqlite3.OperationalError as e:
             logger.warning("Could not set WAL mode (database may be locked): %s", e)
         _ensure_users_table(conn, reset=reset)
@@ -118,7 +120,9 @@ def init_db(db_path: Path, *, reset: bool) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Initialize user-service SQLite database")
+    parser = argparse.ArgumentParser(
+        description="Initialize user-service SQLite database"
+    )
     parser.add_argument(
         "--db",
         dest="db_path",
@@ -133,11 +137,14 @@ def main() -> int:
     args = parser.parse_args()
 
     db_path = Path(args.db_path).expanduser().resolve()
-    init_db(db_path, reset=bool(args.reset)) # inicijalizacija baze podataka i resetiranje tablice ako je potrebno
-    
+    init_db(
+        db_path, reset=bool(args.reset)
+    )  # inicijalizacija baze podataka i resetiranje tablice ako je potrebno
+
     logger.info("SQLite DB initialized: %s", db_path)
     logger.info("Ensured table schema: users(%s)", ", ".join(EXPECTED_USER_COLUMNS))
     return 0
+
 
 # python3 db.py --db users.db
 

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import base64
 import hashlib
 import hmac
@@ -25,7 +23,9 @@ def unsign(signed_value: str) -> str | None:
     except ValueError:
         return None
 
-    expected = hmac.new(COOKIE_SECRET, value.encode("utf-8"), hashlib.sha256).hexdigest()
+    expected = hmac.new(
+        COOKIE_SECRET, value.encode("utf-8"), hashlib.sha256
+    ).hexdigest()
     if not hmac.compare_digest(sig, expected):
         return None
 

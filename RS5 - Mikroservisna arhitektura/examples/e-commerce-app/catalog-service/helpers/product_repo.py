@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import sqlite3
 import uuid
 from pathlib import Path
@@ -187,11 +185,15 @@ def product_exists(db_path: Path, *, product_id: str) -> bool:
         return False
 
     with connect(db_path) as conn:
-        row = conn.execute("SELECT 1 FROM products WHERE id=? LIMIT 1;", (product_id,)).fetchone()
+        row = conn.execute(
+            "SELECT 1 FROM products WHERE id=? LIMIT 1;", (product_id,)
+        ).fetchone()
         return row is not None
 
 
-def check_availability(db_path: Path, *, items: list[tuple[str, int]]) -> dict[str, object]:
+def check_availability(
+    db_path: Path, *, items: list[tuple[str, int]]
+) -> dict[str, object]:
     """
     Check whether all requested items are available in requested quantities.
     """
@@ -204,12 +206,19 @@ def check_availability(db_path: Path, *, items: list[tuple[str, int]]) -> dict[s
     with connect(db_path) as conn:
         for product_id, qty in items:
             row = conn.execute(
-                "SELECT amount_available FROM products WHERE id=? LIMIT 1;", (product_id,)
+                "SELECT amount_available FROM products WHERE id=? LIMIT 1;",
+                (product_id,),
             ).fetchone()
             if not row:
                 ok = False
                 details.append(
-                    {"item_id": product_id, "requested": qty, "available": 0, "ok": False, "reason": "not_found"}
+                    {
+                        "item_id": product_id,
+                        "requested": qty,
+                        "available": 0,
+                        "ok": False,
+                        "reason": "not_found",
+                    }
                 )
                 continue
 
@@ -230,7 +239,9 @@ def check_availability(db_path: Path, *, items: list[tuple[str, int]]) -> dict[s
     return {"ok": bool(ok), "items": details}
 
 
-def decrement_stock(db_path: Path, *, items: list[tuple[str, int]]) -> dict[str, object]:
+def decrement_stock(
+    db_path: Path, *, items: list[tuple[str, int]]
+) -> dict[str, object]:
     """
     Decrease stock for all items. Operation is all-or-nothing.
     """

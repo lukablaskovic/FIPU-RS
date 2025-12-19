@@ -1,6 +1,5 @@
 # Custom logger komponenta za više razina u boji :)
 
-from __future__ import annotations
 
 import logging
 import os
@@ -11,6 +10,7 @@ DEFAULT_LOG_FORMAT = (
 )
 DEFAULT_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
+
 class ColorFormatter(logging.Formatter):
 
     RESET = "\033[0m"
@@ -18,11 +18,11 @@ class ColorFormatter(logging.Formatter):
     BOLD = "\033[1m"
 
     COLORS = {
-        logging.DEBUG: DIM + "\033[37m",     # dim gray
-        logging.INFO: "\033[36m",           # cyan
-        logging.WARNING: "\033[33m",        # yellow
-        logging.ERROR: "\033[31m",          # red
-        logging.CRITICAL: BOLD + "\033[31m" # bold red
+        logging.DEBUG: DIM + "\033[37m",  # dim gray
+        logging.INFO: "\033[36m",  # cyan
+        logging.WARNING: "\033[33m",  # yellow
+        logging.ERROR: "\033[31m",  # red
+        logging.CRITICAL: BOLD + "\033[31m",  # bold red
     }
 
     def __init__(self, fmt: str, datefmt: str | None = None, use_colors: bool = True):
@@ -41,9 +41,12 @@ class ColorFormatter(logging.Formatter):
         finally:
             record.levelname = original_levelname
 
+
 class LoggingSetup:
     def __init__(self, logger_name: str | None = None):
-        self.logger = logging.getLogger(logger_name or os.getenv("LOGGER_NAME", "auth-service"))
+        self.logger = logging.getLogger(
+            logger_name or os.getenv("LOGGER_NAME", "auth-service")
+        )
         self.logger.propagate = False
 
         level_name = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -51,7 +54,9 @@ class LoggingSetup:
             level = int(level_name)
         else:
             level_map = logging.getLevelNamesMapping()
-            level = level_map.get(level_name, level_map.get("WARNING") if level_name == "WARN" else None)
+            level = level_map.get(
+                level_name, level_map.get("WARNING") if level_name == "WARN" else None
+            )
             if level is None:
                 level = logging.INFO
         self.logger.setLevel(level)
@@ -68,11 +73,14 @@ class LoggingSetup:
         use_colors = is_tty and not os.getenv("NO_COLOR")
 
         stream_handler.setFormatter(
-            ColorFormatter(DEFAULT_LOG_FORMAT, datefmt=DEFAULT_DATE_FORMAT, use_colors=use_colors)
+            ColorFormatter(
+                DEFAULT_LOG_FORMAT, datefmt=DEFAULT_DATE_FORMAT, use_colors=use_colors
+            )
         )
 
     def get_logger(self) -> logging.Logger:
         return self.logger
+
 
 logging_setup = LoggingSetup()
 
@@ -80,7 +88,11 @@ logger = logging_setup.get_logger()
 
 if __name__ == "__main__":
     logger.info("Hello, world! I'm logging_setup.py and this is a test INFO message.")
-    logger.warning("Hello, world! I'm logging_setup.py and this is a test WARNING message.")
+    logger.warning(
+        "Hello, world! I'm logging_setup.py and this is a test WARNING message."
+    )
     logger.error("Hello, world! I'm logging_setup.py and this is a test ERROR message.")
-    logger.critical("Hello, world! I'm logging_setup.py and this is a test CRITICAL message.")
+    logger.critical(
+        "Hello, world! I'm logging_setup.py and this is a test CRITICAL message."
+    )
     logger.debug("Hello, world! I'm logging_setup.py and this is a test DEBUG message.")

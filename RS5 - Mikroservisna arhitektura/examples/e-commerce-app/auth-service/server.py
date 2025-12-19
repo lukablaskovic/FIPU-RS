@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import asyncio
 import json
 import os
@@ -44,8 +42,13 @@ POST_LOGIN_REDIRECT_COOKIE = "post_login_redirect"
 
 USER_SERVICE_URL = os.getenv("USER_SERVICE_URL", "http://localhost:8001")
 
+
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"status": "auth-service REST API Server is running just fine. Not sure about the microservice itself."})
+    return web.json_response(
+        {
+            "status": "auth-service REST API Server is running just fine. Not sure about the microservice itself."
+        }
+    )
 
 
 def _infer_connection_from_sub(sub: str) -> str:
@@ -141,7 +144,9 @@ async def _get_auth0_mgmt_access_token() -> str | None:
         return access_token
 
 
-def _connection_from_identities(sub: str, identities: list[dict[str, Any]]) -> str | None:
+def _connection_from_identities(
+    sub: str, identities: list[dict[str, Any]]
+) -> str | None:
     if "|" not in sub:
         return None
     provider, raw_user_id = sub.split("|", 1)
@@ -187,9 +192,17 @@ async def _resolve_auth0_connection(userinfo: dict[str, Any]) -> str:
             ) as resp:
                 if resp.status >= 400:
                     body = await resp.text()
-                    logger.warning("Auth0 mgmt user lookup failed: status=%s body=%s", resp.status, body[:500])
+                    logger.warning(
+                        "Auth0 mgmt user lookup failed: status=%s body=%s",
+                        resp.status,
+                        body[:500],
+                    )
                     conn = _infer_connection_from_sub(sub)
-                    logger.info("Resolved connection via fallback: sub=%s connection=%s", sub, conn)
+                    logger.info(
+                        "Resolved connection via fallback: sub=%s connection=%s",
+                        sub,
+                        conn,
+                    )
                     return conn
                 data = await resp.json()
 
@@ -197,7 +210,11 @@ async def _resolve_auth0_connection(userinfo: dict[str, Any]) -> str:
         if isinstance(identities, list):
             conn = _connection_from_identities(sub, identities)
             if conn:
-                logger.info("Resolved connection via Auth0 mgmt API: sub=%s connection=%s", sub, conn)
+                logger.info(
+                    "Resolved connection via Auth0 mgmt API: sub=%s connection=%s",
+                    sub,
+                    conn,
+                )
                 return conn
     except Exception as e:
         logger.warning("Auth0 mgmt user lookup errored: %s", e)
@@ -205,6 +222,7 @@ async def _resolve_auth0_connection(userinfo: dict[str, Any]) -> str:
     conn = _infer_connection_from_sub(sub)
     logger.info("Resolved connection via fallback: sub=%s connection=%s", sub, conn)
     return conn
+
 
 def _userinfo_to_user_payload(userinfo: dict[str, Any]) -> dict[str, str] | None:
     sub = userinfo.get("sub")
@@ -220,7 +238,11 @@ def _userinfo_to_user_payload(userinfo: dict[str, Any]) -> dict[str, str] | None
     return {"email": email.strip().lower(), "connection": connection}
 
 
-async def login(request: web.Request) -> web.StreamResponse: # StreamResponse je lower-level response object za aiohttp, web.Response je nadklasa StreamResponse klase
+async def login(
+    request: web.Request,
+) -> (
+    web.StreamResponse
+):  # StreamResponse je lower-level response object za aiohttp, web.Response je nadklasa StreamResponse klase
     logger.info(f"Login request received from {request.url}")
     redirect_uri = resolve_redirect_uri(request)
 
@@ -249,7 +271,9 @@ async def login(request: web.Request) -> web.StreamResponse: # StreamResponse je
         **extra,
     )
 
-    resp = web.HTTPFound(authorization_url) # kao HTTP odgovor se vraća URL za autentifikaciju preko Auth0 servisa.
+    resp = web.HTTPFound(
+        authorization_url
+    )  # kao HTTP odgovor se vraća URL za autentifikaciju preko Auth0 servisa.
     set_signed_cookie(resp, "oauth_state", state, max_age_s=600)
     set_signed_cookie(resp, "pkce_verifier", verifier, max_age_s=600)
     if next_url:
@@ -307,7 +331,9 @@ async def callback(request: web.Request) -> web.StreamResponse:
         try:
             timeout = ClientTimeout(total=5)
             async with ClientSession(timeout=timeout) as session:
-                async with session.post(f"{USER_SERVICE_URL}/users", json=payload) as resp:
+                async with session.post(
+                    f"{USER_SERVICE_URL}/users", json=payload
+                ) as resp:
                     if resp.status >= 400:
                         body = await resp.text()
                         logger.warning(
@@ -318,11 +344,18 @@ async def callback(request: web.Request) -> web.StreamResponse:
         except Exception as e:
             logger.warning("user-service ensure failed: %s", e)
 
-    redirect_to = get_signed_cookie(request, POST_LOGIN_REDIRECT_COOKIE) or POST_LOGIN_REDIRECT_URL
+    redirect_to = (
+        get_signed_cookie(request, POST_LOGIN_REDIRECT_COOKIE)
+        or POST_LOGIN_REDIRECT_URL
+    )
 
     if redirect_to:
         session_payload = {"token": token, "userinfo": userinfo}
-        session_encoded = b64url(json.dumps(session_payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8"))
+        session_encoded = b64url(
+            json.dumps(
+                session_payload, separators=(",", ":"), ensure_ascii=False
+            ).encode("utf-8")
+        )
         resp = web.HTTPFound(f"{redirect_to}#session={session_encoded}")
         resp.del_cookie("oauth_state", path="/")
         resp.del_cookie("pkce_verifier", path="/")
@@ -353,10 +386,12 @@ async def logout(request: web.Request) -> web.StreamResponse:
     return resp
 
 
-def create_app() -> web.Application: # vraća instancu HTTP web poslužitelja s definiranim rutama
+def create_app() -> (
+    web.Application
+):  # vraća instancu HTTP web poslužitelja s definiranim rutama
     app = web.Application(middlewares=[cors_middleware])
-    app.router.add_get("/health", health) # provjeri je li mikroservis živ
-    app.router.add_get("/login", login) 
+    app.router.add_get("/health", health)  # provjeri je li mikroservis živ
+    app.router.add_get("/login", login)
     app.router.add_get("/callback", callback)
     app.router.add_get("/logout", logout)
     app.router.add_route("OPTIONS", "/{tail:.*}", lambda _: web.Response(status=204))
@@ -370,9 +405,12 @@ async def start_server(app: web.Application, host: str, port: int) -> web.AppRun
     await site.start()
     return runner
 
+
 async def main() -> None:
     host = os.getenv("SERVER_HOST")
-    port = int(os.getenv("SERVER_PORT", "8000")) # ako SERVER_PORT env nije definiran, koristi 8000
+    port = int(
+        os.getenv("SERVER_PORT", "8000")
+    )  # ako SERVER_PORT env nije definiran, koristi 8000
 
     logger.info(f"Starting auth-service aiohttp server on {host}:{port}")
 
