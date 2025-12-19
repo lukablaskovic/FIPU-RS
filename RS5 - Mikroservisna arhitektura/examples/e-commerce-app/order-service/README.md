@@ -1,11 +1,11 @@
 ```bash
-conda create -n user-service python=3.14
+conda create -n order-service python=3.14
 # conda env list (provjera svih conda okruženja)
-conda activate user-service
+conda activate order-service
 
 # provjera ista
 
-which python3 (bash)
+which python3
 
 pip install -r requirements.txt
 ```

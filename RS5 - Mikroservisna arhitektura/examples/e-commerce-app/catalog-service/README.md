@@ -1,11 +1,9 @@
 ```bash
-conda create -n user-service python=3.14
+conda create -n catalog-service python=3.14
 # conda env list (provjera svih conda okruženja)
-conda activate user-service
+conda activate catalog-service
 
 # provjera ista
-
-which python3 (bash)
 
 pip install -r requirements.txt
 ```
@@ -15,6 +13,13 @@ Stvorite `.env` datoteku i dodajte odgovarajuće vrijednosti varijabli okruženj
 ```bash
 touch .env
 cat env.template > .env
+```
+
+Pomoćne skripte (izrada baze i popunjavanje testnim podacima):
+
+```bash
+python db.py
+python fill_products.py
 ```
 
 Pokrenite mikroservis:
