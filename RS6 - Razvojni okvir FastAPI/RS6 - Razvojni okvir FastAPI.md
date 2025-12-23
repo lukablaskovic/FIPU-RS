@@ -309,7 +309,7 @@ Više o tipovima podataka u poglavlju [2. Pydantic](#2-pydantic).
 
 **Zapamti:** FastAPI razvojni okvir je baziran na modernom Pythonu koji koristi _type hinting_ za parsiranje i validaciju podataka. Dodatna prednost kod korištenja _type hintinga_ je i podrška za _autocomplete_ koja je integrirana sa većinom modernih IDE-a (npr. VSCode, PyCharm, itd.), što olakšava razvoj i smanjuje mogućnost grešaka.
 
-![alt text](image.png)
+<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS6%20-%20Razvojni%20okvir%20FastAPI/screenshots/vs-code-autocomplete.png?raw=true" style="width: 60%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin-top:10px;">
 
 > _Python type hinting podrška u VSCode IDE-u_ omogućava _brže pisanje kôda_ i _manje grešaka_ zahvaljujući automatskom dovršavanju i provjeri tipova podataka tijekom pisanja kôda.
 
