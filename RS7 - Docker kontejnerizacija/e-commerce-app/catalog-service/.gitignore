@@ -1,0 +1,5 @@
+.env
+products.db
+__pycache__
+products.db-shm
+products.db-wal

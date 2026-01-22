@@ -1,0 +1,75 @@
+services:
+  auth-service:
+    build: ./auth-service
+    platform: linux/amd64
+    env_file:
+      - ./auth-service/.env
+    environment:
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8000
+      - USER_SERVICE_URL=http://user-service:8001
+    ports:
+      - "8000:8000"
+    depends_on:
+      - user-service
+    networks:
+      - ecommerce-net
+
+  user-service:
+    build: ./user-service
+    platform: linux/amd64
+    env_file:
+      - ./user-service/.env
+    environment:
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8001
+    ports:
+      - "8001:8001"
+    networks:
+      - ecommerce-net
+
+  catalog-service:
+    build: ./catalog-service
+    platform: linux/amd64
+    env_file:
+      - ./catalog-service/.env
+    environment:
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8002
+    ports:
+      - "8002:8002"
+    networks:
+      - ecommerce-net
+
+  order-service:
+    build: ./order-service
+    platform: linux/amd64
+    env_file:
+      - ./order-service/.env
+    environment:
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8003
+      - CATALOG_SERVICE_BASE_URL=http://catalog-service:8002
+    ports:
+      - "8003:8003"
+    depends_on:
+      - catalog-service
+    networks:
+      - ecommerce-net
+
+  frontend:
+    build: ./frontend-app
+    platform: linux/amd64
+    ports:
+      - "80:80"
+    depends_on:
+      - auth-service
+      - user-service
+      - catalog-service
+      - order-service
+    networks:
+      - ecommerce-net
+
+networks:
+  ecommerce-net:
+    driver: bridge
