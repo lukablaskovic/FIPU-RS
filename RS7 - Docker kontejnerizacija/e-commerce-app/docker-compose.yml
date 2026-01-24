@@ -1,6 +1,6 @@
 services:
   auth-service:
-    build: ./auth-service
+    image: lukablaskovic/shop-auth-service:latest
     platform: linux/amd64
     env_file:
       - ./auth-service/.env
@@ -16,7 +16,7 @@ services:
       - ecommerce-net
 
   user-service:
-    build: ./user-service
+    image: lukablaskovic/shop-user-service:latest
     platform: linux/amd64
     env_file:
       - ./user-service/.env
@@ -29,7 +29,7 @@ services:
       - ecommerce-net
 
   catalog-service:
-    build: ./catalog-service
+    image: lukablaskovic/shop-catalog-service:latest
     platform: linux/amd64
     env_file:
       - ./catalog-service/.env
@@ -42,7 +42,7 @@ services:
       - ecommerce-net
 
   order-service:
-    build: ./order-service
+    image: lukablaskovic/shop-order-service:latest
     platform: linux/amd64
     env_file:
       - ./order-service/.env
@@ -58,7 +58,7 @@ services:
       - ecommerce-net
 
   frontend:
-    build: ./frontend-app
+    image: lukablaskovic/shop-frontend:latest
     platform: linux/amd64
     ports:
       - "80:80"
