@@ -1,15 +1,17 @@
-# Raspodijeljeni sustavi (RS)
+# Raspodijeljeni sustavi ([RS - 273470](https://fipu.unipu.hr/fipu/predmet/rassus_a))
+
+<img src="../images/RS-banner.png" alt="Raspodijeljeni sustavi (RS - 273470)" style="border-radius: 8px;">
 
 **Nositelj**: doc. dr. sc. Nikola Tanković  
 **Asistent**: Luka Blašković, mag. inf.
 
 **Ustanova**: Sveučilište Jurja Dobrile u Puli, Fakultet informatike u Puli
 
-<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-PJS/main/0.%20Template/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; "></img>
+<img src="../images/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; "></img>
 
 # (4) Asinkroni Python: Konkurentna obrada mrežnih operacija
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Slanje%20konkurentnih%20HTTP%20zahtjeva/RS_4.png?raw=true" style="width:9%; border-radius: 8px; float:right;"></img>
+<img src="../rs-icons/RS_4.png" style="width:9%; border-radius: 8px; float:right;"></img>
 
 <div style="float: clear; margin-right:5px;">
 Na prethodnim vježbama upoznali smo temeljne koncepte asinkronog programiranja u Pythonu koristeći biblioteku <code>asyncio</code>. Naučili smo kako definirati i pokretati korutine, konkurentno izvršavati kod pomoću <code>asyncio.gather</code> i <code>asyncio.create_task</code>, kao i ulogu <i>event loop</i> mehanizma koji omogućava učinkovito izvršavanje korutina unutar jedne Python dretve - samu konkurentnost.
@@ -21,11 +23,11 @@ Do sada smo sve primjere temeljili na simuliranim I/O operacijama koristeći `as
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 20.11.2025.**
+**🆙 Posljednje ažurirano: 12.9.2026.**
 
 ## Sadržaj
 
-- [Raspodijeljeni sustavi (RS)](#raspodijeljeni-sustavi-rs)
+- [Raspodijeljeni sustavi (RS - 273470)](#raspodijeljeni-sustavi-rs---273470)
 - [(4) Asinkroni Python: Konkurentna obrada mrežnih operacija](#4-asinkroni-python-konkurentna-obrada-mrežnih-operacija)
   - [Sadržaj](#sadržaj)
 - [1. HTTP (HyperText Transfer Protocol) protokol](#1-http-hypertext-transfer-protocol-protokol)

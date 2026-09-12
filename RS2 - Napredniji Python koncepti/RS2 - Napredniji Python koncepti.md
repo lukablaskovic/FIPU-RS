@@ -1,11 +1,13 @@
-# Raspodijeljeni sustavi (RS)
+# Raspodijeljeni sustavi ([RS - 273470](https://fipu.unipu.hr/fipu/predmet/rassus_a))
+
+<img src="../images/RS-banner.png" alt="Raspodijeljeni sustavi (RS - 273470)" style="border-radius: 8px;">
 
 **Nositelj**: doc. dr. sc. Nikola Tanković  
 **Asistent**: Luka Blašković, mag. inf.
 
 **Ustanova**: Sveučilište Jurja Dobrile u Puli, Fakultet informatike u Puli
 
-<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-PJS/main/0.%20Template/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; "></img>
+<img src="../images/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; "></img>
 
 # (2) Napredniji Python koncepti
 
@@ -16,11 +18,11 @@ U ovoj ćemo se skripti usredotočiti na naprednije značajke programskog jezika
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 6.11.2025.**
+**🆙 Posljednje ažurirano: 12.9.2026.**
 
 ## Sadržaj
 
-- [Raspodijeljeni sustavi (RS)](#raspodijeljeni-sustavi-rs)
+- [Raspodijeljeni sustavi (RS - 273470)](#raspodijeljeni-sustavi-rs---273470)
 - [(2) Napredniji Python koncepti](#2-napredniji-python-koncepti)
   - [Sadržaj](#sadržaj)
 - [1. Lambda funkcije](#1-lambda-funkcije)

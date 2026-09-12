@@ -1,11 +1,13 @@
-# Raspodijeljeni sustavi (RS)
+# Raspodijeljeni sustavi ([RS - 273470](https://fipu.unipu.hr/fipu/predmet/rassus_a))
+
+<img src="../images/RS-banner.png" alt="Raspodijeljeni sustavi (RS - 273470)" style="border-radius: 8px;">
 
 **Nositelj**: doc. dr. sc. Nikola Tanković  
 **Asistent**: Luka Blašković, mag. inf.
 
 **Ustanova**: Sveučilište Jurja Dobrile u Puli, Fakultet informatike u Puli
 
-<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-PJS/main/0.%20Template/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; "></img>
+<img src="../images/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; "></img>
 
 # (1) Programski jezik Python
 
@@ -20,11 +22,11 @@ Ipak, prije nego krenemo, važno je naučiti programski jezik Python, koji ćemo
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 30.10.2025.**
+**🆙 Posljednje ažurirano: 12.9.2026.**
 
 ## Sadržaj
 
-- [Raspodijeljeni sustavi (RS)](#raspodijeljeni-sustavi-rs)
+- [Raspodijeljeni sustavi (RS - 273470)](#raspodijeljeni-sustavi-rs---273470)
 - [(1) Programski jezik Python](#1-programski-jezik-python)
   - [Sadržaj](#sadržaj)
 - [1. Uvod](#1-uvod)
@@ -118,7 +120,7 @@ Ako koristite Windows OS, možete provjeriti `PATH` varijablu pokretanjem naredb
 
 Možete provjeriti i putem grafičkog sučelja na Windowsu, otvorite _Start_ i ukucajte "environment" te odaberite **Edit the system environment variables**. U prozoru koji se otvori, kliknite na **Environment Variables** te u listi _System variables_ pronađite **Path**. Kliknite na **Edit** i provjerite je li putanja do Python instalacijskog direktorija prisutna u listi.
 
-![How to Set the Path and Environment Variables in Windows](https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS1%20-%20Ponavljanje%20Pythona/screenshots/windows_check_env.png)
+![How to Set the Path and Environment Variables in Windows](https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS1%20-%20Programski%20jezik%20Python/screenshots/windows_check_env.png)
 
 ---
 

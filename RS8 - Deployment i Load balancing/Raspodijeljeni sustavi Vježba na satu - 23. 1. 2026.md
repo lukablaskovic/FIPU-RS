@@ -1,8 +1,14 @@
+# Raspodijeljeni sustavi ([RS - 273470](https://fipu.unipu.hr/fipu/predmet/rassus_a))
+
+<img src="../images/RS-banner.png" alt="Raspodijeljeni sustavi (RS - 273470)" style="border-radius: 8px;">
+
+**🆙 Posljednje ažurirano: 12.9.2026.**
+
 # Raspodijeljeni sustavi: Vježba na satu - 23. 1. 2026.
 
 ## Zadatak: Deployment mikroservisne arhitekture na DigitalOcean Droplet VPS
 
-<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-PJS/main/0.%20Template/FIPU_UNIPU.png" style="width:20%; box-shadow: none !important; "></img>
+<img src="../images/FIPU_UNIPU.png" style="width:20%; box-shadow: none !important; "></img>
 
 ### Priprema i spajanje na Droplet VPS kroz SSH protokol
 

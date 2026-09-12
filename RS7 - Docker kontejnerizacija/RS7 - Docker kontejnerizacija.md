@@ -1,11 +1,13 @@
-# Raspodijeljeni sustavi (RS)
+# Raspodijeljeni sustavi ([RS - 273470](https://fipu.unipu.hr/fipu/predmet/rassus_a))
+
+<img src="../images/RS-banner.png" alt="Raspodijeljeni sustavi (RS - 273470)" style="border-radius: 8px;">
 
 **Nositelj**: doc. dr. sc. Nikola Tanković  
 **Asistent**: Luka Blašković, mag. inf.
 
 **Ustanova**: Sveučilište Jurja Dobrile u Puli, Fakultet informatike u Puli
 
-<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-PJS/main/0.%20Template/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; "></img>
+<img src="../images/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; "></img>
 
 # (7) Docker kontejnerizacija
 
@@ -16,11 +18,11 @@ Naučili smo kako definirati asinkrone mikroservise s konkurentnom obradom podat
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 15.1.2026.**
+**🆙 Posljednje ažurirano: 12.9.2026.**
 
 ## Sadržaj
 
-- [Raspodijeljeni sustavi (RS)](#raspodijeljeni-sustavi-rs)
+- [Raspodijeljeni sustavi (RS - 273470)](#raspodijeljeni-sustavi-rs---273470)
 - [(7) Docker kontejnerizacija](#7-docker-kontejnerizacija)
   - [Sadržaj](#sadržaj)
 - [1. Uvod u kontejnerizaciju](#1-uvod-u-kontejnerizaciju)

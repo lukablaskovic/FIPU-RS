@@ -1,11 +1,13 @@
-# Raspodijeljeni sustavi (RS)
+# Raspodijeljeni sustavi ([RS - 273470](https://fipu.unipu.hr/fipu/predmet/rassus_a))
+
+<img src="../images/RS-banner.png" alt="Raspodijeljeni sustavi (RS - 273470)" style="border-radius: 8px;">
 
 **Nositelj**: doc. dr. sc. Nikola Tanković  
 **Asistent**: Luka Blašković, mag. inf.
 
 **Ustanova**: Sveučilište Jurja Dobrile u Puli, Fakultet informatike u Puli
 
-<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-PJS/main/0.%20Template/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; "></img>
+<img src="../images/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; "></img>
 
 # (6) Razvojni okvir FastAPI
 
@@ -16,11 +18,11 @@ FastAPI je moderni web okvir za izgradnju API-ja koji se temelji na modernom Pyt
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 23.12.2025.**
+**🆙 Posljednje ažurirano: 12.9.2026.**
 
 ## Sadržaj
 
-- [Raspodijeljeni sustavi (RS)](#raspodijeljeni-sustavi-rs)
+- [Raspodijeljeni sustavi (RS - 273470)](#raspodijeljeni-sustavi-rs---273470)
 - [(6) Razvojni okvir FastAPI](#6-razvojni-okvir-fastapi)
   - [Sadržaj](#sadržaj)
 - [1. Uvod u FastAPI](#1-uvod-u-fastapi)

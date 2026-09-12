@@ -1,4 +1,6 @@
-# Materijali iz kolegija: Raspodijeljeni sustavi (RS)
+# Materijali iz kolegija: Raspodijeljeni sustavi ([RS - 273470](https://fipu.unipu.hr/fipu/predmet/rassus_a))
+
+<img src="images/RS-banner.png" alt="Raspodijeljeni sustavi (RS - 273470)" style="border-radius: 8px;">
 
 <p>
   <a href="https://www.python.org/" target="_blank">  <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue" />
@@ -14,10 +16,10 @@
 **Ustanova**: [Sveučilište Jurja Dobrile u Puli](https://www.unipu.hr/), [Fakultet informatike u Puli](https://fipu.unipu.hr/)
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/lukablaskovic/FIPU-WA/refs/heads/main/FIPU_UNIPU_white.png">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/lukablaskovic/FIPU-WA/refs/heads/main/FIPU_UNIPU.png">
+  <source media="(prefers-color-scheme: dark)" srcset="images/FIPU_UNIPU_white.png">
+  <source media="(prefers-color-scheme: light)" srcset="images/FIPU_UNIPU.png">
   <img alt="Fakultet informatike u Puli (materijali iz kolegija Raspodijeljeni sustavi - Luka Blašković)" 
-       src="https://raw.githubusercontent.com/lukablaskovic/FIPU-WA/refs/heads/main/FIPU_UNIPU_white.png" width="300">
+       src="images/FIPU_UNIPU_white.png" width="300">
 </picture>
 
 ---
