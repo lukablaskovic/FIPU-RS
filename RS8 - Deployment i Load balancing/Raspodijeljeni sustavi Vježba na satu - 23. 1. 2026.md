@@ -2,9 +2,11 @@
 
 <img src="../images/RS-banner.png" alt="Raspodijeljeni sustavi (RS - 273470)" style="border-radius: 8px;">
 
-**🆙 Posljednje ažurirano: 12.9.2026.**
+**🆙 Posljednje ažurirano: 13.9.2026.**
 
 # Raspodijeljeni sustavi: Vježba na satu - 23. 1. 2026.
+
+<img src="../rs-icons/RS_8.png" style="width:9%; border-radius: 8px; float:right;"></img>
 
 ## Zadatak: Deployment mikroservisne arhitekture na DigitalOcean Droplet VPS
 
