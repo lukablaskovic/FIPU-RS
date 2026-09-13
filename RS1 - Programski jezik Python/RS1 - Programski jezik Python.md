@@ -11,7 +11,7 @@
 
 # (1) Programski jezik Python
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS1%20-%20Programski%20jezik%20Python/RS_01.png?raw=true" style="width:9%; border-radius: 8px; float:right;"></img>
+<img src="../rs-icons/RS_1.png" style="width:9%; border-radius: 8px; float:right;"></img>
 
 <div style="float: clear; margin-right:5px;">Raspodijeljeni sustav je svaki računalni sustav koji se sastoji od više povezanih autonomnih računala koja zajedno rade kao jedinstveni kohezivni sustav za postizanje zajedničkog cilja. Drugim riječima, raspodijeljeni sustavi su skupina nezavisnih računala (čvorova u mreži) koji međusobno komuniciraju i koordiniraju svoje radnje kako bi izvršili određeni zadatak.
 
@@ -22,7 +22,7 @@ Ipak, prije nego krenemo, važno je naučiti programski jezik Python, koji ćemo
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 12.9.2026.**
+**🆙 Posljednje ažurirano: 13.9.2026.**
 
 ## Sadržaj
 

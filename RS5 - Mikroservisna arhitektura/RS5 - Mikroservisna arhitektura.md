@@ -11,7 +11,7 @@
 
 # (5) Mikroservisna arhitektura
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS5%20-%20Mikroservisna%20arhitektura/RS_5.png?raw=true" style="width:9%; border-radius: 8px; float:right;"></img>
+<img src="../rs-icons/RS_5.png" style="width:9%; border-radius: 8px; float:right;"></img>
 
 <div style="float: clear; margin-right:5px;">
 
@@ -22,7 +22,7 @@ Takav način izgradnje sustava donosi niz prednosti: omogućuje jednostavnije sk
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 12.9.2026.**
+**🆙 Posljednje ažurirano: 13.9.2026.**
 
 ## Sadržaj
 

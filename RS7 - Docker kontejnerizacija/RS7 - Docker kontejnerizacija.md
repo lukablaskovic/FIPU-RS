@@ -11,14 +11,14 @@
 
 # (7) Docker kontejnerizacija
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/rs-icons/RS_7.png?raw=true" style="width:9%; border-radius: 8px; float:right"></img>
+<img src="../rs-icons/RS_7.png" style="width:9%; border-radius: 8px; float:right"></img>
 
 <div style="float: clear; margin-right:5px;">
 Naučili smo kako definirati asinkrone mikroservise s konkurentnom obradom podataka koji svoje funkcionalnosti otvaraju putem FastAPI i aiohttp poslužitelja. Jednom kad imamo robusne mikroservise, sljedeći korak je njihovo raspoređivanje i upravljanje resursima, bilo na lokalnom ili u produkcijskom okruženju. Kontejnerizacija predstavlja tehnologiju koja omogućuje doslovno pakiranje aplikacija i svih njenih ovisnosti u jednu samostalnu i lako-prenosivu cjelinu, tzv. kontejner (<i>eng. Container</i>). Kontejneri osiguravaju konzistentnost i predvidljivost ponašanja aplikacija u različitim okruženjima, smanjujući pritom mogućnost čestih grešaka vezanih uz promjenu okruženja gdje se aplikacija izvodi. Docker je trenutno najpopularnija platforma za kontejnerizaciju aplikacija, a u ovom poglavlju naučit ćemo kako kontejnerizirati naše mikroservise koristeći Docker tehnologiju.
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 12.9.2026.**
+**🆙 Posljednje ažurirano: 13.9.2026.**
 
 ## Sadržaj
 

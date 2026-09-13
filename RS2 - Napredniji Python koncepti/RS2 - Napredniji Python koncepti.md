@@ -11,14 +11,14 @@
 
 # (2) Napredniji Python koncepti
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS2%20-%20Napredniji%20Python%20koncepti/RS_2.png?raw=true" style="width:9%; border-radius: 8px; float:right;"></img>
+<img src="../rs-icons/RS_2.png" style="width:9%; border-radius: 8px; float:right;"></img>
 
 <div style="float: clear; margin-right:5px;">
 U ovoj ćemo se skripti usredotočiti na naprednije značajke programskog jezika Python koje će vam olakšati i ubrzati izradu rješenja unutar ovog kolegija, ali i unaprijediti vaše opće razumijevanje i rad s jezikom. Obradit ćemo teme kao što su anonimne (lambda) funkcije, funkcije višeg reda, korištenje paketa i modula, *comprehension* sintaksa za brzo stvaranje struktura podataka te osnove objektno orijentiranog programiranja kroz rad s klasama i objektima.
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 12.9.2026.**
+**🆙 Posljednje ažurirano: 13.9.2026.**
 
 ## Sadržaj
 
