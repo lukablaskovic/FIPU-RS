@@ -18,7 +18,7 @@ Asinkronost je koncept koji označava mogućnost simultanog izvršavanja više z
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 13.9.2026.**
+**🆙 Posljednje ažurirano: 28.10.2026.**
 
 ## Sadržaj
 
@@ -28,7 +28,7 @@ Asinkronost je koncept koji označava mogućnost simultanog izvršavanja više z
 - [1. `asyncio` biblioteka](#1-asyncio-biblioteka)
   - [1.1. Korutine (eng. Coroutines)](#11-korutine-eng-coroutines)
   - [1.2 Event Loop](#12-event-loop)
-    - [1.2.1 Analogija za razumijevanje konkurentnog izvršavanja](#121-analogija-za-razumijevanje-konkurentnog-izvršavanja)
+    - [1.2.1 Simpatična analogija za razumijevanje konkurentnog izvršavanja i GIL mehanizma u Pythonu](#121-simpatična-analogija-za-razumijevanje-konkurentnog-izvršavanja-i-gil-mehanizma-u-pythonu)
   - [1.3 Konkurentno izvršavanje više korutina](#13-konkurentno-izvršavanje-više-korutina)
     - [Primjer 1: Sinkrono izvođenje dvije funkcije koje simuliraju dohvaćanje podataka s različitim vremenom trajanja.](#primjer-1-sinkrono-izvođenje-dvije-funkcije-koje-simuliraju-dohvaćanje-podataka-s-različitim-vremenom-trajanja)
     - [Primjer 2: Asinkrono izvođenje dvije korutine koje simuliraju dohvaćanje podataka s različitim vremenom trajanja.](#primjer-2-asinkrono-izvođenje-dvije-korutine-koje-simuliraju-dohvaćanje-podataka-s-različitim-vremenom-trajanja)
@@ -229,7 +229,9 @@ Zašto jednu po jednu? Python nije striktno jednodretveni jezik (_eng. single-th
 
 <hr>
 
-### 1.2.1 Analogija za razumijevanje konkurentnog izvršavanja
+### 1.2.1 Simpatična analogija za razumijevanje konkurentnog izvršavanja i GIL mehanizma u Pythonu
+
+<img src="./screenshots/GIL.png" style="width:90%;"></img>
 
 Zamislite jednu zgradu s nekoliko stanova 🏢
 
