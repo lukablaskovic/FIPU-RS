@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Avenir Next", Avenir, "Trebuchet MS", sans-serif;
+  --color-fipu: #6ecff6;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply m-0 bg-stone-50 text-stone-900 antialiased; }
+  button, a { @apply focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-700; }
+  button { @apply cursor-pointer; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .product-card { transform: none !important; }
+}
