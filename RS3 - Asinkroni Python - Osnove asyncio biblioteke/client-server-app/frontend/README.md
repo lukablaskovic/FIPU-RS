@@ -20,6 +20,8 @@ Production serves `dist/client` assets and renders Vue using `dist/server` on ev
 ## Structure
 
 - `src/App.vue`: category navigation, storefront, and in-memory demo cart
+- `src/components/ShopHeader.vue`: branding, category links, and cart count
+- `src/components/ShopFooter.vue`: course and study programme links
 - `src/components/ShoppingCart.vue`: bottom-pinned cart, visible only while it contains items
 - `src/components/ProductCard.vue`: reusable product card with hover motion and an add-to-cart event
 - `src/data/products.js`: sample products, prices in cents
