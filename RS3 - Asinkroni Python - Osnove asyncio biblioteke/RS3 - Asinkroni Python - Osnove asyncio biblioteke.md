@@ -18,7 +18,7 @@ Asinkronost je koncept koji označava mogućnost simultanog izvršavanja više z
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 28.10.2026.**
+**🆙 Posljednje ažurirano: 2.11.2026.**
 
 ## Sadržaj
 
@@ -174,7 +174,8 @@ import time
 
 def main():
     print('Hello')
-    await time.sleep(1) # blokira glavni tok programa na 1 sekundu
+    time.sleep(1) # blokira glavni tok programa na 1 sekundu
+    await time.sleep(1) # Greška! time modul ne podržava asinkrono programiranje
     print('World')
 
 main()
@@ -217,7 +218,7 @@ _Event loop_ omogućuje da se više korutina izvršava konkurentno, bez blokiran
 
 Mi smo do sada pozvali samo jednu korutinu `main()` kroz _event loop_. Međutim, u praksi, prilikom razvoja robusnih asinkronih mrežnih aplikacija, _event loop_ može upravljati stotinama ili čak tisućama korutina "istovremeno".
 
-Grafički možemo predstaviti _event loop_ kao petlju koja provjerava **postoje li zadaci** (korutine) za izvršavanje. Svakom zadatku omogućuje da se privremeno zaustavi i kasnije nastavi, ovisno o stvarnoj potrebi.
+Grafički možemo predstaviti _event loop_ kao petlju koja provjerava **postoje li zadaci** (korutine) za izvršavanje. Svakom zadatku omogućuje da se privremeno zaustavi i kasnije nastavi, ovisno o stvarnoj potrebi/opterećenju.
 
 Zašto jednu po jednu? Python nije striktno jednodretveni jezik (_eng. single-threaded_), tj. dozvoljava višedretveno izvršavanje koda, **međutim samo jedna dretva može izvršavati** [Python bytecode](https://realpython.com/ref/glossary/bytecode/#:~:text=In%20Python%2C%20bytecode%20is%20a,has%20a%20compatible%20CPython%20interpreter.) u određenom trenutku zbog [Global Interpreter Lock](https://realpython.com/python-gil/) (**GIL**) mehanizma (_there are [workarounds](https://realpython.com/python-parallel-processing/)..._).
 
@@ -569,7 +570,7 @@ result1 = await task1 # schedule and run
 result2 = await task2 # schedule and run (nakon što je task1 korutina u potpunosti završena)
 ```
 
-Ovaj problem možemo riješiti `Task` _wrapper-ima_ koje `asyncio` nudi, a koji nam omogućuju da **rasporedimo (_to schedule_) više korutina za izvršavanje prije nego što ih zapravo pokrenemo**.
+Ovaj problem možemo riješiti `Task` _wrapperima_ koje `asyncio` nudi, a koji nam omogućuju da **rasporedimo (_engl. schedule_) više korutina za izvršavanje prije nego što ih zapravo pokrenemo**.
 
 `Task` objekt predstavlja **zakazanu korutinu** (_scheduled_) koja je spremna za izvršavanje unutar _event loop_-a, a kao argument moramo proslijediti _corutine objekt_.
 
@@ -865,7 +866,7 @@ Timer 2: 1 sekundi preostalo...
 Timer 2: Vrijeme je isteklo!
 ```
 
-Osim korutina, `asyncio.gather()` može primiti i _Task_ objekte kao argumente. Međutim, nije potrebno prethodno kreirati _Task_ objekte ako koristimo `asyncio.gather()`.
+Osim korutina, `asyncio.gather()` može primiti i _Task_ objekte kao argumente. Međutim, nije potrebno prethodno kreirati _Task_ objekte ako koristimo `asyncio.gather()`, budući da `gather()` funkcija to automatski radi za nas.
 
 ```python
 async def main():
