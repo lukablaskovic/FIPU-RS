@@ -42,8 +42,9 @@ Do sada smo sve primjere temeljili na simuliranim I/O-operacijama koristeći `as
     - [2.2.1. Context Manager `with`](#221-context-manager-with)
     - [2.2.2. Asinkroni klijenti `ClientSession` i `AsyncClient`](#222-asinkroni-klijenti-clientsession-i-asyncclient)
     - [2.2.3. Konkurentna obrada HTTP-zahtjeva (`asyncio.gather`)](#223-konkurentna-obrada-http-zahtjeva-asynciogather)
-    - [2.2.4. Konkurentna obrada HTTP-zahtjeva (`asyncio.Task`)](#224-konkurentna-obrada-http-zahtjeva-asynciotask)
-  - [2.3. Timeout mrežnih operacija i obrada iznimki](#23-timeout-mrežnih-operacija-i-obrada-iznimki)
+    - [2.2.4. Mjerenja vremena konkurentnih HTTP zahtjeva](#224-mjerenja-vremena-konkurentnih-http-zahtjeva)
+    - [2.2.5. Konkurentna obrada HTTP-zahtjeva (`asyncio.Task`)](#225-konkurentna-obrada-http-zahtjeva-asynciotask)
+  - [2.3. Timeout mrežnih operacija i obrada iznimki (`asyncio.wait_for`)](#23-timeout-mrežnih-operacija-i-obrada-iznimki-asynciowait_for)
 - [3. Zadaci za vježbu: konkurentna obrada mrežnih operacija i simulacije grešaka](#3-zadaci-za-vježbu-konkurentna-obrada-mrežnih-operacija-i-simulacije-grešaka)
   - [Zadatak 1: fetch_users i izdvajanje podataka](#zadatak-1-fetch_users-i-izdvajanje-podataka)
   - [Zadatak 2: filter_cat_facts](#zadatak-2-filter_cat_facts)
@@ -980,7 +981,7 @@ async def main():
     await asyncio.gather(*cat_fact_korutine)
 ```
 
-> Pokrenite kod – vidimo da se činjenice ispisuju dosta brzo.
+> Pokrenite kod – vidimo da se činjenice o mačkama 🐱 ispisuju dosta brzo.
 
 ```plaintext
 A kitten will typically weigh about 3 ounces at birth.  The typical male housecat will weigh between  7 and 9 pounds, slightly less for female housecats.
@@ -990,19 +991,17 @@ Cats bury their feces to cover their trails from predators.
 The Egyptian Mau is probably the oldest breed of cat. In fact, the breed is so ancient that its name is the Egyptian word for "cat."
 ```
 
-![alt text](<CleanShot 2026-11-19 at 00.45.57@2x.png>)
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.45.57%402x.png"><img src="./CleanShot%202026-11-19%20at%2000.45.57%402x.png" alt="Pet korutina dijeli jednu HTTP-sesiju pri konkurentnom slanju zahtjeva" width="50%"></a>
 
-> Svih pet korutina koristi istu HTTP sesiju. `asyncio.gather()` omogućuje preklapanje mrežnog čekanja i čeka njihov završetak.
+> **Slika 11.** Svih pet korutina koristi istu HTTP sesiju. `asyncio.gather()` omogućuje preklapanje mrežnog čekanja i čeka njihov završetak.
 
-![alt text](<CleanShot 2026-11-19 at 00.46.27@2x.png>)
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.46.27%402x.png"><img src="./CleanShot%202026-11-19%20at%2000.46.27%402x.png" alt="Vremenski prikaz preklapanja pet HTTP-zahtjeva" width="50%"></a>
 
-> Shematski prikaz, nije stvarno mjerenje. Zahtjevi započinju približno zajedno, ali mogu završiti različitim redoslijedom.
+> **Slika 12.** Shematski prikaz, nije stvarno mjerenje. Zahtjevi započinju približno zajedno, ali mogu završiti različitim redoslijedom.
 
-<hr>
+### 2.2.4. Mjerenja vremena konkurentnih HTTP zahtjeva
 
-Ako se prisjetite, prosječno vrijeme trajanja programa s 5 činjenica iznosilo je od 1 do 2 sekunde, ali tada smo imali i ispisivanje: `print("Šaljemo n. zahtjev...")` u svakoj iteraciji.
-
-Dodat ćemo i ovdje `print` naredbu prije ispisa činjenice i izmjeriti vrijeme koristeći `time` modul:
+U sekvencijalnom primjeru dohvat pet činjenica trajao je od jedne do dvije sekunde. Usporedimo ga s konkurentnim dohvatom. Na početku svake korutine ispišimo poruku kako bismo u terminalu vidjeli kada zahtjev kreće, a kada stiže odgovor.
 
 ```python
 async def get_cat_fact(session):
@@ -1022,7 +1021,7 @@ async def get_cat_fact(client):
 
 I bez dodavanja `time` modula odmah vidimo razliku u terminalu! Prije smo imali **sekvencijalno slanje jednog zahtjeva za drugim i čekanje na odgovor prije slanja sljedećeg zahtjeva**:
 
-**Sinkrono slanje HTTP-zahtjeva (_requests_):**
+**Sinkrono slanje HTTP-zahtjeva:**
 
 ```plaintext
 Šaljemo 1. zahtjev...
@@ -1088,54 +1087,19 @@ async def main():
 asyncio.run(main())
 ```
 
-_Primjer ispisa:_
-
-```plaintext
-Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
-Cats have "nine lives" thanks to a flexible spine and powerful leg and back muscles
-Cats' eyes shine in the dark because of the tapetum, a reflective layer in the eye, which acts like a mirror.
-The oldest cat on record was Crème Puff from Austin, Texas, who lived from 1967 to August 6, 2005, three days after her 38th birthday. A cat typically can live up to 20 years, which is equivalent to about 96 human years.
-When a cats rubs up against you, the cat is marking you with it's scent claiming ownership.
-Cats see six times better in the dark and at night than humans.
-
-Izvršavanje programa traje 0.27 s.
-```
-
-Vidimo da se vrijeme izvršavanja programa na ovom jednostavnom primjeru slanja 5 zahtjeva **smanjilo s ~1,26 s na ~0,27 s**.
-
-Razliku možemo izraziti i u postocima:
+U prikazanom mjerenju pet sekvencijalnih zahtjeva trajalo je 1,26 s, a pet konkurentnih 0,27 s. **Postotno smanjenje vremena** računamo u odnosu na početno, sekvencijalno vrijeme:
 
 $$
-\frac{sekvencijalnoVrijeme - konkurentnoVrijeme}{sekvencijalnoVrijeme} \times 100
+\frac{1{,}26 - 0{,}27}{1{,}26} \times 100\,\% \approx 78{,}57\,\%
 $$
 
-odnosno:
+**Faktor ubrzanja** dobijemo dijeljenjem sekvencijalnog vremena konkurentnim:
 
 $$
-\frac{1{,}26 - 0{,}27}{1{,}26} \times 100 \approx 78{,}57\,\%
+\frac{1{,}26}{0{,}27} \approx 4{,}67
 $$
 
-Dakle, **konkurentni se kod izvršio otprilike 78,57 % brže od sinkronog**!
-
-> Naravno, ovi izračuni ovise o mrežnim uvjetima i opterećenju poslužitelja, ali i o brzini CPU-a na kojem se konkurentna obrada odvija. Ipak, gotovo uvijek možemo očekivati značajno poboljšanje vremena izvođenja jer bolje iskorištavamo CPU-vrijeme.
-
-<hr>
-
-Ako podijelimo staro vrijeme izvršavanja novim, vidimo da je **konkurentni kod gotovo 5 puta brži od sinkronog**.
-
-$$
-\frac{sekvencijalnoVrijeme}{konkurentnoVrijeme}
-$$
-
-$$
-\frac{1{,}26}{0{,}27} = 4{,}67
-$$
-
-<hr>
+Dok jedna korutina čeka odgovor, druge mogu poslati svoje zahtjeve. Zbog tog preklapanja program može završiti ranije. Izmjereno ubrzanje ovisi o mrežnim uvjetima i opterećenju poslužitelja.
 
 <div style="page-break-after: always; break-after: page;"></div>
 
@@ -1198,9 +1162,9 @@ The name "jaguar" comes from a Native American word meaning "he who kills with o
 Izvršavanje programa traje 0.61 s.
 ```
 
-> Vidimo da se vrijeme izvršavanja programa s 15 zahtjeva **smanjilo s 3–4 s na 0,61 s**. Ovdje nam je također program gotovo 5 puta brži, odnosno poboljšanje je ~80 %.
+> Za 15 zahtjeva sekvencijalno izvođenje trajalo je od 3 do 4 s, a konkurentno 0,61 s. Za početno vrijeme od 3 s faktor ubrzanja iznosi 3 / 0,61 ≈ 4,92, a za 4 s iznosi 4 / 0,61 ≈ 6,56. To odgovara smanjenju vremena izvođenja od približno **80 do 85 %**.
 
-### 2.2.4. Konkurentna obrada HTTP-zahtjeva (`asyncio.Task`)
+### 2.2.5. Konkurentna obrada HTTP-zahtjeva (`asyncio.Task`)
 
 Naučili smo kako koristiti `asyncio.gather` funkciju za konkurentno izvođenje korutina. Međutim, u prošloj smo skripti rekli da možemo definirati i tzv. **Taskove** koji predstavljaju eventualni rezultat izvršavanja korutina unutar _event loopa_.
 
@@ -1318,7 +1282,11 @@ asyncio.run(main())
 Rezultat je lista činjenica:
 
 ```plaintext
-['The Maine Coone is the only native American long haired breed.', 'The Amur leopard is one of the most endangered animals in the world.', "A cat's normal pulse is 140-240 beats per minute, with an average of 195.", 'The cat has 500 skeletal muscles (humans have 650).', 'A happy cat holds her tail high and steady.']
+['The Maine Coone is the only native American long haired breed.',
+'The Amur leopard is one of the most endangered animals in the world.',
+"A cat's normal pulse is 140-240 beats per minute, with an average of 195.",
+'The cat has 500 skeletal muscles (humans have 650).',
+'A happy cat holds her tail high and steady.']
 
 Izvršavanje programa traje 0.27 s.
 ```
@@ -1400,7 +1368,7 @@ Ako se prisjetimo ilustracije konkurentnog izvođenja na samom početku skripte 
 <details>
   <summary>Spoiler alert! Odgovor na pitanje</summary>
   <p>
-    U ovom primjeru <code>asyncio.create_task</code> raspoređuje svaku korutinu za izvršavanje. Ispis unutar korutine pokazuje kada je obrađen pojedini odgovor. Lista koju vraća <code>asyncio.gather</code> zadržava redoslijed predanih zadataka.
+    U ovom primjeru <code>asyncio.create_task</code> raspoređuje svaku korutinu za izvršavanje. Ispis unutar korutine pokazuje kada je obrađen pojedini odgovor. Lista koju vraća <code>asyncio.gather</code> <b>zadržava redoslijed predanih zadataka</b>.
   </p>
   <p>
     Budući da korutine traju različito zbog mrežne obrade, njihovi se rezultati vraćaju u različitim trenucima. Zbog toga <i>event loop</i> aktivira pojedine korutine onim redoslijedom kojim pristižu HTTP-odgovori.
@@ -1411,32 +1379,34 @@ Ako se prisjetimo ilustracije konkurentnog izvođenja na samom početku skripte 
 
 <div style="page-break-after: always; break-after: page;"></div>
 
-## 2.3. Timeout mrežnih operacija i obrada iznimki
+## 2.3. Timeout mrežnih operacija i obrada iznimki (`asyncio.wait_for`)
 
 Kada radimo s mrežnim operacijama, **uvijek postoji mogućnost da dođe do kašnjenja ili prekida veze**. Zbog toga je važno postaviti vremenska ograničenja (_timeout_) za naše mrežne zahtjeve kako bismo spriječili da naš program "visi" čekajući odgovor koji možda nikada neće stići.
 
 Zadano je ponašanje funkcije `asyncio.gather` da čeka završetak svih korutina, bez vremenskog ograničenja. Ovo može biti praktično, ali i opasno ako neka od korutina traje predugo zbog mrežnih problema.
 
-Primjer: Naš raspodijeljeni sustav za praćenje prometa motornih vozila šalje zahtjeve na različite _monitoring_ kamere instalirane na cestama na udaljenim lokacijama. Postoje mikroservisi za svaku kameru koji obrađuju slike i imaju REST API za dohvaćanje podataka kako bi komunicirali s glavnim sustavom. Zamislite da je glavni sustav u stvari naša `main` korutina koja šalje zahtjeve na različite kamere koristeći `asyncio.gather` funkciju, pri čemu svaki zahtjev predstavlja korutinu koja šalje HTTP-zahtjev na različite API-je kamera.
+> Primjer: Naš raspodijeljeni sustav za praćenje prometa motornih vozila šalje zahtjeve na različite _monitoring_ kamere instalirane na cestama na udaljenim lokacijama. Postoje mikroservisi za svaku kameru koji obrađuju slike i imaju REST API za dohvaćanje podataka kako bi komunicirali s glavnim sustavom. Zamislite da je glavni sustav u stvari naša `main` korutina koja šalje zahtjeve na različite kamere koristeći `asyncio.gather` funkciju, pri čemu svaki zahtjev predstavlja korutinu koja šalje HTTP-zahtjev na različite API-je kamera.
 
-Neke su kamere udaljenije, na nepovoljnijim geografskim lokacijama, te je veća vjerojatnost da će doći do mrežnih problema ili kašnjenja.
+> Neke su kamere udaljenije, na nepovoljnijim geografskim lokacijama, te je veća vjerojatnost da će doći do mrežnih problema ili kašnjenja.
 
-Kako mi ne možemo pravilno obraditi podatke bez svih odgovora (podataka svih kamera), a opet ne želimo da naš glavni sustav "visi" čekajući odgovore koji možda nikada neće stići, možemo postaviti vremensko ograničenje za svaki zahtjev.
+> Kako mi ne možemo pravilno obraditi podatke bez svih odgovora (podataka svih kamera), a opet ne želimo da naš glavni sustav "visi" čekajući odgovore koji možda nikada neće stići, možemo postaviti vremensko ograničenje za svaki zahtjev.
+
+![alt text](<CleanShot 2026-11-19 at 00.52.45@2x.png>)
 
 To možemo postići korištenjem `asyncio.wait_for` funkcije koja omogućuje postavljanje vremenskog ograničenja za izvršavanje korutine. Ako korutina ne završi unutar zadanog vremena, podići će se iznimka `asyncio.TimeoutError`.
 
-Sintaksa:
+**Sintaksa:**
 
 ```python
 await asyncio.wait_for(coroutine, timeout)
 ```
 
-- coroutine: korutina koju želimo izvršiti s vremenskim ograničenjem
-- timeout: maksimalno vrijeme (u sekundama) koje korutina smije trajati
+- `coroutine`: korutina koju želimo izvršiti s vremenskim ograničenjem
+- `timeout`: maksimalno vrijeme (u sekundama) koje korutina smije trajati
 
 Iznimke u Pythonu možemo podići (simulirati) i sami, naredbom `raise`:
 
-Sintaksa:
+**Sintaksa:**
 
 ```python
 raise ExceptionType("poruka o grešci")
@@ -1444,7 +1414,7 @@ raise ExceptionType("poruka o grešci")
 
 - gdje `ExceptionType` predstavlja tip iznimke koju želimo podići (npr. `ValueError`, `TimeoutError` itd.)
 
-Definirat ćemo nekoliko korutina koje simuliraju mrežne operacije naših mikroservisa za praćenje prometa motornih vozila.
+*Primjer: *Definirat ćemo nekoliko korutina koje simuliraju mrežne operacije naših mikroservisa za praćenje prometa motornih vozila.
 
 ```python
 import asyncio
@@ -1485,6 +1455,8 @@ Data from camera 1 fetched.
 Data from camera 2 fetched.
 An error occurred while fetching camera data: Camera 3 is unreachable!
 ```
+
+![alt text](<CleanShot 2026-11-19 at 00.56.21@2x.png>)
 
 Možemo simulirati situaciju da zahtjev kamere 3 traje predugo, npr. 20 sekundi, ali će podatak ipak naposljetku stići:
 
