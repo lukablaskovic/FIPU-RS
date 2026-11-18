@@ -46,9 +46,9 @@ Do sada smo sve primjere temeljili na simuliranim I/O-operacijama koristeći `as
     - [2.2.5. Konkurentna obrada HTTP-zahtjeva (`asyncio.Task`)](#225-konkurentna-obrada-http-zahtjeva-asynciotask)
   - [2.3. Timeout mrežnih operacija i obrada iznimki (`asyncio.wait_for`)](#23-timeout-mrežnih-operacija-i-obrada-iznimki-asynciowait_for)
 - [3. Zadaci za vježbu: konkurentna obrada mrežnih operacija i simulacije grešaka](#3-zadaci-za-vježbu-konkurentna-obrada-mrežnih-operacija-i-simulacije-grešaka)
-  - [Zadatak 1: fetch_users i izdvajanje podataka](#zadatak-1-fetch_users-i-izdvajanje-podataka)
-  - [Zadatak 2: filter_cat_facts](#zadatak-2-filter_cat_facts)
-  - [Zadatak 3: mix_dog_cat_facts](#zadatak-3-mix_dog_cat_facts)
+  - [Zadatak 1: fetch\_users i izdvajanje podataka](#zadatak-1-fetch_users-i-izdvajanje-podataka)
+  - [Zadatak 2: filter\_cat\_facts](#zadatak-2-filter_cat_facts)
+  - [Zadatak 3: mix\_dog\_cat\_facts](#zadatak-3-mix_dog_cat_facts)
   - [Zadatak 4: simulacija autentifikacije korisnika](#zadatak-4-simulacija-autentifikacije-korisnika)
   - [Zadatak 5: pretvorba sinkronog koda u asinkroni](#zadatak-5-pretvorba-sinkronog-koda-u-asinkroni)
   - [Zadatak 6: simulacija raspodijeljenog sustava za dohvaćanje i obradu vremenskih podataka](#zadatak-6-simulacija-raspodijeljenog-sustava-za-dohvaćanje-i-obradu-vremenskih-podataka)
@@ -1393,6 +1393,8 @@ Zadano je ponašanje funkcije `asyncio.gather` da čeka završetak svih korutina
 
 ![alt text](<CleanShot 2026-11-19 at 00.52.45@2x.png>)
 
+> Ilustracija primjera s kamerama.  
+
 To možemo postići korištenjem `asyncio.wait_for` funkcije koja omogućuje postavljanje vremenskog ograničenja za izvršavanje korutine. Ako korutina ne završi unutar zadanog vremena, podići će se iznimka `asyncio.TimeoutError`.
 
 **Sintaksa:**
@@ -1457,6 +1459,8 @@ An error occurred while fetching camera data: Camera 3 is unreachable!
 ```
 
 ![alt text](<CleanShot 2026-11-19 at 00.56.21@2x.png>)
+
+> Svih pet korutina započinje konkurentno. Svaka kamera ima različito trajanje simuliranog mrežnog zahtjeva, ali **kamera 3 nakon 6 sekundi podiže iznimku**.
 
 Možemo simulirati situaciju da zahtjev kamere 3 traje predugo, npr. 20 sekundi, ali će podatak ipak naposljetku stići:
 
