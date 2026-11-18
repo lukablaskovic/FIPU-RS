@@ -23,17 +23,19 @@ Do sada smo sve primjere temeljili na simuliranim I/O-operacijama koristeći `as
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 18.11.2026.**
+**🆙 Posljednje ažurirano: 19.11.2026.**
 
 ## Sadržaj
 
 - [Raspodijeljeni sustavi (RS - 273470)](#raspodijeljeni-sustavi-rs---273470)
 - [(4) Asinkroni Python: Konkurentna obrada mrežnih operacija](#4-asinkroni-python-konkurentna-obrada-mrežnih-operacija)
   - [Sadržaj](#sadržaj)
-- [1. HTTP (HyperText Transfer Protocol) protokol](#1-http-hypertext-transfer-protocol-protokol)
-  - [1.1. Osnove HTTP-protokola](#11-osnove-http-protokola)
-    - [1.1.1. Struktura HTTP-zahtjeva](#111-struktura-http-zahtjeva)
-    - [1.1.2. Struktura HTTP-odgovora](#112-struktura-http-odgovora)
+- [1. HTTP (Hypertext Transfer Protocol)](#1-http-hypertext-transfer-protocol)
+  - [1.1. HTTP u raspodijeljenim sustavima](#11-http-u-raspodijeljenim-sustavima)
+  - [1.2. Osnove HTTP-protokola](#12-osnove-http-protokola)
+    - [1.2.1. Struktura HTTP-zahtjeva](#121-struktura-http-zahtjeva)
+    - [1.2.2. Struktura HTTP-odgovora](#122-struktura-http-odgovora)
+  - [1.3. HTTP statusni kodovi](#13-http-statusni-kodovi)
 - [2. Konkurentna obrada mrežnih operacija pomoću `aiohttp` biblioteke](#2-konkurentna-obrada-mrežnih-operacija-pomoću-aiohttp-biblioteke)
   - [2.1. Kako šaljemo HTTP-zahtjeve sinkrono (`requests`)?](#21-kako-šaljemo-http-zahtjeve-sinkrono-requests)
   - [2.2. Kako šaljemo HTTP-zahtjeve konkurentno (`aiohttp`)?](#22-kako-šaljemo-http-zahtjeve-konkurentno-aiohttp)
@@ -52,50 +54,76 @@ Do sada smo sve primjere temeljili na simuliranim I/O-operacijama koristeći `as
 
 <div style="page-break-after: always; break-after: page;"></div>
 
-# 1. HTTP (HyperText Transfer Protocol) protokol
+# 1. HTTP (Hypertext Transfer Protocol)
 
 HTTP-protokol dominantan je mrežni protokol na aplikacijskoj razini (_application-level protocol_) koji se koristi u modernim web-aplikacijama i _web-facing_ raspodijeljenim sustavima. Predstavlja jednostavan, ali snažan _real-world_ mehanizam za razmjenu podataka između nezavisnih čvorova u sustavu.
 
 HTTP je **_request-response_** protokol osmišljen prema modelu _klijent-poslužitelj_ ([client-server model](https://en.wikipedia.org/wiki/Client%E2%80%93server_model)).
 
 - **Klijent** (_engl. client_) inicira komunikaciju slanjem HTTP-zahtjeva poslužitelju radi dohvaćanja, slanja ili izmjene resursa.
-- **Poslužitelj** (_engl. server_) prima HTTP-zahtjev, obrađuje ga i vraća HTTP-odgovor klijentu s traženim podacima ili statusom operacije.
+- **Poslužitelj** (_engl. server_) prima HTTP-zahtjev, obrađuje ga i klijentu vraća HTTP-odgovor koji sadrži statusni kod, a može sadržavati i tražene podatke.
 
-> Podsjetnik: Na kolegiju Web aplikacije klijent nam je bila Vue.js web-aplikacija koja se izvodi u web-pregledniku, dok je poslužitelj bio Node.js Express server koji je obrađivao HTTP-zahtjeve i komunicirao s bazom podataka MongoDB. U kontekstu raspodijeljenih sustava **klijent i poslužitelj mogu biti bilo koji čvorovi u mreži koji koriste HTTP za međusobnu komunikaciju** – nismo više ograničeni na klasični model klijent-poslužitelj.
+> Podsjetnik: Na kolegiju Web aplikacije klijent nam je bila Vue.js web-aplikacija koja se izvodi u web-pregledniku, dok je poslužitelj bio Node.js Express server koji je obrađivao HTTP-zahtjeve i komunicirao s bazom podataka MongoDB. U raspodijeljenom sustavu **isti servis može imati obje uloge**. Kad Express primi zahtjev Vue.js aplikacije, ima ulogu poslužitelja. Kad pošalje HTTP-zahtjev drugom servisu, u toj je razmjeni klijent.
 
-HTTP je u [svojim počecima](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Evolution_of_HTTP) (90-ih) bio namijenjen isključivo za prijenos hipertekstualnih dokumenata (HTML-stranica) između web-preglednika i web-poslužitelja. Međutim, s vremenom je evoluirao u univerzalni protokol za komunikaciju između različitih vrsta _service-oriented_ arhitektura, evoluirajući u industrijski standard _general-purpose application-layer_ mrežnog protokola za **prijenos gotovo svih vrsta podataka**, uključujući JSON, XML, slike, audio, video i druge binarne formate.
+**Kratka povijest HTTP-a**:
+
+Prva verzija HTTP-a, [HTTP/0.9](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Evolution_of_HTTP), služila je za prijenos HTML-stranica. HTTP/1.0 uveo je zaglavlje `Content-Type` kojim se označava vrsta sadržaja. Danas se HTTP koristi za prijenos HTML-a, JSON-a, XML-a, slika, zvuka, videa i drugih vrsta podataka.
 
 <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/ea6e5a8f96a04c8f882ac73813a8d303e64fb890/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/fetching-a-page.svg" style="width:50%; box-shadow: none !important; "></img>
 
-> HTTP-zahtjevima mogu se "dohvatiti" preko mreže razni resursi s različitih poslužitelja.
+> **Slika 1.** HTTP-zahtjevima mogu se "dohvatiti" preko mreže razni resursi s različitih poslužitelja.
 
-#### Zašto učimo HTTP u kontekstu raspodijeljenih sustava? <!-- omit in toc -->
+## 1.1. HTTP u raspodijeljenim sustavima
 
-Većina suvremenih raspodijeljenih sustava, uključujući mikroservise (AWS, Azure Functions, Google Cloud Functions), sučelja REST API-ja, _serverless_ arhitekture i web-servise, koristi HTTP kao primarni komunikacijski protokol. HTTP je **široko prihvaćen**, **implementiran** i detaljno **dokumentiran** u gotovo svim modernim programskim jezicima, operacijskim sustavima, platformama i cloud okruženjima.
+Mnogi web-servisi i mikroservisi koriste HTTP za međusobnu komunikaciju. HTTP je **široko prihvaćen**, **implementiran** i detaljno **dokumentiran** u gotovo svim modernim programskim jezicima, operacijskim sustavima, platformama i cloud okruženjima.
 
 **Primjeri korištenja HTTP-protokola u raspodijeljenim sustavima:**
 
-- mikroservisi često koriste sučelja REST ili gRPC preko protokola HTTP/2
-- sve moderne cloud platforme (AWS, Azure, Google Cloud) nude HTTP/HTTPS _endpointove_ za svoje funkcije i servise
-- _serverless_ "okidači" često se temelje na HTTP-zahtjevima
-- IoT-platforme redovito koriste HTTPS za sigurno upravljanje uređajima
-- web-aplikacije i moderne SPA (_Single Page Applications_) koriste HTTP za komunikaciju s _backend_ servisima
+| Primjer                      | Opis                                                                                                                                          |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Web-aplikacije               | Preglednik šalje HTTP-zahtjeve poslužitelju kako bi dohvatio web-stranice i podatke.                                                          |
+| REST API                     | Aplikacije i servisi razmjenjuju podatke koristeći HTTP-metode poput `GET`, `POST`, `PUT` i `DELETE`.                                         |
+| Mikroservisi                 | Neovisni servisi unutar iste raspodijeljene aplikacije komuniciraju putem HTTP-a.                                                             |
+| Servisi u oblaku             | Aplikacije putem HTTP API-ja pohranjuju datoteke i upravljaju resursima u oblaku.                                                             |
+| IoT sustavi                  | Senzori i pametni uređaji šalju podatke udaljenim poslužiteljima putem HTTP-a.                                                                |
+| Raspodijeljene baze podataka | Neki sustavi za pohranu i pretraživanje podataka, poput Elasticsearcha, omogućuju pristup podacima i upravljanje indeksima putem HTTP API-ja. |
 
-Naravno, **HTTP nije jedini protokol koji se koristi u raspodijeljenim sustavima**. _Domain-specific_ protokoli često su bolje prilagođeni određenim scenarijima, ali su često i složeniji za kvalitetnu implementaciju i održavanje. Evo nekoliko primjera drugih protokola:
+**Protokoli i komunikacijski okviri u raspodijeljenim sustavima**
 
-- _message Queue/Event Streams_ protokoli poput protokola AMQP (RabbitMQ), MQTT (dominantan u IoT-sustavima) i Kafka (Apache Kafka)
-- baze podataka gotovo uvijek koriste vlastite protokole za komunikaciju klijenta i poslužitelja (npr. PostgreSQL, MySQL, MongoDB)
-- RPC ([remote procedure call](https://en.wikipedia.org/wiki/Remote_procedure_call)) protokoli poput gRPC-a (koji koristi HTTP/2 kao transport) ili Thrifta (koji podržava različite transportne mehanizme)
-- protokoli niske latencije, poput WebSocketa za dvosmjernu komunikaciju u stvarnom vremenu, te razni _custom_ UDP-based protokoli u _real-time_ aplikacijama, _gaming_ poslužiteljima, streaming platformama i sl.
-- distribuirani klasteri i sustavi za pohranu često koriste vlastite protokole za internu komunikaciju (npr. Cassandra, Hadoop HDFS)
+| Protokol ili okvir            | Osnovna namjena                                                                | Primjeri primjene                                                              |
+| ----------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| HTTP/HTTPS                    | Razmjena zahtjeva i odgovora između klijenta i poslužitelja                    | REST API-ji, mikroservisi, web-aplikacije                                      |
+| TCP                           | Pouzdan prijenos podataka uspostavljenom vezom uz očuvanje redoslijeda bajtova | HTTP/1.1, HTTP/2, povezivanje s bazama podataka, RPC                           |
+| UDP                           | Prijenos datagrama bez prethodne uspostave veze                                | Mrežne igre, DNS upiti, QUIC                                                   |
+| WebSocket                     | Dvosmjerna razmjena poruka preko trajne veze                                   | Razgovor uživo, obavijesti, ažuriranje nadzornih ploča                         |
+| gRPC                          | Udaljeni pozivi procedura (RPC) preko HTTP/2                                   | Pozivanje funkcija jednog mikroservisa iz drugoga                              |
+| AMQP                          | Pouzdana asinkrona razmjena poruka                                             | Redovi poruka i obrada pozadinskih zadataka uz RabbitMQ                        |
+| MQTT                          | Razmjena poruka objavom i pretplatom na teme uz mali komunikacijski trošak     | IoT uređaji, senzori, telemetrija                                              |
+| HTTP/3 (QUIC)                 | Razmjena HTTP zahtjeva i odgovora preko QUIC-a, koji koristi UDP               | Web-aplikacije i API-ji koji podržavaju HTTP/3                                 |
+| DNS                           | Razrješavanje naziva domena i pronalaženje servisa                             | Dohvat IP adrese poslužitelja ili pronalaženje poslužitelja za određeni servis |
+| Protokol sustava Apache Kafka | Objava i čitanje tokova događaja u raspodijeljenom sustavu                     | Arhitekture vođene događajima, povezivanje faza obrade podataka                |
 
-#### HTTP je _stateless_ protokol <!-- omit in toc -->
+### HTTP je _stateless_ protokol <!-- omit in toc -->
 
-HTTP je [_stateless_ protokol](https://en.wikipedia.org/wiki/Stateless_protocol) ("ne pamti stanje prethodnih zahtjeva"), što je iznimno pogodno za učenje raspodijeljenih sustava u kojima su neovisnost čvorova i idempotentnost operacija ključni koncepti. [Idempotentnost](https://en.wikipedia.org/wiki/Idempotence) znači da se **višestrukim izvršavanjem iste operacije postiže isti rezultat kao i jednim pozivom**. U kontekstu HTTP-a to podrazumijeva da ponavljanje istog zahtjeva neće promijeniti stanje resursa nakon prvog izvršenja — iako to **ovisi o korištenoj HTTP-metodi** (npr. metode `GET` i `DELETE` idempotentne su, dok `POST` nije).
+HTTP je [_stateless_ protokol](https://www.rfc-editor.org/rfc/rfc9110.html#section-3.3). To znači da se svaki zahtjev može protumačiti neovisno o prethodnim zahtjevima na istoj vezi. Aplikacija pritom može čuvati stanje, primjerice korisničku sesiju.
 
-**Otpornost na greške** ([_engl. Fault tolerance_](https://en.wikipedia.org/wiki/Fault_tolerance)) jednako je važna u raspodijeljenim sustavima. HTTP, kao i mnogi drugi protokoli, nudi mehanizme za signaliziranje grešaka putem statusnih kodova, čime omogućuje klijentima pravovremenu reakciju i oporavak od privremenih problema u mreži ili na poslužitelju.
+<img src="./screenshots/http-autentifikacija-tokenom.png" alt="Prijava korisnika i dohvat profila uz autentifikacijski token" width="50%">
 
-#### Analiza HTTP-zahtjeva pokazuje gdje se u stvarnim I/O-operacijama javljaju uska grla <!-- omit in toc -->
+> **Slika 2.** Ilustracija autentifikacije i dohvaćanja korisničkih podataka na endpointu `/profile`. Nakon prvog zahtjeva (prijava), ne mora značiti da će poslužitelj zapamtiti korisnika i da će svaki sljedeći zahtjev biti autoriziran. U token-based API sustavima, klijent mora poslati valjani token u svakom sljedećem HTTP-zahtjevu kako bi poslužitelj mogao autorizirati korisnika.
+
+[Idempotentnost](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) znači da **ponavljanje istog zahtjeva ima isti namjeravani učinak na poslužitelju kao i jedan zahtjev**. Metode `GET`, `PUT` i `DELETE` idempotentne su, dok za `POST` to ovisi o konkretnoj operaciji. Primjerice, prvi zahtjev `DELETE /korisnici/42` može vratiti `204 No Content`, a ponovljeni `404 Not Found`. U oba slučaja korisnik nakon zahtjeva više ne postoji.
+
+<img src="./screenshots/http-idempotentnost.png" alt="Učinak ponovljenih zahtjeva PUT i POST" width="50%">
+
+> **Slika 3.** PUT je idempotentan jer ponovljeni zahtjevi s istim podacima neće promijeniti stanje resursa `products`, odnosno operacija ažuriranja cijene proizvoda na 10€ (PUT /products/1 {"price": 10}) neće imati dodatni učinak na stanje resursa. S druge strane, `POST /orders` nije idempotentan jer ponovljeni zahtjevi mogu stvoriti više narudžbi.
+
+Za [**otpornost na pogreške**](https://en.wikipedia.org/wiki/Fault_tolerance) (_engl. fault tolerance_) važno je razlikovati primitak odgovora od isteka vremena čekanja. Statusnim kodom `503 Service Unavailable` poslužitelj javlja da privremeno ne može obraditi zahtjev. Ako nakon slanja zahtjeva `POST /narudzbe` istekne vrijeme čekanja, poslužitelj je možda već izradio narudžbu. Ponavljanjem zahtjeva klijent tada može izraditi još jednu.
+
+<img src="./screenshots/http-istek-vremena.png" alt="Ponavljanje zahtjeva za izradu narudžbe nakon isteka vremena čekanja" width="50%">
+
+> **Slika 4.** U slučaju isteka vremena čekanja, klijent ne zna je li poslužitelj obradio zahtjev ili ne. Ako je poslužitelj već izradio narudžbu, ponovljeni zahtjev može stvoriti dupliciranu narudžbu ako nema implementiran mehanizam za provjeru dupliciranih zahtjeva.
+
+### Analiza HTTP-zahtjeva pokazuje gdje se u stvarnim I/O-operacijama javljaju uska grla <!-- omit in toc -->
 
 U radu s mrežnim operacijama često se susrećemo s uskim grlima koja mogu znatno utjecati na performanse. Mrežne su operacije sporije od operacija u memoriji ili na disku zbog latencije, ograničene propusnosti, zagušenja mreže i drugih faktora (više o tome na predavanjima iz kolegija).
 
@@ -117,9 +145,9 @@ Ovo čini HTTP idealnim za učenje i demonstraciju sljedećih koncepata:
 - _fault tolerancea_
 - propagacije kvarova (_failure propagation_)
 
-**Zaključno**: HTTP predstavlja jednostavan i nenametljiv protokol, lako razumljiv te pogodan za implementaciju u raznim programskim jezicima, a pritom osigurava jasan i predvidljiv komunikacijski model između klijenta i poslužitelja. U kontekstu raspodijeljenih sustava preporučljivo je započeti upravo s HTTP-om prije razmatranja složenijih rješenja poput gRPC-a, WebSocketa ili Raft RPC-a.
+**Zaključno**: HTTP predstavlja jednostavan i nenametljiv protokol, lako razumljiv te pogodan za implementaciju u raznim programskim jezicima, a pritom osigurava jasan i predvidljiv komunikacijski model između klijenta i poslužitelja. U kontekstu raspodijeljenih sustava preporučljivo je započeti upravo s HTTP-om prije razmatranja složenijih rješenja poput gRPC-a ili WebSocketa.
 
-## 1.1. Osnove HTTP-protokola
+## 1.2. Osnove HTTP-protokola
 
 Tipičan komunikacijski model HTTP-a (**klijent ↔ poslužitelj**) temelji se na razmjeni HTTP-zahtjeva i HTTP-odgovora.
 
@@ -129,14 +157,13 @@ Tipičan komunikacijski model HTTP-a (**klijent ↔ poslužitelj**) temelji se n
 
 <img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/http-protocol.png?raw=true" style="width:50%; box-shadow: none !important; "></img>
 
-> Komunikacijski model HTTP-a: klijent šalje HTTP-zahtjev poslužitelju, koji obrađuje zahtjev i vraća HTTP-odgovor klijentu.
+> **Slika 5.** Komunikacijski model HTTP-a: klijent šalje HTTP-zahtjev poslužitelju, koji obrađuje zahtjev i vraća HTTP-odgovor klijentu.
 
-### 1.1.1. Struktura HTTP-zahtjeva
+### 1.2.1. Struktura HTTP-zahtjeva
 
 - **Metoda** (_engl. method_): označava tip operacije koju klijent želi izvršiti nad resursom (npr. `GET`, `POST`, `PUT`, `PATCH`, `DELETE`).
 
 - **URL** (_engl. Uniform Resource Locator_): specificira lokaciju resursa na poslužitelju (npr. `https://api.github.com/users/neki_korisnik`). Sastoji se od sljedećih komponenti:
-
   - **Shema** (_engl. scheme_): definira protokol komunikacije (npr. `https`).
   - **Domena** (_engl. domain_): predstavlja naziv poslužitelja (npr. `api.github.com`).
   - **Route parametar** (_engl. route parameter_): opisuje dinamički dio putanje koji često identificira pojedini resurs (npr. `/users/:id`).
@@ -151,7 +178,7 @@ Tipičan komunikacijski model HTTP-a (**klijent ↔ poslužitelj**) temelji se n
 
 <img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/http-request.png?raw=true" style="width:60%; box-shadow: none !important; "></img>
 
-> Struktura HTTP-zahtjeva: metoda, URL, zaglavlja i tijelo zahtjeva.
+> **Slika 6.** Struktura HTTP-zahtjeva: metoda, URL, zaglavlja i tijelo zahtjeva.
 
 **Najčešće korištene HTTP-metode** imaju [jasno definirane semantike](https://dzone.com/articles/rest-and-http-semantics) i koriste se u skladu **s namjerom operacije nad resursom**:
 
@@ -253,7 +280,7 @@ _Primjer:_ HTTP-zahtjev koji zamjenjuje sve podatke o korisniku `pero_peric`:
 
 > Iz navedenih primjera uočite dijelove HTTP-zahtjeva: metodu, URL, zaglavlja i tijelo zahtjeva.
 
-### 1.1.2. Struktura HTTP-odgovora
+### 1.2.2. Struktura HTTP-odgovora
 
 - **Statusna linija** (_engl. status line_): uključuje **statusni kod** i pripadajuću **tekstualnu poruku** (npr. `200 OK`), pri čemu brojčana vrijednost (`200`) označava rezultat obrade zahtjeva, a tekstualni opis (`OK`) pruža kratko objašnjenje stanja.
 - **Zaglavlja** (_engl. headers_): pružaju **dodatne informacije o odgovoru**, poput formata podataka, duljine sadržaja ili informacija o keširanju (npr. `Content-Type: application/json`).
@@ -262,47 +289,37 @@ _Primjer:_ HTTP-zahtjev koji zamjenjuje sve podatke o korisniku `pero_peric`:
 
 <img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/http-response.png?raw=true" style="width:50%; box-shadow: none !important; "></img>
 
-> Struktura HTTP-odgovora: statusna linija, zaglavlja i tijelo odgovora.
+> **Slika 7.** Struktura HTTP-odgovora: statusna linija, zaglavlja i tijelo odgovora.
 
-#### Statusni kodovi <!-- omit in toc -->
+## 1.3. HTTP statusni kodovi
 
-**Statusni kodovi** (_engl. HTTP status codes_) koriste se u HTTP-odgovorima kako bi klijent dobio jasnu informaciju o rezultatu obrađenog zahtjeva. Ako je zahtjev neispravan ili dođe do pogreške, poslužitelj vraća odgovarajući statusni kod koji opisuje vrstu problema.
+Statusni kod je troznamenkasti broj u HTTP-odgovoru. Prva znamenka označava skupinu kojoj kod pripada.
 
-Statusne kodove možemo grupirati u sljedeće kategorije:
+| Raspon          | Skupina                 | Značenje                                                                                                  |
+| --------------- | ----------------------- | --------------------------------------------------------------------------------------------------------- |
+| `1xx` (100–199) | Informacijski odgovori  | Klijent prima privremenu informaciju prije konačnog odgovora.                                             |
+| `2xx` (200–299) | Uspješni odgovori       | Poslužitelj je uspješno primio, razumio i prihvatio zahtjev.                                              |
+| `3xx` (300–399) | Preusmjeravanja         | Za dovršetak zahtjeva potreban je dodatni korak, primjerice slanje zahtjeva na novu adresu.               |
+| `4xx` (400–499) | Klijentske pogreške     | Poslužitelj ne može ispuniti zahtjev, primjerice zbog neispravnih podataka ili nedostatka prava pristupa. |
+| `5xx` (500–599) | Poslužiteljske pogreške | Pogreška na strani poslužitelja sprječava obradu zahtjeva.                                                |
 
-- **`1xx` (100–199) – Informacijski odgovori** (_engl. Informational responses_)  
-  Poslužitelj je primio zahtjev i nastavlja s njegovom obradom.
+**Najčešći statusni kodovi**
 
-- **`2xx` (200–299) – Uspješni odgovori** (_engl. Successful responses_)  
-  Zahtjev je uspješno primljen, razumljen i obrađen.
+| Statusni kod                | Značenje                                                | Primjer                                                             |
+| --------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------- |
+| `200 OK`                    | Zahtjev je uspješno obrađen.                            | `GET /proizvodi/1` vraća podatke o proizvodu.                       |
+| `201 Created`               | Stvoren je novi resurs.                                 | `POST /narudzbe` stvara narudžbu.                                   |
+| `204 No Content`            | Zahtjev je uspješno obrađen, a odgovor nema tijelo.     | Nakon brisanja proizvoda poslužitelj vraća samo zaglavlja i status. |
+| `301 Moved Permanently`     | Resurs je trajno premješten.                            | Zaglavlje `Location` upućuje na novu adresu.                        |
+| `400 Bad Request`           | Zahtjev je neispravan.                                  | Tijelo zahtjeva sadrži sintaksno neispravan JSON.                   |
+| `401 Unauthorized`          | Zahtjevu nedostaju valjani autentifikacijski podaci.    | Pristupni token za dohvat profila je istekao.                       |
+| `403 Forbidden`             | Poslužitelj je razumio zahtjev, ali ga odbija ispuniti. | Prijavljeni korisnik nema pravo obrisati tuđu narudžbu.             |
+| `404 Not Found`             | Poslužitelj nije pronašao traženi resurs.               | Klijent traži narudžbu s nepostojećim identifikatorom.              |
+| `409 Conflict`              | Zahtjev je u sukobu s trenutačnim stanjem resursa.      | Klijent pokušava izmijeniti narudžbu koja je već poslana.           |
+| `500 Internal Server Error` | Neočekivana pogreška spriječila je obradu zahtjeva.     | Pri obradi zahtjeva pojavila se neobrađena iznimka.                 |
+| `503 Service Unavailable`   | Poslužitelj privremeno ne može obraditi zahtjev.        | Servis je preopterećen ili je u tijeku održavanje.                  |
 
-- **`3xx` (300–399) – Preusmjeravanja** (_engl. Redirection messages_)  
-  Klijent mora poduzeti dodatne korake kako bi dovršio zahtjev, najčešće slijediti novu lokaciju resursa.
-
-- **`4xx` (400–499) – Klijentske pogreške** (_engl. Client error responses_)  
-  Zahtjev sadrži pogreške na strani klijenta (npr. neispravni podaci, nedostatna autorizacija).
-
-- **`5xx` (500–599) – Poslužiteljske pogreške** (_engl. Server error responses_)  
-  Poslužitelj je naišao na pogrešku prilikom obrade valjanog zahtjeva.
-
-Statusni kodovi standardiziraju komunikaciju između klijenta i poslužitelja, omogućujući klijentu da interpretira odgovor i poduzme odgovarajuće akcije ovisno o rezultatu.
-
-Popis svih statusnih kodova s njihovim objašnjenjima dostupan je u službenoj [Mozillinoj dokumentaciji](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
-
-### Najčešće korišteni statusni kodovi <!-- omit in toc -->
-
-- **`200 OK`** – Zahtjev je uspješno obrađen (npr. dohvat resursa putem GET-zahtjeva).
-- **`201 Created`** – Novi je resurs uspješno stvoren (npr. nakon POST-zahtjeva).
-- **`400 Bad Request`** – Zahtjev nije moguće obraditi zbog neispravnih ili nedostajućih podataka (npr. neispravan JSON-format).
-- **`404 Not Found`** – Traženi resurs ne postoji na poslužitelju (primjerice, pogrešan URL s dinamičkim parametrom).
-- **`500 Internal Server Error`** – Opća pogreška na poslužitelju, tipično uzrokovana greškom u kodu (iznimka na poslužitelju koja nije "uhvaćena").
-
-- **`401 Unauthorized`** – Klijent nije autentificiran te nema pristup resursu.
-- **`204 No Content`** – Zahtjev je uspješno obrađen, ali odgovor nema tijelo (npr. nakon uspješnog brisanja).
-- **`403 Forbidden`** – Klijent je autentificiran, ali nema odgovarajuća prava pristupa.
-- **`301 Moved Permanently`** – Resurs je trajno premješten na novu adresu.
-- **`503 Service Unavailable`** – Poslužitelj trenutno nije dostupan (npr. zbog preopterećenja ili održavanja).
-- **`409 Conflict`** – Zahtjev nije moguće obraditi zbog konflikta u stanju resursa (npr. prilikom ažuriranja zastarjelih podataka).
+Detaljnija objašnjenja dostupna su u [Mozillinu pregledu HTTP statusnih kodova](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
 
 ---
 
@@ -312,7 +329,7 @@ Popis svih statusnih kodova s njihovim objašnjenjima dostupan je u službenoj [
 
 # 2. Konkurentna obrada mrežnih operacija pomoću `aiohttp` biblioteke
 
-`aiohttp` (_Asynchronous HTTP Client/Server for asyncio and Python_) popularna je biblioteka za Python koja omogućuje **asinkrono programiranje HTTP-klijenata i poslužitelja u Pythonu**. Ova datoteka razvijena je na temelju `asyncio` biblioteke s kojom smo se već upoznali u skripti RS3.
+`aiohttp` (_Asynchronous HTTP Client/Server for asyncio and Python_) je biblioteka za Python koja omogućuje **asinkrono programiranje HTTP-klijenata i poslužitelja u Pythonu**. Ova datoteka razvijena je na temelju `asyncio` biblioteke s kojom smo se već upoznali u skripti RS3.
 
 `aiohttp` biblioteka omogućuje nam da jednostavno implementiramo asinkrone **klijente** i **poslužitelje** za HTTP u Pythonu, što je korisno u kontekstu razvoja i testiranja malih web-servisa koji zahtijevaju visoku propusnost. Dodatno, datoteka pruža podršku za [WebSocket protokol](https://en.wikipedia.org/wiki/WebSocket#:~:text=WebSocket%20is%20a%20computer%20communications,as%20RFC%206455%20in%202011.).
 
