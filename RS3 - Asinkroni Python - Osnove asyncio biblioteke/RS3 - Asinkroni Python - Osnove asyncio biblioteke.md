@@ -72,9 +72,15 @@ Međutim, konkurentnost je moguće ostvariti i kroz jednodretveni pristup – np
 - može se izvoditi na jednoj CPU-jezgri (`asyncio`) ili na više jezgri (`multithreading`)
 - konkurentnost je logička, ne fizička – više je stvari "u tijeku"
 
-![konkurentno_paralelno_razlike](https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS3%20-%20Asinkroni%20Python%20-%20Osnove%20asyncio%20biblioteke/screenshots/konkurentno_paralelno_razlike.png)
+![Konkurentno i paralelno izvršavanje zadataka](https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS3%20-%20Asinkroni%20Python%20-%20Osnove%20asyncio%20biblioteke/screenshots/konkurentno_paralelno_razlike.png)
+
+> **Slika 1.** Usporedba konkurentnog i paralelnog izvršavanja zadataka.
 
 > Napomena: Na ovom kolegiju dotaknut ćemo se prvenstveno **konkurentnog izvršavanja** kroz asinkrono programiranje koristeći `asyncio` biblioteku budući da se problemi u raspodijeljenim sustavima često odnose na učinkovito upravljanje I/O-operacijama, a ne na CPU-intenzivne zadatke.
+
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS3%20-%20Asinkroni%20Python%20-%20Osnove%20asyncio%20biblioteke/screenshots/konkurentnost-i-paralelizam.png" alt="Raspored zadataka na jednoj ili dvije procesorske jezgre" width="50%">
+
+> **Slika 2.** Četiri primjera raspoređivanja zadataka na jednoj ili dvije procesorske jezgre.
 
 ## 1.1. Korutine (engl. Coroutines)
 
@@ -226,13 +232,15 @@ Zašto jednu po jednu? Python nije striktno jednodretveni jezik (_engl. single-t
 
 <img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS3%20-%20Asinkroni%20Python%20-%20Osnove%20asyncio%20biblioteke/screenshots/event-loop-simplified-illustration.png?raw=true" style="width:70%;"></img>
 
-> Jednostavna ilustracija Python _event loopa_ koja prikazuje dvije korutine (`add(5,5)` i `add(3,4)`) koje se raspoređuju unutar _event loopa_ za konkurentno izvršavanje.
+> **Slika 3.** Jednostavna ilustracija Python _event loopa_ koja prikazuje dvije korutine (`add(5,5)` i `add(3,4)`) koje se raspoređuju unutar _event loopa_ za konkurentno izvršavanje.
 
 <hr>
 
 ### 1.2.1. Simpatična analogija za razumijevanje konkurentnog izvršavanja i mehanizma GIL-a u Pythonu
 
 <img src="./screenshots/GIL.png" style="width:90%;"></img>
+
+> **Slika 4.** Analogija za GIL u Pythonu: stanari dijele jedan mikrofon.
 
 Zamislite jednu zgradu s nekoliko stanova 🏢.
 
