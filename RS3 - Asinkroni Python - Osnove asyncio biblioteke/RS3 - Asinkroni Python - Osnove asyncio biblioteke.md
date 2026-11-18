@@ -29,16 +29,16 @@ Asinkronost je koncept koji označava mogućnost simultanog izvršavanja više z
   - [1.1. Korutine (engl. Coroutines)](#11-korutine-engl-coroutines)
   - [1.2. Event Loop](#12-event-loop)
     - [1.2.1. Simpatična analogija za razumijevanje konkurentnog izvršavanja i mehanizma GIL-a u Pythonu](#121-simpatična-analogija-za-razumijevanje-konkurentnog-izvršavanja-i-mehanizma-gil-a-u-pythonu)
-  - [1.2.2 Kako provjeriti postoji li aktivni _event loop_?](#122-kako-provjeriti-postoji-li-aktivni-event-loop)
+    - [1.2.2 Kako provjeriti postoji li aktivni _event loop_?](#122-kako-provjeriti-postoji-li-aktivni-event-loop)
   - [1.3. Konkurentno izvršavanje više korutina](#13-konkurentno-izvršavanje-više-korutina)
     - [Primjer 1: Sinkrono izvođenje dviju funkcija koje simuliraju dohvaćanje podataka s različitim vremenom trajanja](#primjer-1-sinkrono-izvođenje-dviju-funkcija-koje-simuliraju-dohvaćanje-podataka-s-različitim-vremenom-trajanja)
-    - [Mjerenje vremena izvršavanja (modul `time`)](#mjerenje-vremena-izvršavanja-modul-time)
+      - [Mjerenje vremena izvršavanja (modul `time`)](#mjerenje-vremena-izvršavanja-modul-time)
     - [Primjer 2: Asinkrono izvođenje dviju korutina koje simuliraju dohvaćanje podataka s različitim vremenom trajanja](#primjer-2-asinkrono-izvođenje-dviju-korutina-koje-simuliraju-dohvaćanje-podataka-s-različitim-vremenom-trajanja)
     - [Primjer 3: Konkurentno izvođenje dviju korutina koje simuliraju dohvaćanje podataka s različitim vremenom trajanja](#primjer-3-konkurentno-izvođenje-dviju-korutina-koje-simuliraju-dohvaćanje-podataka-s-različitim-vremenom-trajanja)
     - [Primjer 4: Što se događa ako _awaitamo_ taskove u drugačijem redoslijedu nego što su raspoređeni?](#primjer-4-što-se-događa-ako-awaitamo-taskove-u-drugačijem-redoslijedu-nego-što-su-raspoređeni)
     - [Primjer 5: Što ako _awaitamo_ samo jednu korutinu, a rasporedimo više korutina u event loop?](#primjer-5-što-ako-awaitamo-samo-jednu-korutinu-a-rasporedimo-više-korutina-u-event-loop)
   - [1.4. Konkurentno izvršavanje s funkcijom `asyncio.gather()`](#14-konkurentno-izvršavanje-s-funkcijom-asynciogather)
-  - [1.5. Konkurentno izvođenje kroz `asyncio.gather()` i `asyncio.create_task()`](#15-konkurentno-izvođenje-kroz-asynciogather-i-asynciocreate_task)
+  - [1.5. Konkurentno izvođenje kroz `asyncio.gather()` VS `asyncio.create_task()`](#15-konkurentno-izvođenje-kroz-asynciogather-vs-asynciocreate_task)
     - [UKRATKO: Asyncio šalabahter](#ukratko-asyncio-šalabahter)
 - [2. Zadaci za vježbu - Korutine, Task objekti, gather metoda, event loop](#2-zadaci-za-vježbu---korutine-task-objekti-gather-metoda-event-loop)
 
@@ -311,7 +311,7 @@ Ipak, ako stanovnici ove zgrade presporo govore _Python bytecodeom_ na _mikrofon
 
 <hr>
 
-## 1.2.2 Kako provjeriti postoji li aktivni _event loop_?
+### 1.2.2 Kako provjeriti postoji li aktivni _event loop_?
 
 U praksi _event loop_ mehanizam izvršava se u pozadini i najčešće nećemo ručno upravljati njime. Pokretanjem `asyncio.run()` funkcije ugrubo se događa sljedeće:
 
@@ -440,9 +440,9 @@ _Pitanje 2:_ Koliko je vremena potrebno da se program u potpunosti izvrši? Zaš
 
 ![alt text](<CleanShot 2026-11-18 at 23.32.18@2x.png>)
 
-> Vremenska crta izvršavanja dviju sinkronih funkcija koje simuliraju dohvaćanje podataka s različitim vremenom trajanja.
+> **Slika 5.** Vremenska crta izvršavanja dviju sinkronih funkcija koje simuliraju dohvaćanje podataka s različitim vremenom trajanja.
 
-### Mjerenje vremena izvršavanja (modul `time`)
+#### Mjerenje vremena izvršavanja (modul `time`)
 
 Vrijeme možemo izmjeriti korištenjem istog `time` modula, definiranjem vremenskih oznaka prije i poslije poziva `main()` funkcije:
 
@@ -511,7 +511,7 @@ Pokretanjem gornjeg koda `asyncio.run()` otvara **event loop**:
 
 ![alt text](<CleanShot 2026-11-18 at 23.34.29@2x.png>)
 
-> Vremenska crta izvršavanja dviju asinkronih korutina koje simuliraju dohvaćanje podataka s različitim vremenom trajanja.
+> **Slika 6.** Vremenska crta izvršavanja dviju asinkronih korutina koje simuliraju dohvaćanje podataka s različitim vremenom trajanja.
 
 <hr>
 
@@ -698,7 +698,7 @@ Naredba `await` (`task2`) zapravo omogućuje developerima da preciziraju u kodu 
 
 ![alt text](<CleanShot 2026-11-18 at 23.37.08@2x.png>)
 
-> Oba zadatka zakazana su pomoću `asyncio.create_task()`. Kada `main()` dođe do `await task1`, prepušta kontrolu event loopu, koji može pokrenuti oba zadatka. Njihova čekanja se preklapaju.
+> **Slika 7.** Oba zadatka zakazana su pomoću `asyncio.create_task()`. Kada `main()` dođe do `await task1`, prepušta kontrolu event loopu, koji može pokrenuti oba zadatka. Njihova čekanja se preklapaju.
 
 ### Primjer 4: Što se događa ako _awaitamo_ taskove u drugačijem redoslijedu nego što su raspoređeni?
 
@@ -759,7 +759,7 @@ Pokretanje samih korutina događa se jednom kad korutina "preda" izvršavanje _e
 
 ![alt text](<CleanShot 2026-11-18 at 23.39.03@2x.png>)
 
-> Iako prvo koristimo `await task2`, oba zadatka započinju konkurentno. Task 1 završava nakon približno 1 sekunde, ali `main()` nastavlja tek kada Task 2 završi nakon približno 2 sekunde. **Tada je rezultat Taska 1 već dostupan**.
+> **Slika 8.** Iako prvo koristimo `await task2`, oba zadatka započinju konkurentno. Task 1 završava nakon približno 1 sekunde, ali `main()` nastavlja tek kada Task 2 završi nakon približno 2 sekunde. **Tada je rezultat Taska 1 već dostupan**.
 
 > U prilogu repozitorija RS3 možete pronaći animacije s ovim primjerima za bolje razumijevanje _event loopa_. Izvor: Corey Schafer - [Complete Guide to Asynchronous Programming with Animations](https://youtu.be/oAkLSJNr5zY)
 
@@ -844,7 +844,7 @@ Vrijeme izvođenja: 1.00 s
 
 ![alt text](<CleanShot 2026-11-18 at 23.39.51@2x.png>)
 
-> Iako se task1 nigdje ne koristi uz await, on se ipak izvršava jer je zakazan pomoću `asyncio.create_task()`. Završava nakon približno 1 sekunde, a `main()` čeka samo Task 2. **Rezultat Taska 1 se ne preuzima**.
+> **Slika 9.** Iako se task1 nigdje ne koristi uz await, on se ipak izvršava jer je zakazan pomoću `asyncio.create_task()`. Završava nakon približno 1 sekunde, a `main()` čeka samo Task 2. **Rezultat Taska 1 se ne preuzima**.
 
 <hr>
 
@@ -971,7 +971,7 @@ print(f"Vrijeme izvođenja: {t2 - t1:.2f} s")
 
 <div style="page-break-after: always; break-after: page;"></div>
 
-## 1.5. Konkurentno izvođenje kroz `asyncio.gather()` i `asyncio.create_task()`
+## 1.5. Konkurentno izvođenje kroz `asyncio.gather()` VS `asyncio.create_task()`
 
 Možemo kombinirati prethodne primjere korištenjem `asyncio.create_task()` i `asyncio.gather()`.
 
@@ -1044,7 +1044,7 @@ async def main():
 asyncio.run(main())
 ```
 
-Međutim, puno elegantnije rješenje jest koristiti `asyncio.gather()`.
+Puno elegantnije rješenje jest koristiti `asyncio.gather()`.
 
 - `asyncio.gather()` osim korutina može primiti i `Task` objekte
 - možemo proslijediti jedan ili više `Task` objekata na isti način kao i korutine: `await asyncio.gather(task_1, task_2, task_3)`
