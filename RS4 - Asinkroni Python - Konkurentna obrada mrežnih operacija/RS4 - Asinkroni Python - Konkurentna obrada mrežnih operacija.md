@@ -363,7 +363,7 @@ Unutar VS Codea promijenite _interpreter_ na novokreirano okruženje `rs4` kako 
 
 ![alt text](<CleanShot 2026-11-19 at 00.23.15.png>)
 
-> Odabir ispravnog _interpreter-a_ u VS Codeu omogućuje da se prilikom pokretanja skripti koristi Python iz virtualnog okruženja, a ne globalne distribucije.
+> **Slika 8.** Odabir ispravnog _interpreter-a_ u VS Codeu omogućuje da se prilikom pokretanja skripti koristi Python iz virtualnog okruženja, a ne globalne distribucije.
 
 U aktiviranom okruženju pokrenite sljedeću naredbu.
 
@@ -511,9 +511,9 @@ for i in range(5):
   send_request()
 ```
 
-![alt text](<CleanShot 2026-11-19 at 00.25.16@2x.png>)
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.25.16%402x.png"><img src="./CleanShot%202026-11-19%20at%2000.25.16%402x.png" alt="Tri uzastopna HTTP-zahtjeva na vremenskoj crti od 0 do 3 s" width="50%"></a>
 
-> Sekvencijalno slanje HTTP-zahtjeva rezultira dužim vremenom izvršavanja programa
+> **Slika 9.** Tri HTTP-zahtjeva šalju se sekvencijalno. Svaki traje jednu sekundu, pa ukupno čekanje traje tri sekunde.
 
 Vidimo da je za izvršavanje svakog zahtjeva potrebno pričekati odgovor na prethodni zahtjev; na taj smo način napisali kod i to je OK.
 
@@ -831,11 +831,13 @@ async def main():
     print(fact_dict)
 ```
 
-![alt text](<CleanShot 2026-11-19 at 00.36.53@2x.png>)
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.36.53%402x.png"><img src="./CleanShot%202026-11-19%20at%2000.36.53%402x.png" alt="Slanje GET-zahtjeva i čitanje JSON-odgovora u biblioteci aiohttp" width="50%"></a>
+
+> **Slika 10.** U biblioteci `aiohttp` korutina čeka HTTP-odgovor pozivom `await session.get(url)`, a zatim čita tijelo odgovora pozivom `await response.json()`.
 
 ---
 
-OK, sada znamo kako poslati jedan zahtjev asinkrono. Vidimo da se trajanje nije promijenilo, ali to je zato što smo poslali samo jedan zahtjev i nismo izvršili konkurentnu obradu.
+Vidimo da se trajanje nije promijenilo, ali to je zato što smo poslali samo jedan zahtjev i nismo izvršili konkurentnu obradu.
 
 Idemo poslati 5 zahtjeva na ovaj način. Jednostavno ćemo kod iterirati 5 puta.
 
