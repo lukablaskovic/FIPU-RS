@@ -36,11 +36,11 @@ Do sada smo sve primjere temeljili na simuliranim I/O-operacijama koristeći `as
     - [1.2.1. Struktura HTTP-zahtjeva](#121-struktura-http-zahtjeva)
     - [1.2.2. Struktura HTTP-odgovora](#122-struktura-http-odgovora)
   - [1.3. HTTP statusni kodovi](#13-http-statusni-kodovi)
-- [2. Konkurentna obrada mrežnih operacija pomoću `aiohttp` biblioteke](#2-konkurentna-obrada-mrežnih-operacija-pomoću-aiohttp-biblioteke)
-  - [2.1. Kako šaljemo HTTP-zahtjeve sinkrono (`requests`)?](#21-kako-šaljemo-http-zahtjeve-sinkrono-requests)
-  - [2.2. Kako šaljemo HTTP-zahtjeve konkurentno (`aiohttp`)?](#22-kako-šaljemo-http-zahtjeve-konkurentno-aiohttp)
+- [2. Konkurentna obrada mrežnih operacija pomoću biblioteka `aiohttp` i `httpx`](#2-konkurentna-obrada-mrežnih-operacija-pomoću-biblioteka-aiohttp-i-httpx)
+  - [2.1. Kako šaljemo HTTP-zahtjeve sinkrono (biblioteka `requests`)?](#21-kako-šaljemo-http-zahtjeve-sinkrono-biblioteka-requests)
+  - [2.2. Kako šaljemo HTTP-zahtjeve konkurentno (`aiohttp` i `httpx`)?](#22-kako-šaljemo-http-zahtjeve-konkurentno-aiohttp-i-httpx)
     - [2.2.1. Context Manager `with`](#221-context-manager-with)
-    - [2.2.2. `ClientSession` klasa](#222-clientsession-klasa)
+    - [2.2.2. Asinkroni klijenti `ClientSession` i `AsyncClient`](#222-asinkroni-klijenti-clientsession-i-asyncclient)
     - [2.2.3. Konkurentna obrada HTTP-zahtjeva (`asyncio.gather`)](#223-konkurentna-obrada-http-zahtjeva-asynciogather)
     - [2.2.4. Konkurentna obrada HTTP-zahtjeva (`asyncio.Task`)](#224-konkurentna-obrada-http-zahtjeva-asynciotask)
   - [2.3. Timeout mrežnih operacija i obrada iznimki](#23-timeout-mrežnih-operacija-i-obrada-iznimki)
@@ -327,29 +327,23 @@ Detaljnija objašnjenja dostupna su u [Mozillinu pregledu HTTP statusnih kodova]
 
 <div style="page-break-after: always; break-after: page;"></div>
 
-# 2. Konkurentna obrada mrežnih operacija pomoću `aiohttp` biblioteke
+# 2. Konkurentna obrada mrežnih operacija pomoću biblioteka `aiohttp` i `httpx`
 
-`aiohttp` (_Asynchronous HTTP Client/Server for asyncio and Python_) je biblioteka za Python koja omogućuje **asinkrono programiranje HTTP-klijenata i poslužitelja u Pythonu**. Ova datoteka razvijena je na temelju `asyncio` biblioteke s kojom smo se već upoznali u skripti RS3.
+Biblioteke **`aiohttp` i `httpx`** omogućuju asinkrono slanje HTTP-zahtjeva. Dok jedna korutina čeka odgovor poslužitelja, _event loop_ može nastaviti izvršavati druge zadatke. Usporedimo klijente koje ćemo koristiti u primjerima.
 
-`aiohttp` biblioteka omogućuje nam da jednostavno implementiramo asinkrone **klijente** i **poslužitelje** za HTTP u Pythonu, što je korisno u kontekstu razvoja i testiranja malih web-servisa koji zahtijevaju visoku propusnost. Dodatno, datoteka pruža podršku za [WebSocket protokol](https://en.wikipedia.org/wiki/WebSocket#:~:text=WebSocket%20is%20a%20computer%20communications,as%20RFC%206455%20in%202011.).
+| Biblioteka | Kako šaljemo GET-zahtjev?                           | Što se događa dok čekamo odgovor?                                                              |
+| ---------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `requests` | `requests.get(url)`                                 | Poziv je sinkron i blokira dretvu koja ga izvršava.                                            |
+| `aiohttp`  | `await session.get(url)` uz `aiohttp.ClientSession` | Korutina prepušta upravljanje _event loopu_ dok čeka na mrežu.                                 |
+| `httpx`    | `await client.get(url)` uz `httpx.AsyncClient`      | Čekanje je također asinkrono. Biblioteka nudi i sinkrono sučelje, primjerice `httpx.get(url)`. |
 
-Biblioteka `aiohttp` koristi `asyncio` event loop za upravljanje asinkronim operacijama, što omogućuje učinkovito rukovanje velikim brojem istovremenih HTTP-zahtjeva bez potrebe za višedretvenim pristupom. U usporedbi s tradicionalnim sinkronim klijentima, poput `requests`, `aiohttp` omogućuje konkurentno slanje HTTP-zahtjeva i obradu odgovora, čime se značajno poboljšavaju performanse u scenarijima s velikim brojem mrežnih operacija.
+Biblioteka `aiohttp` podržava i izradu HTTP-poslužitelja te rad s WebSocketima. U ovom poglavlju obje biblioteke koristimo kao HTTP-klijente. [Dokumentacija za aiohttp](https://docs.aiohttp.org/en/stable/client_quickstart.html) · [Dokumentacija za HTTPX](https://www.python-httpx.org/async/)
 
-Dakle, `aiohttp` je _non-blocking [asinkrona I/O](https://en.wikipedia.org/wiki/Asynchronous_I/O) biblioteka_, baš kao i `asyncio`.
+#### Instalacija biblioteka <!-- omit in toc -->
 
-#### Instalacija `aiohttp` biblioteke <!-- omit in toc -->
+Modul `asyncio` dio je standardne biblioteke Pythona. Pakete za rad s HTTP-om instalirajte u virtualno okruženje projekta.
 
-Za razliku od `asyncio` biblioteke koja je ugrađena od verzije 3.7 Pythona, `aiohttp` biblioteku potrebno je instalirati ručno:
-
-```bash
-→ pip install aiohttp
-```
-
-> Napomena: ako koristite `macOS` ili `Linux`, vjerojatno ćete trebati koristiti `pip3` umjesto naredbe `pip` ako niste podesili alijase ili druge konfiguracijske postavke iz RS1.
-
-Kod instalacije vanjskih paketa **preporučuje se korištenje virtualnog okruženja** kako bi se izbjegli konflikti između paketa i "krcanje" globalne Python distribucije.
-
-Ako ste se odlučili koristiti `conda` alat za upravljanje virtualnim okruženjima, stvorite novo virtualno okruženje naziva `rs4` prije nego što instalirate `aiohttp` biblioteku:
+Ako ste se odlučili koristiti `conda` alat za upravljanje virtualnim okruženjima, stvorite novo virtualno okruženje naziva `rs4` prije instalacije paketa:
 
 ```bash
 → conda create --name rs4 python=3.13
@@ -367,21 +361,21 @@ Unutar VS Codea promijenite _interpreter_ na novokreirano okruženje `rs4` kako 
 → CTRL/CMD + SHIFT + P -> Python: Select Interpreter -> rs4
 ```
 
-> Sada možete instalirati biblioteke 📚📚📚
+![alt text](<CleanShot 2026-11-19 at 00.23.15.png>)
+
+> Odabir ispravnog _interpreter-a_ u VS Codeu omogućuje da se prilikom pokretanja skripti koristi Python iz virtualnog okruženja, a ne globalne distribucije.
+
+U aktiviranom okruženju pokrenite sljedeću naredbu.
+
+```bash
+python -m pip install requests aiohttp httpx
+```
 
 <div style="page-break-after: always; break-after: page;"></div>
 
-## 2.1. Kako šaljemo HTTP-zahtjeve sinkrono (`requests`)?
+## 2.1. Kako šaljemo HTTP-zahtjeve sinkrono (biblioteka `requests`)?
 
-Međutim, prije nego što se upoznamo s asinkronim načinom definiranja HTTP-klijenata, vrijedno je prisjetiti se kako to radimo sinkrono, koristeći biblioteku `requests`.
-
-`requests` je popularna biblioteka za rad s HTTP-zahtjevima u Pythonu koja omogućuje jednostavno slanje zahtjeva na poslužitelj i primanje odgovora. Međutim, `requests` je **sinkrona biblioteka**, što znači da će svaki zahtjev blokirati izvođenje programa dok se ne primi odgovor.
-
-Kako bismo poslali HTTP-zahtjev koristeći `requests` biblioteku, prvo je potrebno instalirati biblioteku:
-
-```bash
-pip install requests
-```
+Za početak šaljemo zahtjeve sinkrono. U ovoj usporedbi i `requests.get()` i `httpx.get()` blokiraju trenutnu dretvu dok se odgovor ne preuzme. Asinkroni klijent `httpx.AsyncClient` uvest ćemo u poglavlju 2.2.
 
 Uključimo `requests` biblioteku:
 
@@ -399,8 +393,10 @@ requests.HTTP_METHOD("<URL>")
 
 - `HTTP_METHOD` predstavlja HTTP-metodu koju želimo koristiti (npr. `GET`, `POST`, `PUT`, `DELETE`).
 - `<URL>` je URL-adresa na koju šaljemo zahtjev.
-- _Primjer HTTP GET:_ `requests.get("https://catfact.ninja/fact")` šalje GET-zahtjev na navedeni URL.
-- _Primjer HTTP POST:_ `requests.post("https://example.com/api", json=python_dict)` šalje POST-zahtjev s podacima u tijelu zahtjeva.
+  _Primjer HTTP GET:_ `requests.get("https://catfact.ninja/fact")` šalje GET-zahtjev na navedeni URL.
+  _Primjer HTTP POST:_ `requests.post("https://example.com/api", json=python_dict)` šalje POST-zahtjev s podacima u tijelu zahtjeva.
+
+Isti pozivi u sinkronoj inačici biblioteke `httpx` glase `httpx.get("https://catfact.ninja/fact")` i `httpx.post("https://example.com/api", json=python_dict)`.
 
 Primjer slanja GET-zahtjeva na endpoint `/fact`:
 
@@ -413,7 +409,16 @@ response = requests.get("https://catfact.ninja/fact") # HTTP GET-zahtjev
 print(response.text) # ispis tijela HTTP-odgovora
 ```
 
-Ako pokrenemo ovaj kod, dobit ćemo nasumični odgovor u obliku rječnika s ključevima `fact` i `length`:
+**Isti primjer uz sinkroni `httpx`**
+
+```python
+import httpx
+
+response = httpx.get("https://catfact.ninja/fact") # HTTP GET-zahtjev
+print(response.text) # ispis tijela HTTP-odgovora
+```
+
+Ako pokrenemo ovaj kod, ispisat će se tijelo odgovora u formatu JSON s ključevima `fact` i `length`:
 
 ```python
 {
@@ -422,7 +427,7 @@ Ako pokrenemo ovaj kod, dobit ćemo nasumični odgovor u obliku rječnika s klju
 }
 ```
 
-Možemo provjeriti **statusni kod** odgovora:
+U obje biblioteke možemo provjeriti statusni kod odgovora:
 
 ```python
 print(response.status_code) # 200
@@ -430,7 +435,7 @@ print(response.status_code) # 200
 
 Možemo i deserijalizirati JSON-odgovor koristeći metodu `json()`:
 
-> **Zapamti:** [Serijalizacija](https://en.wikipedia.org/wiki/Serialization) podataka predstavlja proces pretvaranja podataka u format pogodan za prijenos ili pohranu (npr. JSON-string). Deserijalizacija (_unserialization/unmarshalling_) obrnuti je proces u kojem se serijalizirani podaci pretvaraju natrag u format pogodan za računalnu obradu (npr. Python rječnik).
+> **Prisjeti se:** [Serijalizacija](https://en.wikipedia.org/wiki/Serialization) podataka predstavlja proces pretvaranja podataka u format pogodan za prijenos ili pohranu (npr. JSON-string, dok [deserijalizacija](https://hazelcast.com/foundations/distributed-computing/deserialization/) (_unserialization/unmarshalling_) predstavlja obrnuti proces u kojem se serijalizirani podaci (npr. serija bytova/stringova) pretvaraju natrag u format pogodan za računalnu obradu (npr. Python rječnik).
 
 ```python
 data = response.json() # deserijalizacija JSON-odgovora u Python rječnik
@@ -492,11 +497,29 @@ print("Šaljemo 5. zahtjev...")
 send_request()
 ```
 
+**Isti primjer uz sinkroni `httpx`**
+
+```python
+import httpx
+
+def send_request():
+  response = httpx.get("https://catfact.ninja/fact")
+  print(response.json()["fact"])
+
+for i in range(5):
+  print(f"Šaljemo {i + 1}. zahtjev...")
+  send_request()
+```
+
+![alt text](<CleanShot 2026-11-19 at 00.25.16@2x.png>)
+
+> Sekvencijalno slanje HTTP-zahtjeva rezultira dužim vremenom izvršavanja programa
+
 Vidimo da je za izvršavanje svakog zahtjeva potrebno pričekati odgovor na prethodni zahtjev; na taj smo način napisali kod i to je OK.
 
 Ukupno vrijeme trajanja ovog programa iznosi prosječno od 1 do 2 sekunde, ovisno prvenstveno o brzini interneta i opterećenju servisa Cat Facts API.
 
-Možemo koristiti biblioteku `time` kako bismo preciznije izmjerili vrijeme izvršavanja programa:
+Izmjerit ćemo vrijeme trajanja programa pomoću funkcija `time.perf_counter()`:
 
 ```python
 import requests
@@ -504,10 +527,10 @@ import time
 
 def send_request():
   response = requests.get("https://catfact.ninja/fact")
-  fact = response.json()["fact"] # ovo ne možemo raditi s aiohttp varijantom response objekta budući da ".json()" postaje asinkrona metoda
+  fact = response.json()["fact"]
   print(fact)
 
-start = time.perf_counter()
+start = time.perf_counter() # timestamp #1
 
 print("Šaljemo 1. zahtjev...")
 send_request()
@@ -524,6 +547,25 @@ send_request()
 print("Šaljemo 5. zahtjev...")
 send_request()
 
+end = time.perf_counter() # timestamp #2
+print(f"Izvršavanje programa traje {end - start:.2f} s.")
+```
+
+**Isti primjer uz sinkroni `httpx`**
+
+```python
+import time
+import httpx
+
+def send_request():
+  response = httpx.get("https://catfact.ninja/fact")
+  print(response.json()["fact"])
+
+start = time.perf_counter()
+for i in range(5):
+  print(f"Šaljemo {i + 1}. zahtjev...")
+  send_request()
+
 end = time.perf_counter()
 print(f"Izvršavanje programa traje {end - start:.2f} s.")
 ```
@@ -536,7 +578,7 @@ import time
 
 def send_request():
   response = requests.get("https://catfact.ninja/fact")
-  fact = response.json()["fact"] # ovo ne možemo raditi s aiohttp varijantom response objekta budući da ".json()" postaje asinkrona metoda
+  fact = response.json()["fact"]
   print(fact)
 
 start = time.perf_counter()
@@ -549,42 +591,57 @@ end = time.perf_counter()
 print(f"Izvršavanje programa traje {end - start:.2f} s.")
 ```
 
-Prosječno vrijeme trajanja programa iznad iznosi od 3 do 4 sekunde. Ako povećamo broj zahtjeva, **vrijeme izvršavanja povećat će se proporcionalno broju zahtjeva**.
+**Isti primjer uz sinkroni `httpx`**
 
-> S obzirom na to da vrijeme izvođenja programa direktno ovisi o broju iteracija `i`, možemo reći da je vremenska složenost `O(n)`. Ipak, HTTP-zahtjevi jesu **I/O-operacije** i u praksi je teško predvidjeti točno vrijeme trajanja programa zbog varijabilnih mrežnih uvjeta, ali kod analize kompleksnosti algoritma pretpostavljamo idealne uvjete, odnosno tretiramo mrežne operacije kao _constant-time_ operacije.
+```python
+import time
+import httpx
+
+def send_request():
+  response = httpx.get("https://catfact.ninja/fact")
+  print(response.json()["fact"])
+
+start = time.perf_counter()
+for i in range(15):
+  print(f"Šaljemo {i + 1}. zahtjev...")
+  send_request()
+
+end = time.perf_counter()
+print(f"Izvršavanje programa traje {end - start:.2f} s.")
+```
+
+U ovom je mjerenju slanje 15 zahtjeva trajalo od 3 do 4 sekunde. Budući da zahtjeve šaljemo jedan za drugim, njihova se trajanja zbrajaju. Pri svakom pokretanju možemo izmjeriti drukčije vrijeme, ovisno o mrežnim uvjetima i opterećenju poslužitelja.
 
 Zahtjeve smo do sada slali **sinkrono**, što je jasno vidljivo u ovom primjeru. Zamislimo situaciju u kojoj šaljemo 1 000 ili čak 10 000 zahtjeva – program bi tada radio izrazito dugo, a naš bi servis morao čekati da se svaki zahtjev pojedinačno obradi.
 
-U nastavku ćemo vidjeti kako ćemo ovo riješiti asinkronim programiranjem, odnosno **konkurentnim slanjem i obradom HTTP-zahtjeva** na poslužitelj pomoću `aiohttp` biblioteke.
+U nastavku ćemo vidjeti kako ćemo ovo riješiti asinkronim programiranjem, odnosno **konkurentnim slanjem i obradom HTTP-zahtjeva** na poslužitelj pomoću biblioteka `aiohttp` i `httpx`.
 
 > **Napomena**: ako pošaljete previše zahtjeva, moguće je da će CatFact API blokirati zahtjeve s vaše IP-adrese te da će vam se vratiti statusni kod 429 (Too Many Requests). Možete pokušati ponovo kasnije ili koristiti alternativni API za testiranje.
 > [Lista dostupnih besplatnih API-ja za testiranje](https://free-apis.github.io/#/browse) – odaberite API bez CORS ili API-key ograničenja.
 
 <div style="page-break-after: always; break-after: page;"></div>
 
-## 2.2. Kako šaljemo HTTP-zahtjeve konkurentno (`aiohttp`)?
+## 2.2. Kako šaljemo HTTP-zahtjeve konkurentno (`aiohttp` i `httpx`)?
 
 Cilj nam je poslati više zahtjeva na _Cat Facts API_ i postići brže vrijeme izvršavanja programa (ne želimo da slanje i ispis rezultata 15 zahtjeva traju gotovo 4 sekunde).
 
 Kada razmišljamo o konkurentnom slanju HTTP-zahtjeva, najidealnije je razmišljati o **korutinama**. Na zadnjim smo vježbama definirali korutine s fiksnim čekanjima (_non-blocking_ `asyncio.sleep`), a sada ćemo definirati korutine koje će slati HTTP-zahtjeve na neki servis.
 
-Kako zahtjeve šaljemo konkurentno, najpraktičnije je kod spakirati u korutine.
+Za primjere u nastavku učitajmo module na početku datoteke. U svakom primjeru pokrenite samo jednu inačicu: onu s bibliotekom `aiohttp` ili onu ispod komentara `# ili koristeći httpx`.
 
 ```python
-import aiohttp # slanje HTTP-zahtjeva
-import asyncio # temelj asinkronog programiranja – rad s event loopom
-import time # mjerenje vremena izvršavanja
+import asyncio
+import time
+
+import aiohttp
+import httpx
 ```
 
-Nećemo više koristiti _blocking_ `requests` biblioteku. Zamijenili smo je _non-blocking_ bibliotekom `aiohttp`.
-
-Biblioteka `requests` u pozadini uspostavlja korisničku sesiju (_client session_) koja omogućuje **ponovnu upotrebu veze s poslužiteljem** te pohranu HTTP-zaglavlja, podataka o autentifikaciji, kolačića i drugih elemenata koji se ponavljaju pri svakom HTTP-zahtjevu. Zahvaljujući tome, umjesto stvaranja nove sesije za svaki pojedini zahtjev, **moguće je više puta koristiti već uspostavljenu sesiju**.
-
-U `aiohttp` biblioteci potrebno je naglasiti **definiranje asinkrone sesije** – ona nam omogućuje iste funkcionalnosti koje su prethodno navedene.
+Kada šaljemo više zahtjeva istom poslužitelju, jedan klijent može ponovno koristiti već otvorene veze. U sinkronom kodu za to bismo koristili `requests.Session`. U asinkronom kodu otvorit ćemo jednu instancu `aiohttp.ClientSession` ili `httpx.AsyncClient` i koristiti je za sve zahtjeve.
 
 ### 2.2.1. Context Manager `with`
 
-Koncept **kontekstnog menadžera** (_engl. Context Manager_) u Pythonu omogućuje nam alokaciju i dealokaciju resursa, odnosno upravljanje resursima koji se koriste u bloku koda.
+Koncept **kontekstnog menadžera** (_engl. Context Manager_) u Pythonu omogućuje nam automatsku alokaciju i dealokaciju resursa, odnosno upravljanje resursima koji se koriste u bloku koda.
 
 Najčešće korišteni primjer _context managera_ u Pythonu je naredba `with` koju koristimo kako bismo definirali **blok koda za rad s resursima** koje treba eksplicitno **(1) otvoriti**, **(2) koristiti** i **(3) zatvoriti**.
 
@@ -596,7 +653,7 @@ Primjeri resursa koji zahtijevaju ovakvo upravljanje uključuju:
 
 Naredba `with` omogućava automatsko upravljanje resursima, osiguravajući da će se resursi pravilno osloboditi i zatvoriti čak i ako dođe do greške u bloku koda. Na taj način kod postaje čišći i sigurniji za izvođenje.
 
-Kontekstni menadžer `with` jest _blocking I/O_ mehanizam, što znači da će se kod unutar `with` bloka izvršavati sekvencijalno, čekajući da se svaka operacija završi prije nego što prijeđe na sljedeću. _Non-blocking_ varijanta kontekstnog menadžera koristi se u asinkronom programiranju, gdje se koristi **`async with`** sintaksa.
+Naredba `with` upravlja ulaskom u blok i izlaskom iz njega. Za resurse čije otvaranje ili zatvaranje može uključivati asinkrono čekanje koristimo **`async with`**.
 
 **Sintaksa:**
 
@@ -662,17 +719,17 @@ finally:
 
 `Exception` je bazna klasa za većinu iznimaka (ali ne baš za sve) u Pythonu. Kada koristimo `except Exception as e`, uhvatit ćemo sve vrste iznimki koje se nasljeđuju iz klase `Exception`. Varijabla `e` predstavlja **instancu iznimke koja sadrži informacije o grešci**, poput poruke o grešci, i stoga je korisna za dijagnostiku.
 
-Česti primjeri iznimki koje možemo uhvatiti uključuju:
-
-- `ValueError`: nastaje kada funkcija primi argument neprikladnog tipa ili vrijednosti.
-- `TypeError`: nastaje kada se operacija ili funkcija primijeni na objekt neprikladnog tipa.
-- `FileNotFoundError`: nastaje kada se pokuša pristupiti datoteci koja ne postoji.
-- `ZeroDivisionError`: nastaje kada se pokuša dijeliti s nulom.
-- `KeyError`: nastaje kada se pokuša pristupiti nepostojećem ključu u rječniku.
-- `IndexError`: nastaje kada se pokuša pristupiti indeksu izvan raspona liste ili niza.
-- `ConnectionError`: nastaje kada dođe do problema s mrežnom vezom.
-- `TimeoutError`: nastaje kada operacija traje duže nego što je dopušteno vrijeme čekanja.
-- `ImportError`: nastaje kada se pokuša uvesti modul koji ne postoji ili nije dostupan.
+| Iznimka             | Kada nastaje?                                                                   |
+| ------------------- | ------------------------------------------------------------------------------- |
+| `ValueError`        | Kada funkcija primi argument odgovarajućeg tipa, ali neprikladne vrijednosti.   |
+| `TypeError`         | Kada se operacija ili funkcija primijeni na objekt neprikladnog tipa.           |
+| `FileNotFoundError` | Kada se pokuša pristupiti datoteci koja ne postoji.                             |
+| `ZeroDivisionError` | Kada se pokuša dijeliti s nulom.                                                |
+| `KeyError`          | Kada se pokuša pristupiti nepostojećem ključu u rječniku.                       |
+| `IndexError`        | Kada se pokuša pristupiti elementu liste ili niza pomoću indeksa izvan raspona. |
+| `ConnectionError`   | Kada dođe do problema s mrežnom vezom.                                          |
+| `TimeoutError`      | Kada istekne dopušteno vrijeme čekanja na završetak operacije.                  |
+| `ImportError`       | Kada Python ne može učitati modul ili iz njega uvesti traženo ime.              |
 
 _Primjer:_ Iznimku `ValueError` možemo uhvatiti na sljedeći način:
 
@@ -695,44 +752,38 @@ except FileNotFoundError as e:
 
 <div style="page-break-after: always; break-after: page;"></div>
 
-### 2.2.2. `ClientSession` klasa
+### 2.2.2. Asinkroni klijenti `ClientSession` i `AsyncClient`
 
 Vratimo se na svoj primjer slanja 15 zahtjeva na _Cat Facts API_. Što je ovdje resurs koji trebamo otvoriti i zatvoriti u kontekstu `with` naredbe?
 
 <details>
   <summary>Spoiler alert! Odgovor na pitanje</summary>
-  <p> Resurs kojim ovdje upravljamo jest <b>konekcija s poslužiteljem</b>, odnosno HTTP-sesija. </p>
-  <p> Dakle, koristit ćemo naredbu <code>with</code> kako bismo definirali blok koda za rad s HTTP-sesijom. </p>
+  <p>Upravljamo HTTP-klijentom koji može održavati više veza s poslužiteljem. Otvaramo ga prije slanja zahtjeva i zatvaramo kada obradimo odgovore.</p>
 </details>
 
-<br>
-
-> U `aiohttp` biblioteci za rad s HTTP-sesijom koristimo klasu **`ClientSession`**.
-
-**Klasa `ClientSession` predstavlja asinkroni HTTP-klijent** koji omogućuje **konkurentno slanje HTTP-zahtjeva unutar Python programa**. Ovaj klijent implementiran je kao kontekstni menadžer, što znači da ga možemo koristiti unutar `with` bloka.
-
-Kako bismo stvorili novu instancu `ClientSession` klase, kao i klase općenito, jednostavno pozivamo njen konstruktor:
-
-U varijablu `session` spremamo instancu klase `ClientSession`:
+U biblioteci `aiohttp` klijent je instanca klase **`ClientSession`**, a u biblioteci `httpx` instanca klase **`AsyncClient`**. Obje klase možemo koristiti kao asinkrone kontekstne menadžere. Unutar korutine otvaramo klijent pomoću `async with`, a izlaskom iz bloka automatski se oslobađaju njegove veze.
 
 ```python
-session = aiohttp.ClientSession()
+async with aiohttp.ClientSession() as session:
+    ...  # ovdje šaljemo zahtjeve
+
+# ili koristeći httpx
+
+async with httpx.AsyncClient() as client:
+    ...  # ovdje šaljemo zahtjeve
 ```
 
-Nakon što smo stvorili instancu klase, možemo koristiti `with` blok kako bismo definirali blok koda za asinkroni rad s HTTP-sesijom. Jedina je razlika u tome što sad stvari radimo asinkrono pa moramo koristiti `async` ispred kontekstnog menadžera.
-
-S obzirom na to da koristimo `with`, možemo definirati alias `session` za **instancu klase unutar `async with` bloka koda**:
-
-```python
-async with aiohttp.ClientSession() as session: # otvaramo asinkronu HTTP-sesiju
-    # rad s HTTP-sesijom
-```
-
-Nad svojom instancom sesije `session` sad možemo koristiti metodu `get` za slanje GET-zahtjeva na isti način kao što smo to radili s _blocking_ `requests` bibliotekom:
+U obje biblioteke GET-zahtjev šaljemo metodom `get`. Unutar korutine koristimo `await` kako bismo pričekali odgovor.
 
 ```python
 async with aiohttp.ClientSession() as session:
   response = await session.get("https://catfact.ninja/fact") # šalje HTTP GET-zahtjev na navedeni URL
+  print(response)
+
+# ili koristeći httpx
+
+async with httpx.AsyncClient() as client:
+  response = await client.get("https://catfact.ninja/fact")
   print(response)
 ```
 
@@ -748,11 +799,21 @@ async def main(): # definiramo main korutinu
 
 # pokrećemo main korutinu i event loop koristeći funkciju asyncio.run()
 asyncio.run(main())
+
+# ili koristeći httpx
+
+async def main():
+  async with httpx.AsyncClient() as client:
+    response = await client.get("https://catfact.ninja/fact")
+    print(response)
+
+# pokrećemo main korutinu i event loop koristeći funkciju asyncio.run()
+asyncio.run(main())
 ```
 
-Ako pokrenete kod, vidjet ćete ogroman ispis jer smo ispisali **cijeli HTTP-odgovor**, uključujući zaglavlja, statusnu liniju, tijelo itd.
+Naredba `print(response)` prikazuje sažetak objekta odgovora. Za ispis tijela odgovora u sljedećem ćemo koraku pročitati JSON.
 
-Kako bismo dobili samo tijelo odgovora, možemo na isti način kao i kod `requests` biblioteke koristiti metodu `json()` za deserijalizaciju, ali uz jednu razliku – moramo koristiti `await` ključnu riječ jer je metoda sada asinkrona, tj. **vraća objekt korutine**.
+U biblioteci **`aiohttp`** izraz `await response.json()` čeka da se tijelo odgovora pročita i vraća deserijalizirane podatke. Kod **`httpx.AsyncClient`** poziv `await client.get(...)` već je preuzeo cijelo tijelo, pa podatke čitamo običnim pozivom `response.json()`.
 
 ```python
 async def main():
@@ -760,7 +821,17 @@ async def main():
     response = await session.get("https://catfact.ninja/fact") # mrežni zahtjev
     fact_dict = await response.json() # dodajemo await jer je json() asinkrona metoda koja vraća objekt korutine
     print(fact_dict) # ispisuje nasumičnu činjenicu
+
+# ili koristeći httpx
+
+async def main():
+  async with httpx.AsyncClient() as client:
+    response = await client.get("https://catfact.ninja/fact")
+    fact_dict = response.json()
+    print(fact_dict)
 ```
+
+![alt text](<CleanShot 2026-11-19 at 00.36.53@2x.png>)
 
 ---
 
@@ -774,6 +845,15 @@ async def main():
     for i in range(5):
       response = await session.get("https://catfact.ninja/fact") # mrežni zahtjev
       fact_dict = await response.json() # deserijalizacija JSON-odgovora
+      print(fact_dict)
+
+# ili koristeći httpx
+
+async def main():
+  async with httpx.AsyncClient() as client:
+    for i in range(5):
+      response = await client.get("https://catfact.ninja/fact")
+      fact_dict = response.json()
       print(fact_dict)
 ```
 
@@ -801,6 +881,18 @@ async def main():
       print(fact_dict['fact'])
 
 asyncio.run(main())
+
+# ili koristeći httpx
+
+async def main():
+  async with httpx.AsyncClient() as client:
+    for i in range(5):
+      print(f"Šaljemo {i + 1}. zahtjev...")
+      response = await client.get("https://catfact.ninja/fact")
+      fact_dict = response.json()
+      print(fact_dict['fact'])
+
+asyncio.run(main())
 ```
 
 Glavno je pitanje: **Gdje ćemo definirati _context manager_?** Unutar `main` korutine ili unutar `get_cat_fact` korutine?
@@ -814,12 +906,19 @@ Glavno je pitanje: **Gdje ćemo definirati _context manager_?** Unutar `main` ko
 
 <hr>
 
-U korutinu `get_cat_fact` prosljeđujemo alias `session` kao njezin parametar:
+Korutini `get_cat_fact` prosljeđujemo otvoreni klijent kao argument.
 
 ```python
 async def get_cat_fact(session):
   response = await session.get("https://catfact.ninja/fact")
   fact_dict = await response.json()
+  return fact_dict
+
+# ili koristeći httpx
+
+async def get_cat_fact(client):
+  response = await client.get("https://catfact.ninja/fact")
+  fact_dict = response.json()
   return fact_dict
 ```
 
@@ -828,6 +927,13 @@ U `main` korutini tada moramo definirati otvaranje same sesije:
 ```python
 async def main():
   async with aiohttp.ClientSession() as session:
+    ...  # ovdje ćemo pripremiti korutine
+
+# ili koristeći httpx
+
+async def main():
+  async with httpx.AsyncClient() as client:
+    ...  # ovdje šaljemo zahtjeve
 ```
 
 Napokon, možemo koristiti `asyncio.gather` funkciju kako bismo poslali 5 zahtjeva konkurentno.
@@ -843,6 +949,17 @@ async def get_cat_fact(session):
 async def main():
   async with aiohttp.ClientSession() as session:
     cat_fact_korutine = [get_cat_fact(session) for i in range(5)]
+
+# ili koristeći httpx
+
+async def get_cat_fact(client):
+  response = await client.get("https://catfact.ninja/fact")
+  fact_dict = response.json()
+  print(fact_dict['fact'])
+
+async def main():
+  async with httpx.AsyncClient() as client:
+    cat_fact_korutine = [get_cat_fact(client) for i in range(5)]
 ```
 
 **Pozivamo korutine konkurentno** koristeći `asyncio.gather` funkciju.
@@ -851,6 +968,13 @@ async def main():
 async def main():
   async with aiohttp.ClientSession() as session:
     cat_fact_korutine = [get_cat_fact(session) for i in range(5)]
+    await asyncio.gather(*cat_fact_korutine)
+
+# ili koristeći httpx
+
+async def main():
+  async with httpx.AsyncClient() as client:
+    cat_fact_korutine = [get_cat_fact(client) for i in range(5)]
     await asyncio.gather(*cat_fact_korutine)
 ```
 
@@ -876,6 +1000,14 @@ async def get_cat_fact(session):
   response = await session.get("https://catfact.ninja/fact")
   fact_dict = await response.json()
   print(fact_dict['fact'])
+
+# ili koristeći httpx
+
+async def get_cat_fact(client):
+  print("Šaljemo zahtjev za mačji fact")
+  response = await client.get("https://catfact.ninja/fact")
+  fact_dict = response.json()
+  print(fact_dict['fact'])
 ```
 
 I bez dodavanja `time` modula odmah vidimo razliku u terminalu! Prije smo imali **sekvencijalno slanje jednog zahtjeva za drugim i čekanje na odgovor prije slanja sljedećeg zahtjeva**:
@@ -898,7 +1030,7 @@ Izvršavanje programa traje 1.26 s.
 
 Sada vidimo da se svi zahtjevi (korutine koje su _schedulane_ u _event loopu_) prvo pošalju **konkurentno**, a zatim se ispisuju sve činjenice. **Ne čekamo više na odgovor kroz svaku iteraciju petlje**.
 
-**Konkurentno slanje (_aiohttp_):**
+**Primjer ispisa pri konkurentnom slanju (`aiohttp`)**
 
 ```
 Šaljemo zahtjev za mačji fact
@@ -918,7 +1050,7 @@ A cat’s nose pad is ridged with a unique pattern, just like the fingerprint of
 
 <hr>
 
-Zanima nas još i vrijeme izvođenja programa.
+Izmjerimo i vrijeme izvođenja programa. Prikazana vremena izmjerena su s bibliotekom `aiohttp`. Pokrenite i inačicu s bibliotekom `httpx` te usporedite svoja mjerenja.
 
 Započet ćemo mjeriti kad se pozove `main` korutina, a završiti na kraju `main` korutine.
 
@@ -927,6 +1059,18 @@ async def main():
   start = time.perf_counter()
   async with aiohttp.ClientSession() as session:
       cat_fact_korutine = [get_cat_fact(session) for i in range(5)]
+      await asyncio.gather(*cat_fact_korutine)
+  end = time.perf_counter()
+  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
+
+asyncio.run(main())
+
+# ili koristeći httpx
+
+async def main():
+  start = time.perf_counter()
+  async with httpx.AsyncClient() as client:
+      cat_fact_korutine = [get_cat_fact(client) for i in range(5)]
       await asyncio.gather(*cat_fact_korutine)
   end = time.perf_counter()
   print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
@@ -995,6 +1139,16 @@ async def main():
       await asyncio.gather(*cat_fact_korutine)
   end = time.perf_counter()
   print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
+
+# ili koristeći httpx
+
+async def main():
+  start = time.perf_counter()
+  async with httpx.AsyncClient() as client:
+      cat_fact_korutine = [get_cat_fact(client) for i in range(15)]
+      await asyncio.gather(*cat_fact_korutine)
+  end = time.perf_counter()
+  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
 ```
 
 _Primjer ispisa:_
@@ -1044,15 +1198,26 @@ Rekli smo da `Task` objekti omogućuju bolju kontrolu nad izvršavanjem korutina
 
 U našem primjeru dohvaćanja činjenica o mačkama korutine su `get_cat_fact`. Možemo ih jednostavno pohraniti u listu i zatim izraditi `Task` objekte za svaku, koristeći _list comprehension_.
 
-Nakon toga ćemo ih pozvati koristeći `await` ključnu riječ jednostavnim iteriranjem kroz listu `Task` objekata.
+Poziv `asyncio.create_task` raspoređuje svaku korutinu za izvršavanje. Zatim petljom prolazimo kroz listu i čekamo završetak svakog zadatka. Dok čekamo prvi, i ostali raspoređeni zadaci mogu napredovati.
 
 ```python
 async def main():
   start = time.perf_counter()
   async with aiohttp.ClientSession() as session:
-      cat_fact_tasks = [asyncio.create_task(get_cat_fact(session)) for _ in range(5)] # pohranjujemo Taskove u listu korutina i RASPOREĐUJEMO ih u event loopu
-      for task in cat_fact_tasks: # ovaj kod izvršava se konkurentno jer smo koristili Taskove
-          await task # čekamo rezultate svakog taska, dok će prvi await (cat_fact_tasks[0]) pokrenuti sve korutine koje smo rasporedili u event loopu
+      cat_fact_tasks = [asyncio.create_task(get_cat_fact(session)) for _ in range(5)]
+      for task in cat_fact_tasks:
+          await task
+  end = time.perf_counter()
+  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
+
+# ili koristeći httpx
+
+async def main():
+  start = time.perf_counter()
+  async with httpx.AsyncClient() as client:
+      cat_fact_tasks = [asyncio.create_task(get_cat_fact(client)) for _ in range(5)]
+      for task in cat_fact_tasks:
+          await task
   end = time.perf_counter()
   print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
 ```
@@ -1090,6 +1255,16 @@ async def main():
     await asyncio.gather(*cat_fact_tasks) # pozivamo Taskove konkurentno
   end = time.perf_counter()
   print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
+
+# ili koristeći httpx
+
+async def main():
+  start = time.perf_counter()
+  async with httpx.AsyncClient() as client:
+    cat_fact_tasks = [asyncio.create_task(get_cat_fact(client)) for _ in range(5)]
+    await asyncio.gather(*cat_fact_tasks)
+  end = time.perf_counter()
+  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
 ```
 
 Možemo maknuti `print` naredbe unutar korutine `get_cat_fact` te vratiti samo činjenicu kao rezultat te korutine:
@@ -1105,6 +1280,24 @@ async def main():
   async with aiohttp.ClientSession() as session:
     cat_fact_tasks = [asyncio.create_task(get_cat_fact(session)) for _ in range(5)] # pohranjujemo Taskove u listu
     actual_cat_facts = await asyncio.gather(*cat_fact_tasks) # pohranit ćemo rezultate u listu
+  end = time.perf_counter()
+  print(actual_cat_facts)
+  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
+
+asyncio.run(main())
+
+# ili koristeći httpx
+
+async def get_cat_fact(client):
+  response = await client.get("https://catfact.ninja/fact")
+  fact_dict = response.json()
+  return fact_dict['fact']
+
+async def main():
+  start = time.perf_counter()
+  async with httpx.AsyncClient() as client:
+    cat_fact_tasks = [asyncio.create_task(get_cat_fact(client)) for _ in range(5)]
+    actual_cat_facts = await asyncio.gather(*cat_fact_tasks)
   end = time.perf_counter()
   print(actual_cat_facts)
   print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
@@ -1139,6 +1332,23 @@ async def main():
   start = time.perf_counter()
   async with aiohttp.ClientSession() as session:
     cat_fact_tasks = [asyncio.create_task(get_cat_fact(session, i)) for i in range(5)] # u korutinu prosljeđujemo parametar "session" i lokalnu varijablu "i"
+    actual_cat_facts = await asyncio.gather(*cat_fact_tasks)
+  end = time.perf_counter()
+  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
+asyncio.run(main())
+
+# ili koristeći httpx
+
+async def get_cat_fact(client, i):
+  response = await client.get("https://catfact.ninja/fact")
+  fact_dict = response.json()
+  print(f"{i + 1}: {fact_dict['fact']}")
+  return fact_dict['fact']
+
+async def main():
+  start = time.perf_counter()
+  async with httpx.AsyncClient() as client:
+    cat_fact_tasks = [asyncio.create_task(get_cat_fact(client, i)) for i in range(5)]
     actual_cat_facts = await asyncio.gather(*cat_fact_tasks)
   end = time.perf_counter()
   print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
@@ -1180,7 +1390,7 @@ Ako se prisjetimo ilustracije konkurentnog izvođenja na samom početku skripte 
 <details>
   <summary>Spoiler alert! Odgovor na pitanje</summary>
   <p>
-    Svaki poziv korutine raspoređuje se u event loopu već samim pokretanjem glavne korutine. U našem slučaju to se događa prilikom izgradnje list comprehensiona koji kreira Taskove ili prilikom poziva funkcije <code>asyncio.gather</code>.
+    U ovom primjeru <code>asyncio.create_task</code> raspoređuje svaku korutinu za izvršavanje. Ispis unutar korutine pokazuje kada je obrađen pojedini odgovor. Lista koju vraća <code>asyncio.gather</code> zadržava redoslijed predanih zadataka.
   </p>
   <p>
     Budući da korutine traju različito zbog mrežne obrade, njihovi se rezultati vraćaju u različitim trenucima. Zbog toga <i>event loop</i> aktivira pojedine korutine onim redoslijedom kojim pristižu HTTP-odgovori.
@@ -1380,6 +1590,43 @@ Timeout while fetching data from camera 3.
 Timeout while fetching data from camera 5.
 All camera data fetched: ['Data from camera 1', 'Data from camera 2', None, 'Data from camera 4', None]
 ```
+
+Kako isto ograničenje primijeniti na stvarni HTTP-zahtjev? Ponovno ćemo koristiti Cat Facts API. Funkcijom `asyncio.wait_for` ograničit ćemo ukupno vrijeme za dohvat i čitanje odgovora na deset sekundi. Ako vrijeme istekne, ispisat ćemo poruku i vratiti `None`, kao u primjeru s kamerama.
+
+```python
+async def get_cat_fact(session):
+    async with session.get("https://catfact.ninja/fact") as response:
+        data = await response.json()
+        return data["fact"]
+
+async def main():
+    async with aiohttp.ClientSession() as session:
+        try:
+            return await asyncio.wait_for(get_cat_fact(session), timeout=10)
+        except asyncio.TimeoutError:
+            print("Isteklo je vrijeme za dohvat činjenice.")
+            return None
+
+print(asyncio.run(main()))
+
+# ili koristeći httpx
+
+async def get_cat_fact(client):
+    response = await client.get("https://catfact.ninja/fact")
+    return response.json()["fact"]
+
+async def main():
+    async with httpx.AsyncClient(timeout=None) as client:
+        try:
+            return await asyncio.wait_for(get_cat_fact(client), timeout=10)
+        except asyncio.TimeoutError:
+            print("Isteklo je vrijeme za dohvat činjenice.")
+            return None
+
+print(asyncio.run(main()))
+```
+
+U drugom primjeru `timeout=None` isključuje vremenska ograničenja samog klijenta jer cijeli dohvat već ograničava `asyncio.wait_for`. Ako želimo da `httpx` zasebno ograniči čekanje na uspostavu veze ili na sljedeći dio odgovora, možemo postaviti `httpx.AsyncClient(timeout=10)` i obraditi iznimku `httpx.TimeoutException`. [Vremenska ograničenja u biblioteci HTTPX](https://www.python-httpx.org/advanced/timeouts/)
 
 > Više o rukovanju iznimkama i timeoutima radit ćemo na budućim vježbama.
 
