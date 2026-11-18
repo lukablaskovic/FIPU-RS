@@ -14,11 +14,11 @@
 <img src="../rs-icons/RS_3.png" style="width:9%; border-radius: 8px; float:right;"></img>
 
 <div style="float: clear; margin-right:5px;">
-Asinkronost je koncept koji označava mogućnost simultanog izvršavanja više zadataka pri čemu se zadaci izvršavaju neovisno jedan o drugome, odnosno ne čekaju jedan na drugi da se završe, već se odvijaju neovisno o međusobnim vremenskim ograničenjima. U Pythonu, asinkrono programiranje omogućuje nam da zadatke izvršavamo konkurentno, bez blokiranja izvršavanja programa i to bez korištenja tradicionalnih multi-threading tehnika kroz programske dretve. Navedeno je korisno za zadatke poput I/O operacija, mrežne operacije pozivanja velikog broja API-ja, obrade velikih količina podataka i/ili čitanje velikog broja datoteka, <i>streaming</i> i sl. Kroz ovu skriptu naučit ćete pisati konkurentni Python kod koristeći biblioteku <i>asyncio</i>.
+Asinkronost je koncept koji označava mogućnost simultanog izvršavanja više zadataka, pri čemu se zadaci izvršavaju neovisno jedan o drugome, odnosno ne čekaju jedan na drugi da se završe, već se odvijaju neovisno o međusobnim vremenskim ograničenjima. U Pythonu asinkrono programiranje omogućuje nam da zadatke izvršavamo konkurentno, bez blokiranja izvršavanja programa, i to bez korištenja tradicionalnih tehnika multithreadinga kroz programske dretve. Navedeno je korisno za zadatke poput I/O-operacija, mrežnih operacija pozivanja velikog broja API-ja, obrade velikih količina podataka i/ili čitanja velikog broja datoteka, <i>streaminga</i> i sl. Kroz ovu skriptu naučit ćete pisati konkurentni kod u Pythonu koristeći biblioteku <i>asyncio</i>.
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 2.11.2026.**
+**🆙 Posljednje ažurirano: 18.11.2026.**
 
 ## Sadržaj
 
@@ -26,68 +26,68 @@ Asinkronost je koncept koji označava mogućnost simultanog izvršavanja više z
 - [(3) Asinkroni Python: Osnove _asyncio_ biblioteke](#3-asinkroni-python-osnove-asyncio-biblioteke)
   - [Sadržaj](#sadržaj)
 - [1. `asyncio` biblioteka](#1-asyncio-biblioteka)
-  - [1.1. Korutine (eng. Coroutines)](#11-korutine-eng-coroutines)
-  - [1.2 Event Loop](#12-event-loop)
-    - [1.2.1 Simpatična analogija za razumijevanje konkurentnog izvršavanja i GIL mehanizma u Pythonu](#121-simpatična-analogija-za-razumijevanje-konkurentnog-izvršavanja-i-gil-mehanizma-u-pythonu)
-  - [1.3 Konkurentno izvršavanje više korutina](#13-konkurentno-izvršavanje-više-korutina)
-    - [Primjer 1: Sinkrono izvođenje dvije funkcije koje simuliraju dohvaćanje podataka s različitim vremenom trajanja.](#primjer-1-sinkrono-izvođenje-dvije-funkcije-koje-simuliraju-dohvaćanje-podataka-s-različitim-vremenom-trajanja)
-    - [Primjer 2: Asinkrono izvođenje dvije korutine koje simuliraju dohvaćanje podataka s različitim vremenom trajanja.](#primjer-2-asinkrono-izvođenje-dvije-korutine-koje-simuliraju-dohvaćanje-podataka-s-različitim-vremenom-trajanja)
-    - [Primjer 3: Konkurentno izvođenje dvije korutine koje simuliraju dohvaćanje podataka s različitim vremenom trajanja.](#primjer-3-konkurentno-izvođenje-dvije-korutine-koje-simuliraju-dohvaćanje-podataka-s-različitim-vremenom-trajanja)
+  - [1.1. Korutine (engl. Coroutines)](#11-korutine-engl-coroutines)
+  - [1.2. Event Loop](#12-event-loop)
+    - [1.2.1. Simpatična analogija za razumijevanje konkurentnog izvršavanja i mehanizma GIL-a u Pythonu](#121-simpatična-analogija-za-razumijevanje-konkurentnog-izvršavanja-i-mehanizma-gil-a-u-pythonu)
+  - [1.3. Konkurentno izvršavanje više korutina](#13-konkurentno-izvršavanje-više-korutina)
+    - [Primjer 1: Sinkrono izvođenje dviju funkcija koje simuliraju dohvaćanje podataka s različitim vremenom trajanja](#primjer-1-sinkrono-izvođenje-dviju-funkcija-koje-simuliraju-dohvaćanje-podataka-s-različitim-vremenom-trajanja)
+    - [Primjer 2: Asinkrono izvođenje dviju korutina koje simuliraju dohvaćanje podataka s različitim vremenom trajanja](#primjer-2-asinkrono-izvođenje-dviju-korutina-koje-simuliraju-dohvaćanje-podataka-s-različitim-vremenom-trajanja)
+    - [Primjer 3: Konkurentno izvođenje dviju korutina koje simuliraju dohvaćanje podataka s različitim vremenom trajanja](#primjer-3-konkurentno-izvođenje-dviju-korutina-koje-simuliraju-dohvaćanje-podataka-s-različitim-vremenom-trajanja)
     - [Primjer 4: Što se događa ako _awaitamo_ taskove u drugačijem redoslijedu nego što su raspoređeni?](#primjer-4-što-se-događa-ako-awaitamo-taskove-u-drugačijem-redoslijedu-nego-što-su-raspoređeni)
     - [Primjer 5: Što ako _awaitamo_ samo jednu korutinu, a rasporedimo više korutina u event loop?](#primjer-5-što-ako-awaitamo-samo-jednu-korutinu-a-rasporedimo-više-korutina-u-event-loop)
-  - [1.4 Konkurentno izvršavanje s `asyncio.gather()`](#14-konkurentno-izvršavanje-s-asynciogather)
-  - [1.5 Konkurentno izvođenje kroz `asyncio.gather()` i `asyncio.create_task()`](#15-konkurentno-izvođenje-kroz-asynciogather-i-asynciocreate_task)
+  - [1.4. Konkurentno izvršavanje s `asyncio.gather()`](#14-konkurentno-izvršavanje-s-asynciogather)
+  - [1.5. Konkurentno izvođenje kroz `asyncio.gather()` i `asyncio.create_task()`](#15-konkurentno-izvođenje-kroz-asynciogather-i-asynciocreate_task)
 - [2. Zadaci za vježbu - Korutine, Task objekti, gather metoda, event loop](#2-zadaci-za-vježbu---korutine-task-objekti-gather-metoda-event-loop)
 
 <div style="page-break-after: always; break-after: page;"></div>
 
 # 1. `asyncio` biblioteka
 
-`asyncio` je biblioteka koja se koristi za pisanje konkurentnog koda kroz `async/await` sintaksu. Ova biblioteka omogućuje nam da pišemo asinkroni kod koji se izvršava konkurentno, bez blokiranja izvršavanja programa te služi kao svojevrsni **temelj za pisanje asinkronih programa u Pythonu**.
+`asyncio` je biblioteka koja se koristi za pisanje konkurentnog koda kroz `async/await` sintaksu. Ova biblioteka omogućuje nam da pišemo asinkroni kod koji se izvršava konkurentno bez blokiranja izvršavanja programa te služi kao svojevrsni **temelj za pisanje asinkronih programa u Pythonu**.
 
 Primjeri kada je korisno pisati asinkroni kod:
 
 - izvođenje više zadataka bez blokiranja glavnog toka programa
-- učinkovito upravljanje I/O operacijama (npr. čitanje/pisanje datoteka, mrežni zahtjevi)
-- izgradnja mrežnih aplikacija koje zahtijevaju visoku propusnost i nisku latenciju (npr. web poslužitelji, chat aplikacije, _streaming_ servisi, multiplayer gaming poslužitelji, financijske aplikacije u realnom vremenu, raspodijeljeni sustavi za obradu podataka u realnom vremenu - npr. telemetrija, IoT sustavi, senzorske mreže i sl.)
+- učinkovito upravljanje I/O-operacijama (npr. čitanjem/pisanjem datoteka, mrežnim zahtjevima)
+- izgradnja mrežnih aplikacija koje zahtijevaju visoku propusnost i nisku latenciju (npr. web-poslužitelji, chat-aplikacije, _streaming_ servisi, multiplayer gaming poslužitelji, financijske aplikacije u realnom vremenu, raspodijeljeni sustavi za obradu podataka u realnom vremenu – npr. telemetrija, IoT-sustavi, senzorske mreže i sl.)
 
-`asyncio` biblioteka je uključena u standardnu biblioteku **Pythona 3.7+** pa ju nije potrebno naknadno instalirati.
+`asyncio` biblioteka uključena je u standardnu biblioteku **Pythona 3.7+** pa ju nije potrebno naknadno instalirati.
 
 Pitanje: Koja je razlika između **paralelnog** i **konkurentnog** izvršavanja koda?
 
 <hr>
 
-**Paralelno izvršavanje** (_eng. Parallelism_) sastoji se od izvršavanja više operacija simultano, odnosno u isto vrijeme. Ovo se postiže korištenjem prvenstveno više procesnih jezgri ili jedinica. Paralelno izvršavanje je fizičko - odvija se na različitim procesorskim jezgrama ili računalima.
+**Paralelno izvršavanje** (_engl. Parallelism_) sastoji se od izvršavanja više operacija simultano, odnosno u isto vrijeme. Ovo se postiže korištenjem prvenstveno više procesnih jezgri ili jedinica. Paralelno je izvršavanje fizičko – odvija se na različitim procesorskim jezgrama ili računalima.
 
 - paralelno izvršavanje predstavlja _istinski simultano_ izvršavanje više zadataka odjednom
-- zahtijeva više CPU jezgri (_eng. CPU Cores_) ili više računala (npr. u raspodijeljenim sustavima), biblioteke kao što su `multiprocessing` u Pythonu omogućuju paralelno izvršavanje koda
-- tipično se koristi za zadatke koji su CPU-intenzivni (_eng. CPU-bound tasks_) - npr. obrada velikih količina podataka, velika numerička računanja (strojno učenje, duboko učenje), složene simulacije s velikim brojem ulaznih varijabli i sl.
-- paralelizam je fizički - više stvari se događa u isto vrijeme
+- zahtijeva više CPU-jezgri (_engl. CPU Cores_) ili više računala (npr. u raspodijeljenim sustavima). Biblioteke kao što je `multiprocessing` u Pythonu omogućuju paralelno izvršavanje koda
+- tipično se koristi za zadatke koji su CPU-intenzivni (_engl. CPU-bound tasks_) – npr. za obradu velikih količina podataka, velika numerička računanja (strojno učenje, duboko učenje), složene simulacije s velikim brojem ulaznih varijabli i sl.
+- paralelizam je fizički – više se stvari događa u isto vrijeme
 
-**Konkurentno izvršavanje** (_eng. Concurrency_) sastoji se od izvršavanja više operacija u isto vrijeme, ali ne nužno simultano niti istim redoslijedom. To znači da se operacije mogu međusobno preklapati u vremenu, ali se izmjenjuju u svom izvršavanju, koristeći najčešće jednu procesorsku jedinicu tj. iste resurse. Konkurentnost se ostvaruje kroz mehanizme kao što su asinkrono programiranje, višedretvenost (_eng. multithreading_) te programiranje bazirano na događajima (_eng. event-driven programming_).
+**Konkurentno izvršavanje** (_engl. Concurrency_) sastoji se od izvršavanja više operacija u isto vrijeme, ali ne nužno simultano ni istim redoslijedom. To znači da se operacije mogu međusobno preklapati u vremenu, ali se izmjenjuju u svom izvršavanju, koristeći najčešće jednu procesorsku jedinicu, tj. iste resurse. Konkurentnost se ostvaruje kroz mehanizme kao što su asinkrono programiranje, višedretvenost (_engl. multithreading_) te programiranje bazirano na događajima (_engl. event-driven programming_).
 
-Međutim, konkurentnost je moguće ostvariti i kroz jednodretveni pristup - npr. `asyncio` biblioteka u Pythonu.
+Međutim, konkurentnost je moguće ostvariti i kroz jednodretveni pristup – npr. korištenjem biblioteke `asyncio` u Pythonu.
 
-- radi se o posebnom _strukturiranju programa_ koji omogućuje da se više zadataka obrađuje tijekom nekog vremenskog intervala
-- može se izvoditi na jednoj CPU jezgri (`asyncio`) ili na više jezgri (`multithreading`)
-- konkurentnost je logička, ne fizička - više stvari je "u tijeku"
+- radi se o posebnom _strukturiranju programa_ koje omogućuje da se više zadataka obrađuje tijekom nekog vremenskog intervala
+- može se izvoditi na jednoj CPU-jezgri (`asyncio`) ili na više jezgri (`multithreading`)
+- konkurentnost je logička, ne fizička – više je stvari "u tijeku"
 
 ![konkurentno_paralelno_razlike](https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/refs/heads/main/RS3%20-%20Asinkroni%20Python%20-%20Osnove%20asyncio%20biblioteke/screenshots/konkurentno_paralelno_razlike.png)
 
-> Napomena: Na ovom kolegiju dotaknuti ćemo se prvenstveno **konkurentnog izvršavanja** kroz asinkrono programiranje koristeći `asyncio` biblioteku budući da se problemi u raspodijeljenim sustavima često odnose na učinkovito upravljanje I/O operacijama, a ne na CPU-intenzivne zadatke.
+> Napomena: Na ovom kolegiju dotaknut ćemo se prvenstveno **konkurentnog izvršavanja** kroz asinkrono programiranje koristeći `asyncio` biblioteku budući da se problemi u raspodijeljenim sustavima često odnose na učinkovito upravljanje I/O-operacijama, a ne na CPU-intenzivne zadatke.
 
-## 1.1. Korutine (eng. Coroutines)
+## 1.1. Korutine (engl. Coroutines)
 
-**Korutine** (_eng. coroutines_) predstavljaju posebne vrste funkcija koje mogu pauzirati i nastaviti svoje izvršavanje, dozvoljavajući na taj način asinkrono programiranje bez blokiranja glavnog toka programa.
+**Korutine** (_engl. coroutines_) predstavljaju posebne vrste funkcija koje mogu pauzirati i nastaviti svoje izvršavanje, dozvoljavajući na taj način asinkrono programiranje bez blokiranja glavnog toka programa.
 
-Korutine se definiraju korištenjem `async def` sintakse, a njihovim izvršavanje se upravlja pomoću `await` ključne riječi i `asyncio` specifičnih funkcija/metoda.
+Korutine se definiraju korištenjem `async def` sintakse, a njihovim se izvršavanjem upravlja pomoću `await` ključne riječi i funkcija/metoda specifičnih za `asyncio`.
 
-Preciznije, ključne riječi `async` i `await` koriste se za:
+Preciznije, ključne riječi `async` i `await` koriste se za sljedeće:
 
 1. **Definiranje asinkronih** (`async`) funkcija (koje vraćaju `coroutine` objekte kao povratnu vrijednost)
-2. **Pokretanje** asinkronih funkcija korištenjem `await` izraza unutar drugih asinkronih funkcija (_preciznije: suspendira trenutnu korutinu i prepušta izvršavanje programa event loop-u_)
+2. **Pokretanje** asinkronih funkcija korištenjem `await` izraza unutar drugih asinkronih funkcija (_preciznije: izraz `await` suspendira trenutnu korutinu i prepušta izvršavanje programa event loopu_)
 
-Korutine mogu biti **pokrenute**, **pauzirane**, **nastavljene** i **završene** u bilo kojem trenutno tijekom njihovog ciklusa izvođenja (_eng. lifecycle_).
+Korutine mogu biti **pokrenute**, **pauzirane**, **nastavljene** i **završene** u bilo kojem trenutku tijekom svojeg ciklusa izvođenja (_engl. lifecycle_).
 
 **Sintaksa za definiranje jednostavne korutine:**
 
@@ -99,14 +99,14 @@ async def korutina(vrijednost):
     return vrijednost # povratna vrijednost korutine
 ```
 
-Ako sada pokušamo pozvati ovu korutinu na uobičajen način kao što bismo to učinili s običnom funkcijom, npr. `korutina(5)`, kao rezultat nećemo dobiti povratnu vrijednost `5`, već ćemo dobiti **objekt korutine** (_corutine object_) - `CoroutineType`.
+Ako sada pokušamo pozvati ovu korutinu na uobičajen način kao što bismo to učinili s običnom funkcijom, npr. `korutina(5)`, kao rezultat nećemo dobiti povratnu vrijednost `5`, već ćemo dobiti **objekt korutine** (_coroutine object_) – `CoroutineType`.
 
-**Objekt korutine** (_eng. corutine object_) je posebna vrsta objekta koja predstavlja **rezultat poziva asinkrone funkcije** definirane s `async def` **koja se još nije izvršila**. Dakle, `korutina` ustvari vraća tip `CoroutineType`, što je definirano ugrađenom klasom `<class 'coroutine'>`.
+**Objekt korutine** (_engl. coroutine object_) posebna je vrsta objekta koja predstavlja **rezultat poziva asinkrone funkcije** definirane s `async def` **koja se još nije izvršila**. Dakle, `korutina` u stvari vraća tip `CoroutineType`, što je definirano ugrađenom klasom `<class 'coroutine'>`.
 
 ```python
 async def korutina(vrijednost) -> CoroutineType:
     return vrijednost
-coroutine_objekt = korutina(5) # poziv korutine vraća CoroutineType objekt, definirano kao <class 'coroutine'>
+coroutine_objekt = korutina(5) # poziv korutine vraća CoroutineType objekt, definiran kao <class 'coroutine'>
 ```
 
 Kako bismo simulirali asinkrono izvršavanje, iskoristit ćemo funkciju `asyncio.sleep()` koja simulira čekanje (odgađanje izvođenja programa) zadano u sekundama.
@@ -117,9 +117,9 @@ Kako bismo simulirali asinkrono izvršavanje, iskoristit ćemo funkciju `asyncio
 asyncio.sleep(delay)
 ```
 
-- `delay` - broj sekundi koliko želimo čekati tj. odgoditi izvršavanje koda
+- `delay` - broj sekundi koliko želimo čekati, tj. odgoditi izvršavanje koda
 
-_Primjer:_ Definicija `main()` korutine koja ispisuje "Hello", čeka 1 sekundu, potom ispisuje "World".
+_Primjer:_ Definicija `main()` korutine koja ispisuje "Hello", čeka 1 sekundu, a potom ispisuje "World".
 
 ```python
 import asyncio
@@ -131,7 +131,7 @@ async def main(): # asinkrona main funkcija (korutina)
 ```
 
 Kako bismo pozvali korutinu `main()`, potrebno ju je pokrenuti pomoću `asyncio.run()` funkcije.
-Funkcija `run` je glavna funkcija `asyncio` biblioteke kojom pokrećemo korutinu **pokretanjem tzv. _event loopa_.** Kao obavezan argument, očekuje _corutine object_ koji želimo pokrenuti.
+Funkcija `run` glavna je funkcija `asyncio` biblioteke kojom pokrećemo korutinu **pokretanjem tzv. _event loopa_.** Kao obavezan argument očekuje _coroutine object_ koji želimo pokrenuti.
 
 **Sintaksa:**
 
@@ -165,9 +165,9 @@ Hello
 World
 ```
 
-Kao što vidimo, ispis `"Hello"` se pojavljuje odmah, dok se ispis `"World"` pojavljuje nakon 1 sekunde.
+Kao što vidimo, ispis `"Hello"` pojavljuje se odmah, dok se ispis `"World"` pojavljuje nakon 1 sekunde.
 
-Primjer iznad ne iskorištava potencijal konkurentnog programiranja jer smo pokrenuli samo jednu korutinu - isto možemo postići i običnom funkcijom tj. **sinkronim izvođenjem**:
+Primjer iznad ne iskorištava potencijal konkurentnog programiranja jer smo pokrenuli samo jednu korutinu – isto možemo postići i običnom funkcijom, tj. **sinkronim izvođenjem**:
 
 ```python
 import time
@@ -184,16 +184,16 @@ main()
 Ipak, postoji nekoliko ključnih razlika koje moramo uočiti:
 
 - u asinkronom kodu koristili smo modul `asyncio` za čekanje od 1 sekunde, dok smo u sinkronom kodu koristili `time.sleep()`
-- u asinkronom kodu, poziv `main()` uvijek vraća coroutine objekt, dok u sinkronom kodu, poziv `main()` izvršava funkciju odmah i vraća povratnu vrijednost koju definira funkcija (u našem slušaju `None`)
-- u asinkronom primjeru, funkciju (korutinu) definiramo s `async def`, dok u sinkronom primjeru koristimo samo `def`
+- u asinkronom kodu poziv `main()` uvijek vraća coroutine objekt, dok u sinkronom kodu poziv `main()` izvršava funkciju odmah i vraća povratnu vrijednost koju definira funkcija (u našem slučaju `None`)
+- u asinkronom primjeru funkciju (korutinu) definiramo s `async def`, dok u sinkronom primjeru koristimo samo `def`
 
 Zašto u primjeru iznad koristimo `await asyncio.sleep(1)` umjesto `time.sleep(1)`?
 
-- razlog je taj što `time` modul ne **podržava asinkrono programiranje**, odnosno objekt `time` nema definiranu `__await__` metodu koja je potrebna da bi se mogao koristiti s `await` izrazom unutar asinkrone funkcije - samim time, ova naredba predstavlja blocking I/O operaciju koja blokira glavni tok programa (aktivnu dretvu) na 1 sekundu
+- razlog je taj što `time` modul ne **podržava asinkrono programiranje**, odnosno objekt `time` nema definiranu `__await__` metodu koja je potrebna da bi se mogao koristiti s `await` izrazom unutar asinkrone funkcije – samim time ova naredba predstavlja blocking I/O-operaciju koja blokira glavni tok programa (aktivnu dretvu) na 1 sekundu
 
-> Objekte koji imaju implementiranu `__await__` metodu i možemo koristiti s `await` izrazom unutar asinkronih funkcija nazivamo **awaitable objektima** ([awaitable objects](<https://realpython.com/ref/glossary/awaitable/#:~:text=In%20Python%2C%20an%20awaitable%20is,__await__()%20method.>)).
+> Objekte koji imaju implementiranu `__await__` metodu i koje možemo koristiti s `await` izrazom unutar asinkronih funkcija nazivamo **awaitable objektima** ([awaitable objects](<https://realpython.com/ref/glossary/awaitable/#:~:text=In%20Python%2C%20an%20awaitable%20is,__await__()%20method.>)).
 
-Ovisno o linteru koji koristite (npr. `pylint`, `flake8`, `black` i sl.), možda ćete dobiti upozorenje za korištenje blocking I/O operacije unutar asinkrone funkcije, a **možda i nećete**.
+Ovisno o linteru koji koristite (npr. `pylint`, `flake8`, `black` i sl.), možda ćete dobiti upozorenje za korištenje blocking I/O-operacije unutar asinkrone funkcije, a **možda i nećete**.
 
 ```python
 import asyncio, time
@@ -208,83 +208,83 @@ asyncio.run(main()) # TypeError: object NoneType can't be used in 'await' expres
 
 <div style="page-break-after: always; break-after: page;"></div>
 
-## 1.2 Event Loop
+## 1.2. Event Loop
 
-Pokretanjem `asyncio.run()` funkcije, automatski se stvara i pokreće **event loop**. _Event loop_ je srž asinkronog programiranja u Pythonu i predstavlja interni mehanizam koji upravljanja izvršavanjem asinkronih zadataka (korutina) unutar programa.
+Pokretanjem `asyncio.run()` funkcije automatski se stvara i pokreće **event loop**. _Event loop_ srž je asinkronog programiranja u Pythonu i predstavlja interni mehanizam koji upravlja izvršavanjem asinkronih zadataka (korutina) unutar programa.
 
 _Event loop_ omogućuje da se više korutina izvršava konkurentno, bez blokiranja glavnog toka programa.
 
 > Zamislimo _event loop_ kao **_scheduler_ asinkronih zadataka.**
 
-Mi smo do sada pozvali samo jednu korutinu `main()` kroz _event loop_. Međutim, u praksi, prilikom razvoja robusnih asinkronih mrežnih aplikacija, _event loop_ može upravljati stotinama ili čak tisućama korutina "istovremeno".
+Mi smo do sada pozvali samo jednu korutinu `main()` kroz _event loop_. Međutim, u praksi prilikom razvoja robusnih asinkronih mrežnih aplikacija _event loop_ može upravljati stotinama ili čak tisućama korutina "istovremeno".
 
 Grafički možemo predstaviti _event loop_ kao petlju koja provjerava **postoje li zadaci** (korutine) za izvršavanje. Svakom zadatku omogućuje da se privremeno zaustavi i kasnije nastavi, ovisno o stvarnoj potrebi/opterećenju.
 
-Zašto jednu po jednu? Python nije striktno jednodretveni jezik (_eng. single-threaded_), tj. dozvoljava višedretveno izvršavanje koda, **međutim samo jedna dretva može izvršavati** [Python bytecode](https://realpython.com/ref/glossary/bytecode/#:~:text=In%20Python%2C%20bytecode%20is%20a,has%20a%20compatible%20CPython%20interpreter.) u određenom trenutku zbog [Global Interpreter Lock](https://realpython.com/python-gil/) (**GIL**) mehanizma (_there are [workarounds](https://realpython.com/python-parallel-processing/)..._).
+Zašto jednu po jednu? Python nije striktno jednodretveni jezik (_engl. single-threaded_), tj. dozvoljava višedretveno izvršavanje koda. **Međutim, samo jedna dretva može izvršavati** [Python bytecode](https://realpython.com/ref/glossary/bytecode/#:~:text=In%20Python%2C%20bytecode%20is%20a,has%20a%20compatible%20CPython%20interpreter.) u određenom trenutku zbog [Global Interpreter Lock](https://realpython.com/python-gil/) (**GIL**) mehanizma (_there are [workarounds](https://realpython.com/python-parallel-processing/)..._).
 
 - GIL je implementacijsko ograničenje unutar CPython _interpretera/compilera_ koje možemo zamisliti kao ključ koji dozvoljava samo jednoj dretvi da izvršava Python _bytecode_ u određenom trenutku. Ako vas više zanima, pročitajte [ovaj članak o GIL-u](https://realpython.com/python-gil/#what-problem-did-the-gil-solve-for-python).
 
 <img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS3%20-%20Asinkroni%20Python%20-%20Osnove%20asyncio%20biblioteke/screenshots/event-loop-simplified-illustration.png?raw=true" style="width:70%;"></img>
 
-> Jednostavna ilustracija Python _event loop_-a koja prikazuje dvije korutine (`add(5,5)` i `add(3,4)`) koje se raspoređuju unutar _event loop_-a za konkurentno izvršavanje.
+> Jednostavna ilustracija Python _event loopa_ koja prikazuje dvije korutine (`add(5,5)` i `add(3,4)`) koje se raspoređuju unutar _event loopa_ za konkurentno izvršavanje.
 
 <hr>
 
-### 1.2.1 Simpatična analogija za razumijevanje konkurentnog izvršavanja i GIL mehanizma u Pythonu
+### 1.2.1. Simpatična analogija za razumijevanje konkurentnog izvršavanja i mehanizma GIL-a u Pythonu
 
 <img src="./screenshots/GIL.png" style="width:90%;"></img>
 
-Zamislite jednu zgradu s nekoliko stanova 🏢
+Zamislite jednu zgradu s nekoliko stanova 🏢.
 
-> **_Zgrada_** predstavlja _Python proces_ koji se izvršava (npr. web servis)
+> **_Zgrada_** predstavlja _Python proces_ koji se izvršava (npr. web-servis).
 
-U zgradi se nalazi više **_Stanova_**, a svaki stan predstavlja jednu _dretvu_ (_eng. thread_).
+U zgradi se nalazi više **_stanova_**, a svaki stan predstavlja jednu _dretvu_ (_engl. thread_).
 
-> Svaki _Stan_ (_dretva_) ima svoje **_Stanare_** (_korutine_) koji mogu međusobno komunicirati i na taj način surađivati kako bi uspješno obavljali razne kućanske poslove (npr. čitanje datoteka, mrežni zahtjevi, obrada podataka i sl.)
+> Svaki _stan_ (_dretva_) ima svoje **_stanare_** (_korutine_) koji mogu međusobno komunicirati i na taj način surađivati kako bi uspješno obavljali razne kućanske poslove (npr. čitanje datoteka, mrežni zahtjevi, obrada podataka i sl.).
 
-U cijeloj zgradi postoji samo jedan **_Mikrofon_ 🎤**, kojim se smije govoriti u jednom trenutku, stanari bez _Mikrofona_ jednostavno ne mogu komunicirati jer su stariji, i slabije čuju 👴🏼. U slučaju loše komunikacije, kućanski poslovi ne mogu se obavljati učinkovito.
+U cijeloj zgradi postoji samo jedan **_mikrofon_ 🎤**, kojim se smije govoriti u jednom trenutku. Stanari bez _mikrofona_ jednostavno ne mogu komunicirati jer su stariji i slabije čuju 👴🏼. U slučaju loše komunikacije kućanski poslovi ne mogu se obavljati učinkovito.
 
 > _Mikrofon_ predstavlja _GIL (Global Interpreter Lock)_.
 
-Bez obzira na veći broj _Stanova_ i _Stanara_ u _Zgradi_, _Mikrofon_ može koristiti **samo jedan _Stanar_ (_korutina_) u jednom trenutku** - jednostavno nemamo više mikrofona...
+Bez obzira na veći broj _stanova_ i _stanara_ u _zgradi_ _mikrofon_ može koristiti **samo jedan _stanar_ (_korutina_) u jednom trenutku** – jednostavno nemamo više mikrofona...
 
-> Ovo je upravo ono što `GIL` radi u Pythonu - dopušta samo jednoj dretvi da izvršava _Python bytecode_ u određenom trenutku.
+> Ovo je upravo ono što `GIL` radi u Pythonu – dopušta samo jednoj dretvi da izvršava _Python bytecode_ u određenom trenutku.
 
-Ako jedan _Stanar_ predugo govori na _Mikrofon_, drugi polako počinju biti nervozni jer ne mogu doći do riječi te samim tim ništa ne rade, a izvršavanje kućanskih poslova se usporava ili potpuno zaustavlja (_blocking code_, npr. `time` ili `requests` moduli).
+Ako jedan _stanar_ predugo govori na _mikrofon_, drugi polako počinju biti nervozni jer ne mogu doći do riječi te samim time ništa ne rade, a izvršavanje kućanskih poslova usporava se ili potpuno zaustavlja (_blocking code_, npr. `time` ili `requests` moduli).
 
-Pojedini _Stanar_ može dugo koristiti mikrofon iz više razloga:
+Pojedini _stanar_ može dugo koristiti mikrofon iz više razloga:
 
-1. jednostavno sporo govori (_I/O - čitanje velike datoteke_),
-2. možda čeka na ključne informacije od još starijeg _Stanara_ sa sedmog kata, (_dugi mrežni zahtjevi_, _čekanje na rezultat druge funkcije i sl._),
-3. ili je pak jednostavno zaboravio određeni dio govora i treba mu vremena da se prisjeti - ali odbija dati mikrofon ostalima (_deadlock_).
+1. jednostavno sporo govori (_I/O – čitanje velike datoteke_),
+2. možda čeka na ključne informacije od još starijeg _stanara_ sa sedmog kata (_dugi mrežni zahtjevi_, _čekanje na rezultat druge funkcije i sl._)
+3. ili je pak jednostavno zaboravio određeni dio govora i treba mu vremena da se prisjeti, ali odbija dati mikrofon ostalima (_deadlock_).
 
-Ipak, u nekim _Stanovima_, _Stanari_ su bolje organizirani i kupili su si _Ploču_ za zid (_whiteboard_) na kojoj si zapisuju **kako će se izmjenjivati u govoru** jednom kad njihov _Stan_ dobije _Mikrofon_.
+Ipak, u nekim _stanovima_ _stanari_ su bolje organizirani i kupili su si _ploču_ za zid (_whiteboard_) na kojoj si zapisuju **kako će se izmjenjivati u govoru** jednom kad njihov _stan_ dobije _mikrofon_.
 
 - **Ploča** 📋 predstavlja _asyncio event loop_.
 
-> Jedan _Stan_ može imati maksimalno jednu _Ploču_ - tj. jedna dretva pokreće maksimalno jedan _asyncio event loop_
-> Mnogi _Stanovi_ ne koriste _Ploče_ - to su obične sinkrone dretve koje ne koriste asinkrono programiranje, pa samim time niti _event loop_
+> Jedan _stan_ može imati maksimalno jednu _ploču_, tj. jedna dretva pokreće maksimalno jedan _asyncio event loop_.
+> Mnogi _stanovi_ ne koriste _ploče_ – to su obične sinkrone dretve koje ne koriste asinkrono programiranje pa samim time ni _event loop_.
 
-Na _Ploči_, _Stanari_ čitaju pravila o tome kako će se izmjenjivati u govoru kada dobiju _Mikrofon_.
+Na _ploči_ _stanari_ čitaju pravila o tome kako će se izmjenjivati u govoru kada dobiju _mikrofon_.
 
-Primjer uputa koje pišu na _Ploči_:
+Primjer uputa koje pišu na _ploči_:
 
-- "Prvo ću reći ovo, zatim ću čekati 2 sekunde, pa ću reći ono drugo."
-- "Ako netko počinje zamuckivati (I/O operacije), ja ću preuzeti mikrofon i reći svoj dio, a drugi će nastaviti kasnije."
-- "Ako čekam na informacije potrebne da dovršim misao - dat ću mikrofon nekom drugom te nastaviti kad dobijem te informacije."
+- "Prvo ću reći ovo, zatim ću čekati 2 sekunde pa ću reći ono drugo."
+- "Ako netko počinje zamuckivati (I/O-operacije), ja ću preuzeti mikrofon i reći svoj dio, a drugi će nastaviti kasnije."
+- "Ako čekam na informacije potrebne da dovršim misao, dat ću mikrofon nekom drugom te nastaviti kad dobijem te informacije."
 - "Kad završim, dat ću mikrofon natrag drugima da nastave."
 
-Dokle god je _Mikrofon_ u toj sobi, _Stanari_ slijede upute na _Ploči_ i izmjenjuju se u govoru.
+Dokle god je _mikrofon_ u toj sobi, _stanari_ slijede upute na _ploči_ i izmjenjuju se u govoru.
 
 > Odnosno, dok se izvršava _dretva_ unutar _Python procesa_, _event loop_ učinkovito upravlja izvršavanjem korutina unutar te _dretve_.
 
-- To je **konkurentno izvođenje**, a ne paralelno (**_Mikrofon_** je samo jedan - ali se učinkovito **dijeli među _Stanarima_**).
+- To je **konkurentno izvođenje**, a ne paralelno (**_mikrofon_** je samo jedan, ali se učinkovito **dijeli među _stanarima_**).
 
-Međutim, _Mikrofon_ ponekad može napustiti _Stan_ i otići u drugi _Stan_ (_dretva_) - o tome **ne odlučuju _Stanari_** u _Sobi_, već **_Upravitelj Zgrade_** (_Operacijski sustav_).
+Međutim, _mikrofon_ ponekad može napustiti _stan_ i otići u drugi _stan_ (_dretva_) – o tome **ne odlučuju _stanari_** u _sobi_, već **_upravitelj zgrade_** (_operacijski sustav_).
 
-Ipak, ako stanovnici ove zgrade presporo govore _Python bytecodom_ na _Mikrofon_ bez obzira što ga učinkovito dijele među sobom, može se sagraditi još jedna _Zgrada_ (Python proces), s vlastitim **_Mikrofonom_**, **_Stanovima_**, **_Pločama_** i **_Stanarima_** - dakle novi proces koji se izvršava neovisno o prvoj _Zgradi_.
+Ipak, ako stanovnici ove zgrade presporo govore _Python bytecodeom_ na _mikrofon_ bez obzira na to što ga učinkovito dijele među sobom, može se sagraditi još jedna _zgrada_ (Python proces) s vlastitim **_mikrofonom_**, **_stanovima_**, **_pločama_** i **_stanarima_** – dakle, novi proces koji se izvršava neovisno o prvoj _zgradi_.
 
-- To je **paralelno izvođenje** - kada nam dvije _Zgrade_ rade nezavisno i međusobno surađuju, a imamo i dva _Mikrofona_.
+- To je **paralelno izvođenje** – kada nam dvije _zgrade_ rade nezavisno i međusobno surađuju, a imamo i dva _mikrofona_.
 
 **Koncepti:**
 
@@ -295,17 +295,17 @@ Ipak, ako stanovnici ove zgrade presporo govore _Python bytecodom_ na _Mikrofon_
 - **Mikrofon** = GIL (Global Interpreter Lock)
 - **Upravitelj zgrade** = Operacijski sustav
 - **Više zgrada** = Više Python procesa (npr. `multiprocessing`)
-- **Kućanski poslovi** = I/O operacije, mrežni zahtjevi, obrada podataka i sl.
+- **Kućanski poslovi** = I/O-operacije, mrežni zahtjevi, obrada podataka i sl.
 - **Loša komunikacija** = Blocking, Deadlock
 
 <hr>
 
-U praksi, _event loop_ mehanizam se izvršava u pozadini i najčešće nećemo ručno upravljati njime. Pokretanjem `asyncio.run()` funkcije, u grubo, dešava se sljedeće:
+U praksi _event loop_ mehanizam izvršava se u pozadini i najčešće nećemo ručno upravljati njime. Pokretanjem `asyncio.run()` funkcije ugrubo se događa sljedeće:
 
 1. Stvara se **novi** _event loop_.
 2. **Pokreće** se _event loop_ i izvršava se proslijeđena korutina (npr. `main()`).
-3. U slučaju da postoji još raspoređenih korutina, _event loop_ će ih izvršavati dokle god ima zadataka za obaviti.
-4. Kada se korutina(e) dovrši(e), _event loop_ se **zatvara** i svi resursi se oslobađaju.
+3. U slučaju da postoji još raspoređenih korutina, _event loop_ će ih izvršavati dokle god ima zadataka koje treba obaviti.
+4. Kada se sve korutine dovrše, _event loop_ se **zatvara** i svi se resursi oslobađaju.
 
 Aktivni _event loop_ možemo dohvatiti pomoću `asyncio.get_running_loop()` funkcije.
 
@@ -317,10 +317,10 @@ event_loop = asyncio.get_running_loop()
 
 Vraća referencu na trenutno aktivni _event loop_ objekt (ovisno o OS-u):
 
-- (`<class 'asyncio.events._WindowsSelectorEventLoop'>` ili
+- `<class 'asyncio.events._WindowsSelectorEventLoop'>` ili
 - `<class 'asyncio.unix_events._UnixSelectorEventLoop'>`
 
-Možemo "dokazati" da postoji aktivni _event loop_ pokretanjem naše korutine `main()`:
+Možemo "dokazati" da postoji aktivni _event loop_ pokretanjem svoje korutine `main()`:
 
 ```python
 import asyncio
@@ -328,10 +328,10 @@ import asyncio
 async def main():
     event_loop = asyncio.get_running_loop()
     print(f'Trenutni aktivni event loop: {event_loop}')
-asyncio.run(main()) # pokretanje event loop-a
+asyncio.run(main()) # pokretanje event loopa
 ```
 
-Uočite dodatne informacije o stanju _event loop_-a:
+Uočite dodatne informacije o stanju _event loopa_:
 
 - `running=True`
 - `closed=False`
@@ -349,13 +349,13 @@ event_loop = asyncio.get_event_loop()
 print(f'Event loop nakon završetka main(): {event_loop}') # RuntimeError: There is no current event loop in thread 'MainThread'.
 ```
 
-## 1.3 Konkurentno izvršavanje više korutina
+## 1.3. Konkurentno izvršavanje više korutina
 
-Kako bismo iskoristili potencijal asinkronog programiranja i konkurentnog izvršavanja koda, moramo definirati i pokrenuti **više korutina** unutar _event loop_-a.
+Kako bismo iskoristili potencijal asinkronog programiranja i konkurentnog izvršavanja koda, moramo definirati i pokrenuti **više korutina** unutar _event loopa_.
 
-Za bolje razumijevanje, krenimo od **jednostavnog primjera sinkronog izvršavanja dvije funkcije**:
+Za bolje razumijevanje krenimo od **jednostavnog primjera sinkronog izvršavanja dviju funkcija**:
 
-### Primjer 1: Sinkrono izvođenje dvije funkcije koje simuliraju dohvaćanje podataka s različitim vremenom trajanja.
+### Primjer 1: Sinkrono izvođenje dviju funkcija koje simuliraju dohvaćanje podataka s različitim vremenom trajanja
 
 ```python
 import time
@@ -374,7 +374,7 @@ def main():
     return [rezultat_1, rezultat_2]
 
 if __name__ == '__main__':
-    rezultati = main() # pokretanje event loop-a
+    rezultati = main() # pokretanje event loopa
     print(f'Rezultati: {rezultati}')
 ```
 
@@ -394,7 +394,7 @@ _Pitanje 2:_ Koliko je vremena potrebno da se program u potpunosti izvrši? Zaš
 
 <details>
   <summary>Spoiler alert! Odgovor na pitanje</summary>
- Ukupno vrijeme izvršavanja je <b>3 sekunde</b> (trajanje poziva <code>fetch_data(1)</code> + trajanje poziva <code>fetch_data(2)</code>)
+ Ukupno vrijeme izvršavanja iznosi <b>3 sekunde</b> (trajanje poziva <code>fetch_data(1)</code> + trajanje poziva <code>fetch_data(2)</code>).
 
 </details>
 
@@ -412,13 +412,13 @@ rezultati = main()
 t2 = time.perf_counter() # ili time.time(), ali time.perf_counter() je precizniji za benchmarking
 
 print(f'Rezultati: {rezultati}')
-print(f'Vrijeme izvršavanja: {t2 - t1} sekundi')
+print(f'Vrijeme izvršavanja: {t2 - t1} s')
 print(f'Vrijeme izvršavanja: {round(t2-t1, 2)} na 2 decimale') # ili bez round() funkcije, {t2 - t1:.2f}
 ```
 
 <hr>
 
-### Primjer 2: Asinkrono izvođenje dvije korutine koje simuliraju dohvaćanje podataka s različitim vremenom trajanja.
+### Primjer 2: Asinkrono izvođenje dviju korutina koje simuliraju dohvaćanje podataka s različitim vremenom trajanja
 
 Idemo pokušati pretvoriti naše sinkrone funkcije u asinkrone korutine koristeći `async def`, `await` i `asyncio.sleep()`:
 
@@ -444,7 +444,7 @@ async def main():
     return [result1, result2]
 
 
-results = asyncio.run(main()) # pokretanje event loop-a
+results = asyncio.run(main()) # pokretanje event loopa
 print(results)
 ```
 
@@ -452,24 +452,24 @@ Dodajte mjerenje vremena kao u prethodnom primjeru i pokrenite kod. Koliko je vr
 
 <details>
   <summary>Spoiler alert! Odgovor na pitanje</summary>
- Ukupno vrijeme izvršavanja je <b>3 sekunde</b> (trajanje poziva <code>fetch_data(1)</code> + trajanje poziva <code>fetch_data(2)</code>)
+ Ukupno vrijeme izvršavanja iznosi <b>3 sekunde</b> (trajanje poziva <code>fetch_data(1)</code> + trajanje poziva <code>fetch_data(2)</code>).
 </details>
 
 <br>
 
-Pokretanjem gornjeg koda, `asyncio.run()` otvara **event loop**:
+Pokretanjem gornjeg koda `asyncio.run()` otvara **event loop**:
 
 - _event loop_ započinje izvršavanje `main()` korutine:
   - `task1` i `task2` su kreirani, ali još nisu pokrenuti (još nisu _awaitani_)
   - `await task1` pauzira `main()` korutinu i prebacuje kontrolu na _event loop_ koji sada može pokrenuti `fetch_data(1)` korutinu
-  - Pokretanjem `fetch_data(1)`, poziva se `await asyncio.sleep(1)`, što pauzira `fetch_data(1)` korutinu na 1 sekundu i vraća kontrolu natrag na _event loop_
-  - Budući da _event loop_ nema drugih zadataka za izvršavanje, čeka 1 sekundu dok korutina `asyncio.sleep(1)` ne završi, zatim ponovo pokreće `fetch_data(1)` korutinu
-  - Završetkom `fetch_data(1)`, vraća se kontrola natrag na `main()` korutinu, koja nastavlja s izvršavanjem
+  - Pokretanjem `fetch_data(1)` poziva se `await asyncio.sleep(1)`, što pauzira `fetch_data(1)` korutinu na 1 sekundu i vraća kontrolu natrag na _event loop_
+  - Budući da _event loop_ nema drugih zadataka za izvršavanje, čeka 1 sekundu dok korutina `asyncio.sleep(1)` ne završi, a zatim ponovo pokreće `fetch_data(1)` korutinu
+  - Završetkom `fetch_data(1)` vraća se kontrola natrag na `main()` korutinu, koja nastavlja s izvršavanjem
 - Isto se događa i za `task2`
 
 <hr>
 
-Još jedan jednostavan primjer za razumijevanje osnovnog koncepta korutina i _event loop_-a.
+Još jedan jednostavan primjer za razumijevanje osnovnog koncepta korutina i _event loopa_.
 
 ```python
 import asyncio
@@ -485,22 +485,22 @@ async def main():
     data = await fetch_data()
     print(f'Podaci: {data}')
 
-asyncio.run(main()) # pokretanje event loop-a
+asyncio.run(main()) # pokretanje event loopa
 ```
 
 Što će se dogoditi kada pokrenemo kod iznad?
 
 <details>
   <summary>Spoiler alert! Odgovor na pitanje</summary>
-  <p>Poziva se korutina <code>fetch_data</code> koja prvo ispisuje "Dohvaćam podatke..."</p>
-  <p>Zatim se čeka 2 sekunde (simulacija mrežnog prometa)</p>
-  <p>Ispisuje se "Podaci dohvaćeni." i podaci se vraćaju</p>
-  <p>U glavnoj korutini <code>main()</code>, dohvaćeni podaci se spremaju u <code>data</code> varijablu te se ispisuju u liniji ispod</p>
+  <p>Poziva se korutina <code>fetch_data</code> koja prvo ispisuje "Dohvaćam podatke...".</p>
+  <p>Zatim se čeka 2 sekunde (simulacija mrežnog prometa).</p>
+  <p>Ispisuje se "Podaci dohvaćeni." i podaci se vraćaju.</p>
+  <p>U glavnoj korutini <code>main()</code> dohvaćeni se podaci spremaju u <code>data</code> varijablu te se ispisuju u liniji ispod.</p>
 </details>
 
 <hr>
 
-Međutim, što ako imamo više asinkronih funkcija koje želimo pokrenuti, a koje imaju **različite duljine trajanja/izvođenja**? U praksi to može biti slučaj kada dohvaćamo podatke s više različitih API-eva, gdje su neki API-evi brži, a neki sporiji.
+Međutim, što ako imamo više asinkronih funkcija koje želimo pokrenuti, a koje imaju **različite duljine trajanja/izvođenja**? U praksi to može biti slučaj kada dohvaćamo podatke s više različitih API-ja, pri čemu su neki API-ji brži, a neki sporiji.
 
 Idemo simulirati takav primjer.
 
@@ -532,38 +532,38 @@ async def main(): # main korutina
     print(f'Podaci s API-ja 1: {podaci_1}')
     print(f'Podaci s API-ja 2: {podaci_2}')
 
-asyncio.run(main()) # pokretanje event loop-a
+asyncio.run(main()) # pokretanje event loopa
 ```
 
-Pokrenite kod, koliko je vremena potrebno da se dohvate svi podaci? Zašto?
+Pokrenite kod. Koliko je vremena potrebno da se dohvate svi podaci? Zašto?
 
 <details>
   <summary>Spoiler alert! Odgovor na pitanje</summary>
-  <p>Prvo se dohvaćaju podaci s API-ja 1, što traje 2 sekunde</p>
-  <p>Nakon toga se dohvaćaju podaci s API-ja 2, što traje dodatne 4 sekunde</p>
-  <p>Ukupno vrijeme izvršavanja je 6 sekundi</p>
-  <p>Na ovaj način, dohvaćanje podataka s oba API-ja se izvršava <b>sekvencijalno</b>, a <b>ne konkurentno</b>.</p>
+  <p>Prvo se dohvaćaju podaci s API-ja 1, što traje 2 sekunde.</p>
+  <p>Nakon toga se dohvaćaju podaci s API-ja 2, što traje dodatne 4 sekunde.</p>
+  <p>Ukupno vrijeme izvršavanja iznosi 6 sekundi.</p>
+  <p>Na ovaj način dohvaćanje podataka s oba API-ja izvršava se <b>sekvencijalno</b>, a <b>ne konkurentno</b>.</p>
 </details>
 
 <hr>
 
-Zaključak: Još uvijek nemamo konkurentno izvršavanje niti iskorištavamo prednosti `asyncio` 🥲.
+Zaključak: Još uvijek nemamo konkurentno izvršavanje niti iskorištavamo prednosti biblioteke `asyncio` 🥲.
 
 <hr>
 
-Ako se vratimo na ilustraciju _event loop_-a iz Sekcije 1.2., možemo vidjeti da postoje dva glavna zadatka prema _event loop-u_ (_super-pojednostavljeni prikaz_):
+Ako se vratimo na ilustraciju _event loopa_ iz sekcije 1.2., možemo vidjeti da postoje dva glavna zadatka prema _event loopu_ (_superpojednostavljeni prikaz_):
 
 1. **Scheduling** (raspoređivanje) korutina za izvršavanje
 2. **Execution** (izvršavanje) korutina
 
-Pozivanjem korutine na sljedeći način, mi ustvari radimo oba koraka jedan za drugim, tj. **raspoređujemo i odmah izvršavamo** korutinu `fetch_api_1()`, a tek nakon što se ona u potpunosti izvrši, raspoređujemo i izvršavamo `fetch_api_2()`.
+Pozivanjem korutine na sljedeći način mi u stvari radimo oba koraka jedan za drugim, tj. **raspoređujemo i odmah izvršavamo** korutinu `fetch_api_1()`, a tek nakon što se ona u potpunosti izvrši, raspoređujemo i izvršavamo `fetch_api_2()`.
 
 ```python
 podaci_1 = await fetch_api_1() # schedule and run
 podaci_2 = await fetch_api_2() # schedule and run
 
-# ili pohranom corutine objekata pa njihovim awaitanjem
-# identifčno kao gore:
+# ili pohranom coroutine objekata pa njihovim awaitanjem
+# identično kao gore:
 task1 = fetch_api_1() # pohrana coroutine objekta (ovo nije SCHEDULE!)
 task2 = fetch_api_2() # pohrana coroutine objekta (ovo nije SCHEDULE!)
 result1 = await task1 # schedule and run
@@ -572,7 +572,7 @@ result2 = await task2 # schedule and run (nakon što je task1 korutina u potpuno
 
 Ovaj problem možemo riješiti `Task` _wrapperima_ koje `asyncio` nudi, a koji nam omogućuju da **rasporedimo (_engl. schedule_) više korutina za izvršavanje prije nego što ih zapravo pokrenemo**.
 
-`Task` objekt predstavlja **zakazanu korutinu** (_scheduled_) koja je spremna za izvršavanje unutar _event loop_-a, a kao argument moramo proslijediti _corutine objekt_.
+`Task` objekt predstavlja **zakazanu korutinu** (_scheduled_) koja je spremna za izvršavanje unutar _event loopa_, a kao argument moramo proslijediti _coroutine objekt_.
 
 **Sintaksa:**
 
@@ -595,9 +595,9 @@ podaci_1 = await task1 # run fetch_api_1 korutinu
 podaci_2 = await task2 # run fetch_api_2 korutinu (ili ne?)
 ```
 
-### Primjer 3: Konkurentno izvođenje dvije korutine koje simuliraju dohvaćanje podataka s različitim vremenom trajanja.
+### Primjer 3: Konkurentno izvođenje dviju korutina koje simuliraju dohvaćanje podataka s različitim vremenom trajanja
 
-Idemo primijeniti `Task`-ove na naš primjer s dohvaćanjem podataka:
+Idemo primijeniti objekte `Task` na naš primjer s dohvaćanjem podataka:
 
 ```python
 import asyncio, time
@@ -621,13 +621,13 @@ async def main():
 
 
 t1 = time.perf_counter()
-results = asyncio.run(main()) # pokretanje event loop-a
+results = asyncio.run(main()) # pokretanje event loopa
 t2 = time.perf_counter()
 print(results)
-print(f"Vrijeme izvođenja {t2 - t1:.2f} sekunde")
+print(f"Vrijeme izvođenja: {t2 - t1:.2f} s")
 ```
 
-Pokrenite sljedeći kod i provjerite ispise i izračunajte koliko je vremena potrebno da se dohvate svi podaci?
+Pokrenite sljedeći kod, provjerite ispise i izračunajte koliko je vremena potrebno da se dohvate svi podaci.
 
 <details>
   <summary>Spoiler alert! Odgovor na pitanje</summary>
@@ -638,19 +638,19 @@ Pokrenite sljedeći kod i provjerite ispise i izračunajte koliko je vremena pot
 <p><code>Dovršio sam s 2.</code></p>
 <p><code>Fetch 2 uspješno završen.</code></p>
 <p><code>['Rezultat za 1', 'Rezultat za 2']</code></p>
-<p><code>Vrijeme izvođenja 2.00 sekunde</code></p>
+<p><code>Vrijeme izvođenja: 2.00 s</code></p>
   
 </details>
 
 <hr>
 
-Ipak, prema ispisu, vidimo da se `fetch_api_1()` i `fetch_api_2()` korutine pokreću **gotovo istovremeno**, dakle `fetch_data(2)` (`await task2`) ne čeka da se `fetch_data(1)` (`await task1`) u potpunosti izvrši prije nego što započne svoje izvršavanje, već se **obje korutine izvršavaju konkurentno** u _event loop-u_.
+Ipak, prema ispisu vidimo da se `fetch_api_1()` i `fetch_api_2()` korutine pokreću **gotovo istovremeno**. Dakle, `fetch_data(2)` (`await task2`) ne čeka da se `fetch_data(1)` (`await task1`) u potpunosti izvrši prije nego što započne svoje izvršavanje, već se **obje korutine izvršavaju konkurentno** u _event loopu_.
 
-> Naglasak je na riječi "gotovo" istovremeno (ali nikad istinski istovremeno) budući da će se ipak prije pokrenuti ona korutina koja je prva raspoređena (_scheduled_) unutar _event loop-a_.
+> Naglasak je na riječi "gotovo" u izrazu "gotovo istovremeno" (ali nikad istinski istovremeno) budući da će se ipak prije pokrenuti ona korutina koja je prva raspoređena (_scheduled_) unutar _event loopa_.
 
-Naredba `await` (`task2`) zapravo omogućuje developerima da preciziraju u kodu kada žele dobiti rezultat izvršavanja određene korutine, **ali to ne znači da se ta korutina neće pokrenuti prije nego što dođemo do `await` naredbe** - hoće ako je prethodno raspoređena (_scheduled_) unutar _event loop_-a.
+Naredba `await` (`task2`) zapravo omogućuje developerima da preciziraju u kodu kada žele dobiti rezultat izvršavanja određene korutine, **ali to ne znači da se ta korutina neće pokrenuti prije nego što dođemo do `await` naredbe** – hoće ako je prethodno raspoređena (_scheduled_) unutar _event loopa_.
 
-> Ovo nam omogućava konkurentno izvršavanja i učinkovitije iskorištavanje našeg CPU-vremena 🔥.
+> Ovo nam omogućava konkurentno izvršavanje i učinkovitije iskorištavanje našeg CPU-vremena 🔥.
 
 ### Primjer 4: Što se događa ako _awaitamo_ taskove u drugačijem redoslijedu nego što su raspoređeni?
 
@@ -678,10 +678,10 @@ async def main():
 
 
 t1 = time.perf_counter()
-results = asyncio.run(main()) # pokretanje event loop-a
+results = asyncio.run(main()) # pokretanje event loopa
 t2 = time.perf_counter()
 print(results)
-print(f"Vrijeme izvođenja {t2 - t1:.2f} sekunde")
+print(f"Vrijeme izvođenja: {t2 - t1:.2f} s")
 ```
 
 Koji ispis očekujemo nakon pokretanja koda iznad?
@@ -695,30 +695,30 @@ Koji ispis očekujemo nakon pokretanja koda iznad?
 <p><code>Fetch 2 uspješno završen.</code></p>
 <p><code>Fetch 1 uspješno završen.</code></p>
 <p><code>['Rezultat za 1', 'Rezultat za 2']</code></p>
-<p><code>Vrijeme izvođenja 2.00 sekunde</code></p>
+<p><code>Vrijeme izvođenja: 2.00 s</code></p>
   
 </details>
 
 <hr>
 
-Pomalo zbunjujuće, zar ne? Ipak, ispis je logičan kada se prisjetimo da se obje korutine raspoređuju pokretanjem _event loop_-a, a ne čekanjem na `await` naredbe.
+Pomalo zbunjujuće, zar ne? Ipak, ispis je logičan kada se prisjetimo da se obje korutine raspoređuju pokretanjem _event loopa_, a ne čekanjem na `await` naredbe.
 
-Pokretanje samih korutina dešava se jednom kad korutina "preda" izvršavanje _event loop_-u - a to se **događa kod prvog `awaita`** unutar `main()` korutine.
+Pokretanje samih korutina događa se jednom kad korutina "preda" izvršavanje _event loopu_, a to se **događa kod prvog `awaita`** unutar `main()` korutine.
 
-- naredba `await task2` će stopirati izvršavanje `main()` korutine i prepustiti izvršavanje _event loop-u_.
-- ipak, _event loop_ će pokrenuti korutine **onim redoslijedom kojim su raspoređene** (prvo `task1`, zatim `task2`) - zato prvo imamo ispis "Nešto radim s 1..."
-- međutim, "Fetch 2 uspješno završen" **se ispisuje prije** "Fetch 1 uspješno završen" jer je `task_2` prije _awaitan_ nego `task_1` (bez obzira što traje duže!)
+- naredba `await task2` stopirat će izvršavanje `main()` korutine i prepustiti izvršavanje _event loopu_.
+- ipak, _event loop_ će pokrenuti korutine **onim redoslijedom kojim su raspoređene** (prvo `task1`, zatim `task2`) – zato prvo imamo ispis "Nešto radim s 1..."
+- međutim, "Fetch 2 uspješno završen" **ispisuje se prije** "Fetch 1 uspješno završen" jer je `task_2` prije _awaitan_ nego `task_1` (bez obzira na to što traje duže!)
 
-> U prilogu repozitorija RS3 možete pronaći animacije s ovim primjerima za bolje razumijevanje _event loop-a_. Izvor: Corey Schafer - [Complete Guide to Asynchronous Programming with Animations](https://youtu.be/oAkLSJNr5zY)
+> U prilogu repozitorija RS3 možete pronaći animacije s ovim primjerima za bolje razumijevanje _event loopa_. Izvor: Corey Schafer - [Complete Guide to Asynchronous Programming with Animations](https://youtu.be/oAkLSJNr5zY)
 
 ### Primjer 5: Što ako _awaitamo_ samo jednu korutinu, a rasporedimo više korutina u event loop?
 
 Rasporedili smo dvije korutine:
 
-1. `task1` koji _wrappa_ corutine objekt `fetch_data(1)`
-2. `task2` koji _wrappa_ corutine objekt `fetch_data(2)`
+1. `task1` koji _wrappa_ coroutine objekt `fetch_data(1)`
+2. `task2` koji _wrappa_ coroutine objekt `fetch_data(2)`
 
-_Awaitati_ ćemo samo `task2`, što se događa s `task1`?
+_Awaitat_ ćemo samo `task2`. Što se događa s `task1`?
 
 ```python
 import asyncio, time
@@ -738,10 +738,10 @@ async def main():
 
 
 t1 = time.perf_counter()
-results = asyncio.run(main()) # pokretanje event loop-a
+results = asyncio.run(main()) # pokretanje event loopa
 t2 = time.perf_counter()
 print(results)
-print(f"Vrijeme izvođenja {t2 - t1:.2f} sekunde")
+print(f"Vrijeme izvođenja: {t2 - t1:.2f} s")
 ```
 
 Koji ispis očekujemo nakon pokretanja koda iznad?
@@ -753,14 +753,14 @@ Dovršio sam s 1.
 Dovršio sam s 2.
 Fetch 2 uspješno završen.
 ['Rezultat za 2']
-Vrijeme izvođenja 2.00 sekunde
+Vrijeme izvođenja: 2.00 s
 ```
 
 Uočite sljedeće:
 
-- _event loop_ će pokrenuti obje korutine (`task1` i `task2`) jer su obje raspoređene, pokrenut će ih onim redoslijedom kojim su raspoređene
-- obje korutine će se izvršiti bez obzira što nismo _awaitali_ `task1`
-- trajanje korutine `fetch_data(2)` dulje je za sekundu od `fetch_data(1)` - obje će se izvršiti do kraja, a nakon toga će se zatvoriti _event loop_
+- _event loop_ će pokrenuti obje korutine (`task1` i `task2`) jer su obje raspoređene. Pokrenut će ih onim redoslijedom kojim su raspoređene
+- obje će se korutine izvršiti bez obzira na to što nismo _awaitali_ `task1`
+- trajanje korutine `fetch_data(2)` dulje je za sekundu od trajanja korutine `fetch_data(1)` – obje će se izvršiti do kraja, a nakon toga će se zatvoriti _event loop_
 
 Ipak, ako _awaitamo_ korutinu `fetch_data(1)` koja traje kraće, a ne awaitamo `fetch_data(2)`, što se događa?
 
@@ -781,24 +781,24 @@ Nešto radim s 2...
 Dovršio sam s 1.
 Fetch 1 uspješno završen.
 ['Rezultat za 1']
-Vrijeme izvođenja 1.00 sekunde
+Vrijeme izvođenja: 1.00 s
 ```
 
-- Fetch 1 uspješno završen. se ispisuje nakon što se `fetch_data(1)` korutina dovrši
-- Međutim, `fetch_data(2)` korutina se pokreće, ali se ne dovršava prije nego što se zatvori _event loop_
-- Zatvaranjem _event loopa_, sve pokrenute korutine (_pending tasks_) se prekidaju i ne dovršavaju
-- U našem slučaju, _event loop_ se zatvara budući da je `main()` korutina dovršena nakon što se awaita `task1`, a nema drugih awaitanih korutina koje bi držale _event loop_ aktivnim
-- Iz tog razloga ne vidimo ispis `Dovršio sam s 2.` niti rezultat `fetch_data(2)`
+- Poruka "Fetch 1 uspješno završen." ispisuje se nakon što se `fetch_data(1)` korutina dovrši
+- Međutim, `fetch_data(2)` korutina pokreće se, ali se ne dovršava prije nego što se zatvori _event loop_
+- Zatvaranjem _event loopa_ sve pokrenute korutine (_pending tasks_) prekidaju se i ne dovršavaju
+- U našem slučaju _event loop_ se zatvara budući da je `main()` korutina dovršena nakon što se awaita `task1`, a nema drugih awaitanih korutina koje bi držale _event loop_ aktivnim
+- Iz tog razloga ne vidimo ispis `Dovršio sam s 2.` ni rezultat `fetch_data(2)`
 
 <hr>
 
-## 1.4 Konkurentno izvršavanje s `asyncio.gather()`
+## 1.4. Konkurentno izvršavanje s `asyncio.gather()`
 
-Konkurentno izvršavanje možemo postići i funkcijom `asyncio.gather()` koja omogućuje pokretanje **više korutina konkurentno** **bez nužnog definiranja _Taskova_**. Ova funkcija prima više _corutine_ objekata kao argumente te ih pokreće konkurentno unutar _event loop_-a.
+Konkurentno izvršavanje možemo postići i funkcijom `asyncio.gather()` koja omogućuje pokretanje **više korutina konkurentno** **bez nužnog definiranja _Taskova_**. Ova funkcija prima više _coroutine_ objekata kao argumente te ih pokreće konkurentno unutar _event loopa_.
 
 Funkcija `asyncio.gather()` vrlo je moćan alat za upravljanje konkurentnim izvršavanjem korutina, posebno kada želimo pokrenuti više asinkronih zadataka i pričekati da se svi dovrše prije nego što nastavimo s daljnjim izvršavanjem koda. Dakle, osim što nam omogućuje konkurentno izvršavanje, `asyncio.gather()` također olakšava prikupljanje rezultata iz više korutina.
 
-- Djeluje kao višenamjenski _wrapper_ za kreiranje i upravljanje Task objektima u _event loopu_ te **omogućava sinkronizaciju rezultata iz više korutina**.
+- Djeluje kao višenamjenski _wrapper_ za kreiranje Task objekata i upravljanje njima u _event loopu_ te **omogućava sinkronizaciju rezultata iz više korutina**.
 
 **Sintaksa:**
 
@@ -808,7 +808,7 @@ asyncio.gather(*corutine_objects)
 ```
 
 - `*corutine_objects` - argumenti su asinkrone funkcije koje želimo rasporediti unutar _event loopa_ i izvršiti konkurentno
-- **Unpacking** operator `*` se koristi za raspakiravanje liste ili n-torke objekata u pojedinačne argumente funkcije (_slično kao spread operator ... u JavaScriptu_)
+- **Unpacking** operator `*` koristi se za raspakiravanje liste ili n-torke objekata u pojedinačne argumente funkcije (_slično kao spread operator ... u JavaScriptu_)
 
 ```python
 async def main():
@@ -818,13 +818,13 @@ async def main():
     print(f'Podaci s API-ja 2: {podaci_2}')
 ```
 
-Pokrenite kod, koliko je vremena potrebno da se dohvate svi podaci? Zašto?
+Pokrenite kod. Koliko je vremena potrebno da se dohvate svi podaci? Zašto?
 
 <details>
   <summary>Spoiler alert! Odgovor na pitanje</summary>
-  <p>Oba API-ja se pozivaju naizgled istovremeno (konkurentno)</p>
-  <p>Ukupno vrijeme izvršavanja je 4 sekunde (vrijeme izvršavanja najdulje korutine)</p>
-  <p>Na ovaj način, dohvaćanje podataka s oba API-ja se izvršava <b>konkurentno</b>, a <b>ne sekvencijalno</b>.</p>
+  <p>Oba se API-ja pozivaju naizgled istovremeno (konkurentno).</p>
+  <p>Ukupno vrijeme izvršavanja iznosi 4 sekunde (vrijeme izvršavanja najdulje korutine).</p>
+  <p>Na ovaj način dohvaćanje podataka s oba API-ja izvršava se <b>konkurentno</b>, a <b>ne sekvencijalno</b>.</p>
 </details>
 
 ---
@@ -836,7 +836,7 @@ import asyncio
 
 async def timer(name, delay):
     for i in range(delay, 0, -1):
-        print(f'{name}: {i} sekundi preostalo...')
+        print(f'{name}: Preostalo vrijeme: {i} s...')
         await asyncio.sleep(1)
     print(f'{name}: Vrijeme je isteklo!')
 
@@ -854,19 +854,19 @@ Pokrenite kod i provjerite ispis.
 _Rezultat izvođenja:_
 
 ```plaintext
-Timer 1: 3 sekundi preostalo...
-Timer 2: 5 sekundi preostalo...
-Timer 1: 2 sekundi preostalo...
-Timer 2: 4 sekundi preostalo...
-Timer 1: 1 sekundi preostalo...
-Timer 2: 3 sekundi preostalo...
+Timer 1: Preostalo vrijeme: 3 s...
+Timer 2: Preostalo vrijeme: 5 s...
+Timer 1: Preostalo vrijeme: 2 s...
+Timer 2: Preostalo vrijeme: 4 s...
+Timer 1: Preostalo vrijeme: 1 s...
+Timer 2: Preostalo vrijeme: 3 s...
 Timer 1: Vrijeme je isteklo!
-Timer 2: 2 sekundi preostalo...
-Timer 2: 1 sekundi preostalo...
+Timer 2: Preostalo vrijeme: 2 s...
+Timer 2: Preostalo vrijeme: 1 s...
 Timer 2: Vrijeme je isteklo!
 ```
 
-Osim korutina, `asyncio.gather()` može primiti i _Task_ objekte kao argumente. Međutim, nije potrebno prethodno kreirati _Task_ objekte ako koristimo `asyncio.gather()`, budući da `gather()` funkcija to automatski radi za nas.
+Osim korutina `asyncio.gather()` može primiti i _Task_ objekte kao argumente. Međutim, nije potrebno prethodno kreirati _Task_ objekte ako koristimo `asyncio.gather()` budući da `gather()` funkcija to automatski radi za nas.
 
 ```python
 async def main():
@@ -879,7 +879,7 @@ asyncio.run(main())
 
 <hr>
 
-Primjer 1.3.3 također možemo napisati koristeći `asyncio.gather()`:
+Primjer 1.3.3. također možemo napisati koristeći `asyncio.gather()`:
 
 ```python
 import asyncio, time
@@ -902,12 +902,12 @@ t1 = time.perf_counter()
 results = asyncio.run(main())
 t2 = time.perf_counter()
 print(results)
-print(f"Vrijeme izvođenja {t2 - t1:.2f} sekunde")
+print(f"Vrijeme izvođenja: {t2 - t1:.2f} s")
 ```
 
 <div style="page-break-after: always; break-after: page;"></div>
 
-## 1.5 Konkurentno izvođenje kroz `asyncio.gather()` i `asyncio.create_task()`
+## 1.5. Konkurentno izvođenje kroz `asyncio.gather()` i `asyncio.create_task()`
 
 Možemo kombinirati prethodne primjere korištenjem `asyncio.create_task()` i `asyncio.gather()`.
 
@@ -921,7 +921,7 @@ async def korutina(n):
     return f'Korutina {n} je završila.'
 ```
 
-U `main()` funkciji ćemo pohraniti 5 korutina u liste `tasks`. Drugim riječima, želimo pohraniti 5 `Task` objekata koji će izvršavati korutine `korutina(n)`, za `n` od 1 do 5.
+U funkciji `main()` pohranit ćemo 5 korutina u listu `tasks`. Drugim riječima, želimo pohraniti 5 `Task` objekata koji će izvršavati korutine `korutina(n)`, za `n` od 1 do 5.
 
 ```python
 async def main():
@@ -946,7 +946,7 @@ async def main():
 asyncio.run(main())
 ```
 
-Za pokretanje svih korutina konkurentno, ne želimo pozivati `await task` za svaki `Task` objekt.
+Za pokretanje svih korutina konkurentno ne želimo pozivati `await task` za svaki `Task` objekt.
 
 Dakle, **sljedeće nije najbolje rješenje**:
 
@@ -980,7 +980,7 @@ async def main():
 asyncio.run(main())
 ```
 
-Međutim, puno elegantnije rješenje je koristiti `asyncio.gather()`.
+Međutim, puno elegantnije rješenje jest koristiti `asyncio.gather()`.
 
 - `asyncio.gather()` osim korutina može primiti i `Task` objekte
 - možemo proslijediti jedan ili više `Task` objekata na isti način kao i korutine: `await asyncio.gather(task_1, task_2, task_3)`
@@ -996,7 +996,7 @@ asyncio.run(main())
 # Ispisuje: ['Korutina 1 je završila.', 'Korutina 2 je završila.', 'Korutina 3 je završila.', 'Korutina 4 je završila.', 'Korutina 5 je završila.']
 ```
 
-Na ovaj način, `asyncio.gather(*tasks)` čeka na završetak svih korutina i vraća **listu rezultata izvođenja korutina**.
+Na ovaj način `asyncio.gather(*tasks)` čeka na završetak svih korutina i vraća **listu rezultata izvođenja korutina**.
 
 ---
 
@@ -1085,7 +1085,7 @@ import asyncio
 
 async def timer(name, delay):
     for i in range(delay, 0, -1):
-        print(f'{name}: {i} sekundi preostalo...')
+        print(f'{name}: Preostalo vrijeme: {i} s...')
         await asyncio.sleep(1)
     print(f'{name}: Vrijeme je isteklo!')
 
@@ -1105,15 +1105,15 @@ asyncio.run(main())
 
 # 2. Zadaci za vježbu - Korutine, Task objekti, gather metoda, event loop
 
-1. **Definirajte korutinu koja će simulirati dohvaćanje podataka s weba**. Podaci neka budu lista brojeva od 1 do 10 koju ćete vratiti nakon 3 sekunde. Listu brojeva definirajte comprehensionom. Nakon isteka vremena, u korutinu ispišite poruku "Podaci dohvaćeni." i vratite podatke. Riješite bez korištenja `asyncio.gather()` i `asyncio.create_task()` funkcija.
+1. **Definirajte korutinu koja će simulirati dohvaćanje podataka s weba**. Podaci neka budu lista brojeva od 1 do 10 koju ćete vratiti nakon 3 sekunde. Listu brojeva definirajte comprehensionom. Nakon isteka vremena u korutini ispišite poruku "Podaci dohvaćeni." i vratite podatke. Riješite bez korištenja `asyncio.gather()` i `asyncio.create_task()` funkcija.
 
 <br>
 
-2. **Definirajte dvije korutine koje će simulirati dohvaćanje podataka s weba**. Prva korutina neka vrati listu proizvoljnih rječnika (npr. koji reprezentiraju podatke o korisnicima) nakon 3 sekunde, a druga korutina neka vrati listu proizvoljnih rječnika (npr. koji reprezentiraju podatke o proizvodima) nakon 5 sekundi. Korutine pozovite konkurentno korištenjem `asyncio.gather()` i ispišite rezultate. Program se mora izvršavati ~5 sekundi.
+2. **Definirajte dvije korutine koje će simulirati dohvaćanje podataka s weba**. Prva korutina neka vrati listu proizvoljnih rječnika (npr. onih koji reprezentiraju podatke o korisnicima) nakon 3 sekunde, a druga korutina neka vrati listu proizvoljnih rječnika (npr. onih koji reprezentiraju podatke o proizvodima) nakon 5 sekundi. Korutine pozovite konkurentno korištenjem `asyncio.gather()` i ispišite rezultate. Program se mora izvršavati ~5 sekundi.
 
 <br>
 
-3. **Definirajte korutinu `autentifikacija()` koja će simulirati autentifikaciju korisnika na poslužiteljskoj strani**. Korutina kao ulazni parametar prima rječnik koji opisuje korisnika, a sastoji se od ključeva `korisnicko_ime`, `email` i `lozinka`. Unutar korutine simulirajte provjeru korisničkog imena na način da ćete provjeriti nalaze li se par `korisnicko_ime` i `email` u bazi korisnika. Ova provjera neka traje ~3 sekunde (simulacija upita prema bazi podataka u Cloudu).
+3. **Definirajte korutinu `autentifikacija()` koja će simulirati autentifikaciju korisnika na poslužiteljskoj strani**. Korutina kao ulazni parametar prima rječnik koji opisuje korisnika, a sastoji se od ključeva `korisnicko_ime`, `email` i `lozinka`. Unutar korutine simulirajte provjeru korisničkog imena tako što ćete provjeriti nalazi li se par `korisnicko_ime` i `email` u bazi korisnika. Ova provjera neka traje ~3 sekunde (simulacija upita prema bazi podataka u cloudu).
 
 ```python
 baza_korisnika = [
@@ -1124,9 +1124,9 @@ baza_korisnika = [
 ]
 ```
 
-Ako se korisnik ne nalazi u bazi, vratite poruku `"Korisnik {korisnik} nije pronađen."`
+Ako se korisnik ne nalazi u bazi, vratite poruku `"Korisnik {korisnik} nije pronađen."`.
 
-Ako se korisnik nalazi u bazi, potrebno je pozvati vanjsku korutinu `autorizacija()` koja će simulirati autorizaciju korisnika u trajanju od 2 sekunde. Funkcija kao ulazni parametar prima rječnik korisnika iz baze i lozinku proslijeđenu iz korutine `autentifikacija()`. Autorizacija simulira dekripciju lozinke (samo provjerite podudaranje stringova) i provjeru s lozinkom iz `baza_lozinka`. Ako su lozinke jednake, korutine vraća poruku `"Korisnik {korisnik}: Autorizacija uspješna."`, a u suprotnom `"Korisnik {korisnik}: Autorizacija neuspješna."`.
+Ako se korisnik nalazi u bazi, potrebno je pozvati vanjsku korutinu `autorizacija()` koja će simulirati autorizaciju korisnika u trajanju od 2 sekunde. Funkcija kao ulazni parametar prima rječnik korisnika iz baze i lozinku proslijeđenu iz korutine `autentifikacija()`. Autorizacija simulira dekripciju lozinke (samo provjerite podudaranje stringova) i provjeru podudara li se dekriptirana lozinka s lozinkom iz liste `baza_lozinka`. Ako su lozinke jednake, korutina vraća poruku `"Korisnik {korisnik}: Autorizacija uspješna."`, a u suprotnom `"Korisnik {korisnik}: Autorizacija neuspješna."`.
 
 ```python
 baza_lozinka = [
@@ -1141,15 +1141,15 @@ Korutinu `autentifikacija()` pozovite u `main()` funkciji s proizvoljnim korisni
 
 <br>
 
-4. **Definirajte korutinu `provjeri_parnost`koja će simulirati "super zahtjevnu operaciju" provjere parnosti** broja putem vanjskog API-ja. Korutina prima kao argument broj za koji treba provjeriti parnost, a vraća poruku `"Broj {broj} je paran."` ili `"Broj {broj} je neparan."` nakon 2 sekunde. Unutar `main` funkcije definirajte listu 10 nasumičnih brojeva u rasponu od 1 do 100 (možete koristiti `random` modul). Listu brojeva izgradite kroz list comprehension sintaksu. Nakon toga, pohranite u listu `zadaci` 10 `Task` objekata koji će izvršavati korutinu `provjeri_parnost` za svaki broj iz liste (također kroz list comprehension). Na kraju, koristeći `asyncio.gather()`, pokrenite sve korutine konkurentno i ispišite rezultate.
+4. **Definirajte korutinu `provjeri_parnost` koja će simulirati "superzahtjevnu operaciju" provjere parnosti** broja putem vanjskog API-ja. Korutina prima kao argument broj za koji treba provjeriti parnost, a vraća poruku `"Broj {broj} je paran."` ili `"Broj {broj} je neparan."` nakon 2 sekunde. Unutar `main` funkcije definirajte listu 10 nasumičnih brojeva u rasponu od 1 do 100 (možete koristiti `random` modul). Listu brojeva izgradite kroz list comprehension sintaksu. Nakon toga pohranite u listu `zadaci` 10 `Task` objekata koji će izvršavati korutinu `provjeri_parnost` za svaki broj iz liste (također kroz list comprehension). Na kraju, koristeći `asyncio.gather()`, pokrenite sve korutine konkurentno i ispišite rezultate.
 
 <br>
 
-5. **Definirajte korutinu `secure_data` koja će simulirati enkripciju osjetljivih podataka**. Kako se u praksi enkripcija radi na poslužiteljskoj strani, korutina će simulirati enkripciju podataka u trajanju od 3 sekunde. Korutina prima kao argument rječnik osjetljivih podataka koji se sastoji od ključeva `prezime`, `broj_kartice` i `CVV`. Definirajte listu s 3 rječnika osjetljivih podataka. Pohranite u listu `zadaci` kao u prethodnom zadatku te pozovite zadatke koristeći `asyncio.gather()`. Korutina `secure_data` mora za svaki rječnik vratiti novi rječnik u obliku: `{'prezime': 'prezime', 'broj_kartice': 'enkriptirano', 'CVV': 'enkriptirano'}`. Za _fake_ enkripciju koristite funkciju `hash(str)` koja samo vraća hash vrijednost ulaznog stringa ili nešto slično.
+5. **Definirajte korutinu `secure_data` koja će simulirati enkripciju osjetljivih podataka**. Kako se u praksi enkripcija radi na poslužiteljskoj strani, korutina će simulirati enkripciju podataka u trajanju od 3 sekunde. Korutina prima kao argument rječnik osjetljivih podataka koji se sastoji od ključeva `prezime`, `broj_kartice` i `CVV`. Definirajte listu s 3 rječnika osjetljivih podataka. Pohranite zadatke u listu `zadaci` kao u prethodnom zadatku te pozovite zadatke koristeći `asyncio.gather()`. Korutina `secure_data` mora za svaki rječnik vratiti novi rječnik u obliku `{'prezime': 'prezime', 'broj_kartice': 'enkriptirano', 'CVV': 'enkriptirano'}`. Za _fake_ enkripciju koristite funkciju `hash(str)` koja samo vraća hash vrijednost ulaznog stringa ili nešto slično.
 
 <br>
 
-6. **Kako možete unutar `main` korutine natjerati _event loop_ da obuhvati ispis unutar korutine** `fetch_data(2)` bez da ju _awaitate_ unutar `main` funkcije? Preciznije, dokažite kako se može ispisati tekst `Dovršio sam s 2.` unutar korutine `fetch_data(2)` bez da eksplicitno pozivate `await task2` unutar `main()` funkcije.
+6. **Kako možete unutar `main` korutine natjerati _event loop_ da obuhvati ispis unutar korutine** `fetch_data(2)`, a da je pritom ne _awaitate_ unutar `main` funkcije? Preciznije, dokažite kako se može ispisati tekst `Dovršio sam s 2.` unutar korutine `fetch_data(2)`, a da pritom eksplicitno ne pozovete `await task2` unutar `main()` funkcije.
 
 ```python
 import asyncio, time
@@ -1169,10 +1169,10 @@ async def main():
 
 
 t1 = time.perf_counter()
-results = asyncio.run(main()) # pokretanje event loop-a
+results = asyncio.run(main()) # pokretanje event loopa
 t2 = time.perf_counter()
 print(results)
-print(f"Vrijeme izvođenja {t2 - t1:.2f} sekunde")
+print(f"Vrijeme izvođenja: {t2 - t1:.2f} s")
 ```
 
 <br>
@@ -1184,7 +1184,7 @@ import asyncio
 
 async def timer(name, delay):
     for i in range(delay, 0, -1):
-        print(f'{name}: {i} sekundi preostalo...')
+        print(f'{name}: Preostalo vrijeme: {i} s...')
         await asyncio.sleep(1)
     print(f'{name}: Vrijeme je isteklo!')
 
