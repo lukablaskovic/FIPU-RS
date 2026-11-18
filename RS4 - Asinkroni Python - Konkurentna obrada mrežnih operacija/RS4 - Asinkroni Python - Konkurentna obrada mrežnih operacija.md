@@ -924,7 +924,7 @@ async def get_cat_fact(client):
   return fact_dict
 ```
 
-U `main` korutini tada moramo definirati otvaranje same sesije:
+U `main` korutini tada **moramo definirati otvaranje same sesije**:
 
 ```python
 async def main():
@@ -989,6 +989,14 @@ There are approximately 60,000 hairs per square inch on the back of a cat and ab
 Cats bury their feces to cover their trails from predators.
 The Egyptian Mau is probably the oldest breed of cat. In fact, the breed is so ancient that its name is the Egyptian word for "cat."
 ```
+
+![alt text](<CleanShot 2026-11-19 at 00.45.57@2x.png>)
+
+> Svih pet korutina koristi istu HTTP sesiju. `asyncio.gather()` omogućuje preklapanje mrežnog čekanja i čeka njihov završetak.
+
+![alt text](<CleanShot 2026-11-19 at 00.46.27@2x.png>)
+
+> Shematski prikaz, nije stvarno mjerenje. Zahtjevi započinju približno zajedno, ali mogu završiti različitim redoslijedom.
 
 <hr>
 

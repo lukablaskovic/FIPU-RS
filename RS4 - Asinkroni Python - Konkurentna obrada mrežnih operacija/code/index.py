@@ -1,16 +1,17 @@
-import time
-import httpx
+import aiohttp, asyncio
 
 
-def send_request():
-    response = httpx.get("https://catfact.ninja/fact")
-    print(response.json()["fact"])
+async def get_cat_fact(session):
+    response = await session.get("https://catfact.ninja/fact")
+    fact_dict = await response.json()
+    print(fact_dict["fact"])
 
 
-start = time.perf_counter()
-for i in range(15):
-    print(f"Šaljemo {i + 1}. zahtjev...")
-    send_request()
+async def main():
+    async with aiohttp.ClientSession() as session:
+        cat_fact_korutine = [get_cat_fact(session) for i in range(5)]
+        await asyncio.gather(*cat_fact_korutine)
 
-end = time.perf_counter()
-print(f"Izvršavanje programa traje {end - start:.2f} s.")
+
+if __name__ == "__main__":
+    asyncio.run(main())
