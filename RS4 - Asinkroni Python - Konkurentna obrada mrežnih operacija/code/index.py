@@ -20,18 +20,19 @@ async def process_camera(camera_id, semaphore):
         return average_speed
 
 
-# ili koristeći "async with" unutar main funkcije:
-
-
 async def main():
     start = time.perf_counter()
 
-    semaphore = asyncio.Semaphore(5)
+    semaphore = asyncio.Semaphore(5)  # 1. tu definiramo semafor
 
-    async with semaphore:
-        tasks = [process_camera(i, semaphore) for i in range(1, 101)]
+    tasks = [
+        process_camera(
+            i, semaphore
+        )  # 2. u svakom zahtjevu prosljeđujemo referencu na taj semafor
+        for i in range(1, 101)
+    ]
 
-        results = await asyncio.gather(*tasks)
+    results = await asyncio.gather(*tasks)
 
     elapsed = time.perf_counter() - start
 

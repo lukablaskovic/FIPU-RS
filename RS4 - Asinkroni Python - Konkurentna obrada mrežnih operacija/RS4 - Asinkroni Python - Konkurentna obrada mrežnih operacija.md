@@ -9,15 +9,11 @@
 
 **Ustanova**: Sveučilište Jurja Dobrile u Puli, Fakultet informatike u Puli
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/images/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; ">
-</p>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/images/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; ">
 
 # (4) Asinkroni Python: Konkurentna obrada mrežnih operacija
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/rs-icons/RS_4.png" style="width:9%; border-radius: 8px;">
-</p>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/rs-icons/RS_4.png" style="width:9%; border-radius: 8px; float:right;">
 
 <div style="float: clear; margin-right:5px;">
 Na prethodnim vježbama upoznali smo temeljne koncepte asinkronog programiranja u Pythonu koristeći biblioteku <code>asyncio</code>. Naučili smo kako definirati i pokretati korutine te konkurentno izvršavati kod pomoću <code>asyncio.gather</code> i <code>asyncio.create_task</code>, a upoznali smo i ulogu <i>event loop</i> mehanizma koji omogućava učinkovito izvršavanje korutina unutar jedne dretve u Pythonu – samu konkurentnost.
@@ -63,7 +59,7 @@ Do sada smo sve primjere temeljili na simuliranim I/O-operacijama koristeći `as
     - [Primjer 10: Vremensko ograničenje pri dohvatu s API-ja](#primjer-10-vremensko-ograničenje-pri-dohvatu-s-api-ja)
 - [3. Ograničavanje konkurentnosti kroz `asyncio.Semaphore`](#3-ograničavanje-konkurentnosti-kroz-asynciosemaphore)
   - [3.1. Primjer kamera: Bez ograničavanja konkurentnosti](#31-primjer-kamera-bez-ograničavanja-konkurentnosti)
-  - [3.2. Primjer kamera: S ograničavanjem konkurentnosti (`asyncio.Semaphore`)](#32-primjer-kamera-s-ograničavanjem-konkurentnosti-asynciosemaphore)
+  - [3.2. Primjer kamera: S ograničavanjem konkurentnosti](#32-primjer-kamera-s-ograničavanjem-konkurentnosti)
 - [4. Retry i backoff strategije](#4-retry-i-backoff-strategije)
   - [4.1. Kada ponoviti zahtjev?](#41-kada-ponoviti-zahtjev)
   - [4.2. Koliko čekati između ponovnih pokušaja?](#42-koliko-čekati-između-ponovnih-pokušaja)
@@ -424,7 +420,7 @@ Unutar VS Codea promijenite _interpreter_ na novokreirano okruženje `rs4` kako 
 ```
 
 <p align="center">
-  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.23.15.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.23.15.png" alt="Odabir Python interpretera u VS Codeu" width="50%"></a>
+  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/vscode-odabir-python-interpretera.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/vscode-odabir-python-interpretera.png" alt="Odabir Python interpretera u VS Codeu" width="50%"></a>
 </p>
 
 > **Slika 8.** Odabir ispravnog _interpreter-a_ u VS Codeu omogućuje da se prilikom pokretanja skripti koristi Python iz virtualnog okruženja, a ne globalne distribucije.
@@ -580,7 +576,7 @@ for i in range(5):
 ```
 
 <p align="center">
-  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.25.16%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.25.16%402x.png" alt="Tri uzastopna HTTP-zahtjeva na vremenskoj crti od 0 do 3 s" width="50%"></a>
+  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/sekvencijalni-http-zahtjevi.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/sekvencijalni-http-zahtjevi.png" alt="Tri uzastopna HTTP-zahtjeva na vremenskoj crti od 0 do 3 s" width="50%"></a>
 </p>
 
 > **Slika 9.** Tri HTTP-zahtjeva šalju se sekvencijalno. Svaki traje jednu sekundu, pa ukupno čekanje traje tri sekunde.
@@ -904,7 +900,7 @@ async def main():
 ```
 
 <p align="center">
-  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.36.53%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.36.53%402x.png" alt="Slanje GET-zahtjeva i čitanje JSON-odgovora u biblioteci aiohttp" width="50%"></a>
+  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/aiohttp-get-zahtjev-i-json-odgovor.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/aiohttp-get-zahtjev-i-json-odgovor.png" alt="Slanje GET-zahtjeva i čitanje JSON-odgovora u biblioteci aiohttp" width="50%"></a>
 </p>
 
 > **Slika 10.** U biblioteci `aiohttp` korutina čeka HTTP-odgovor pozivom `await session.get(url)`, a zatim čita tijelo odgovora pozivom `await response.json()`.
@@ -1053,13 +1049,13 @@ The Egyptian Mau is probably the oldest breed of cat. In fact, the breed is so a
 ```
 
 <p align="center">
-  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.45.57%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.45.57%402x.png" alt="Pet korutina dijeli jednu HTTP-sesiju pri konkurentnom slanju zahtjeva" width="50%"></a>
+  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/konkurentni-zahtjevi-zajednicka-http-sesija.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/konkurentni-zahtjevi-zajednicka-http-sesija.png" alt="Pet korutina dijeli jednu HTTP-sesiju pri konkurentnom slanju zahtjeva" width="50%"></a>
 </p>
 
 > **Slika 11.** Svih pet korutina koristi istu HTTP sesiju. `asyncio.gather()` omogućuje preklapanje mrežnog čekanja i čeka njihov završetak.
 
 <p align="center">
-  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.46.27%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.46.27%402x.png" alt="Vremenski prikaz preklapanja pet HTTP-zahtjeva" width="50%"></a>
+  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/vremenska-crta-konkurentnih-http-zahtjeva.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/vremenska-crta-konkurentnih-http-zahtjeva.png" alt="Vremenski prikaz preklapanja pet HTTP-zahtjeva" width="50%"></a>
 </p>
 
 > **Slika 12.** Shematski prikaz, nije stvarno mjerenje. Zahtjevi započinju približno zajedno, ali mogu završiti različitim redoslijedom.
@@ -1338,7 +1334,7 @@ Redoslijed rezultata u listi:
 ## 2.3. Timeout mrežnih operacija i obrada iznimki (`asyncio.wait_for`)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/HAK.png" alt="Prometne kamere iznad semafora" width="50%">
+  <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/prometne-kamere-iznad-semafora.png" alt="Prometne kamere iznad semafora" width="50%">
 </p>
 
 > **Slika 13.** Prometne kamere postavljene iznad semafora.
@@ -1354,7 +1350,7 @@ Zadano je ponašanje funkcije `asyncio.gather` da **čeka završetak svih koruti
 > Kako mi ne možemo pravilno obraditi podatke bez svih odgovora (podataka svih kamera), a opet ne želimo da naš glavni sustav "visi" čekajući odgovore koji možda nikada neće stići, možemo postaviti vremensko ograničenje za svaki zahtjev.
 
 <p align="center">
-  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.52.45%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.52.45%402x.png" alt="Odgovori pet kamera uz vremensko ograničenje od tri sekunde" width="50%"></a>
+  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamere-istek-cekanja-nakon-tri-sekunde.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamere-istek-cekanja-nakon-tri-sekunde.png" alt="Odgovori pet kamera uz vremensko ograničenje od tri sekunde" width="50%"></a>
 </p>
 
 > **Slika 14.** Kamere 1, 2 i 4 odgovaraju unutar tri sekunde. Za kamere 3 i 5 istječe vrijeme čekanja.
@@ -1425,7 +1421,7 @@ An error occurred while fetching camera data: Camera 3 is unreachable!
 ```
 
 <p align="center">
-  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.56.21%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.56.21%402x.png" alt="Iznimka na kameri 3 nakon šest sekundi" width="50%"></a>
+  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamera-3-iznimka-nakon-sest-sekundi.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamera-3-iznimka-nakon-sest-sekundi.png" alt="Iznimka na kameri 3 nakon šest sekundi" width="50%"></a>
 </p>
 
 > **Slika 15.** Svih pet korutina započinje konkurentno. Svaka kamera ima različito trajanje simuliranog mrežnog zahtjeva, ali **kamera 3 nakon 6 sekundi svakako podiže iznimku**.
@@ -1518,7 +1514,7 @@ A timeout occurred while fetching camera data.
 Uočite da smo dobili `TimeoutError` te se aktivirao `except` blok za hvatanje iznimke.
 
 <p align="center">
-  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.11.14%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.11.14%402x.png" alt="Zajedničko vremensko ograničenje od deset sekundi za pet kamera" width="50%"></a>
+  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/zajednicki-timeout-za-pet-kamera.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/zajednicki-timeout-za-pet-kamera.png" alt="Zajedničko vremensko ograničenje od deset sekundi za pet kamera" width="50%"></a>
 </p>
 
 > **Slika 16.** Svih pet kamera započinje konkurentno dohvaćanje podataka. Kamera 3 simulira spori mrežni odgovor od 20 sekundi, dok ostale kamere završavaju nakon 2, 4, 8 i 10 sekundi. Za razliku od prethodnog primjera, ovdje `asyncio.wait_for()` postavlja jedno zajedničko vremensko ograničenje od 10 sekundi za cijeli `asyncio.gather()`.
@@ -1625,7 +1621,7 @@ Možemo ga zamisliti kao ograničen broj ulaznica za pristup resursu. Kada korut
 U praksi se najčešće koristi konstrukcija `async with semaphore`:, koja automatski upravlja preuzimanjem i oslobađanjem semafora.
 
 <p align="center">
-  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/image.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/image.png" alt="Zauzimanje i oslobađanje mjesta na semaforu" width="50%"></a>
+  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/semafor-zauzimanje-i-oslobadanje-mjesta.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/semafor-zauzimanje-i-oslobadanje-mjesta.png" alt="Zauzimanje i oslobađanje mjesta na semaforu" width="50%"></a>
 </p>
 
 > **Slika 17.** Ilustracija: korutina zauzima slobodno mjesto, obavlja posao i oslobađa mjesto za sljedeću korutinu.
@@ -1667,7 +1663,7 @@ async with semaphore:
 Ipak, pokazat ćemo primjer u kojem šaljemo 100 zahtjeva na 100 kamera **bez ograničavanja konkurentnosti**, odnosno bez semafora. Svaka kamera simulira mrežni odgovor koji traje 1 sekundu.
 
 <p align="center">
-  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.24.04%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.24.04%402x.png" alt="Sto konkurentnih zahtjeva prema istom poslužitelju" width="50%"></a>
+  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/sto-istodobnih-http-zahtjeva.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/sto-istodobnih-http-zahtjeva.png" alt="Sto konkurentnih zahtjeva prema istom poslužitelju" width="50%"></a>
 </p>
 
 > **Slika 18.** U ovom primjeru šaljemo 100 HTTP zahtjeva istovremeno, bez ograničavanja konkurentnosti. To može dovesti do preopterećenja poslužitelja i sporijeg odziva.
@@ -1718,12 +1714,12 @@ Budući da sve kamere šalju zahtjev istovremeno i svaka simulacija traje 1 seku
 
 </details>
 
-## 3.2. Primjer kamera: S ograničavanjem konkurentnosti (`asyncio.Semaphore`)
+## 3.2. Primjer kamera: S ograničavanjem konkurentnosti
 
 Pokazat ćemo kako ograničiti konkurentnost na 5 kamera istovremeno koristeći `asyncio.Semaphore`. Na taj način, samo 5 korutina može pristupiti resursu (API-ju) u isto vrijeme, dok ostale čekaju da se oslobodi mjesto.
 
 <p align="center">
-  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.24.29%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.24.29%402x.png" alt="Semafor propušta najviše pet od sto korutina odjednom" width="50%"></a>
+  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/semafor-ogranicenje-na-pet-korutina.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/semafor-ogranicenje-na-pet-korutina.png" alt="Semafor propušta najviše pet od sto korutina odjednom" width="50%"></a>
 </p>
 
 > **Slika 19.** Od 100 korutina prvih pet pristupa API-ju, a preostalih 95 čeka da se oslobodi mjesto. Semaforom možemo ograničiti broj istovremenih konkurentnih zahtjeva prema poslužitelju (u našem slučaju jednostavnog poziva korutine).
@@ -1803,7 +1799,7 @@ Budući da smo ograničili konkurentnost na 5 kamera, program će obrađivati 5 
 </details>
 
 <p align="center">
-  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/image-1.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/image-1.png" alt="Opterećenje API-ja pri neograničenom i ograničenom pristupu" width="50%"></a>
+  <a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/opterecenje-api-ja-sa-semaforom-i-bez-njega.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/opterecenje-api-ja-sa-semaforom-i-bez-njega.png" alt="Opterećenje API-ja pri neograničenom i ograničenom pristupu" width="50%"></a>
 </p>
 
 > **Slika 20.** Ograničavanje konkurentnosti može zaštititi poslužitelj od preopterećenja i omogućiti stabilniji rad aplikacije.
@@ -1833,7 +1829,7 @@ Međutim, ako je zahtjevom `POST /kamera` ili `PATCH /kamera` iz centralnog sust
 Za sigurno ponavljanje takve operacije API mora podržavati _ključ idempotentnosti_ koji klijent šalje sa svakim pokušajem iste narudžbe.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2012.28.39%402x.png" alt="Ponavljanje zahtjeva GET i PATCH prema prometnoj kameri" width="50%">
+  <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamera-ponavljanje-get-i-patch-zahtjeva.png" alt="Ponavljanje zahtjeva GET i PATCH prema prometnoj kameri" width="50%">
 </p>
 
 > **Slika 21.** Ilustracija slanja zahtjeva za dohvaćanje brzine odnosno promjenu konfiguracije kamere. Zahtjev `GET /kamera` možemo sigurno ponoviti, dok zahtjev `PATCH /kamera` može dovesti do neželjenih posljedica ako ga poslužitelj obradi više puta.
@@ -1878,7 +1874,7 @@ _Primjer_
 | Eksponencijalna odgoda |               1 s |               2 s |               4 s |
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2012.38.35%402x.png" alt="Eksponencijalna odgoda između zahtjeva za dohvat brzine" width="50%">
+  <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/eksponencijalni-backoff-nakon-odgovora-503.png" alt="Eksponencijalna odgoda između zahtjeva za dohvat brzine" width="50%">
 </p>
 
 > **Slika 22.** Nakon svakog odgovora `503 Service Unavailable` klijent udvostručuje odgodu između pokušaja. Čeka redom 1, 2 i 4 sekunde, a u četvrtom pokušaju prima podatak o brzini.
