@@ -56,16 +56,10 @@ Do sada smo sve primjere temeljili na simuliranim I/O-operacijama koristeći `as
     - [Primjer 9: Vremensko ograničenje za skup kamera i za pojedinu kameru](#primjer-9-vremensko-ograničenje-za-skup-kamera-i-za-pojedinu-kameru)
     - [Primjer 10: Vremensko ograničenje pri dohvatu s API-ja](#primjer-10-vremensko-ograničenje-pri-dohvatu-s-api-ja)
 - [3. Ograničavanje konkurentnosti kroz `asyncio.Semaphore`](#3-ograničavanje-konkurentnosti-kroz-asynciosemaphore)
-  - [3.1 Primjer kamera: Bez ograničavanja konkurentnosti](#31-primjer-kamera-bez-ograničavanja-konkurentnosti)
-  - [3.2 Primjer kamera: S ograničavanjem konkurentnosti (`asyncio.Semaphore`)](#32-primjer-kamera-s-ograničavanjem-konkurentnosti-asynciosemaphore)
+  - [3.1. Primjer kamera: Bez ograničavanja konkurentnosti](#31-primjer-kamera-bez-ograničavanja-konkurentnosti)
+  - [3.2. Primjer kamera: S ograničavanjem konkurentnosti (`asyncio.Semaphore`)](#32-primjer-kamera-s-ograničavanjem-konkurentnosti-asynciosemaphore)
 - [4. Retry i backoff strategije](#4-retry-i-backoff-strategije)
-- [Zadaci za vježbu: konkurentna obrada mrežnih operacija i simulacije grešaka](#zadaci-za-vježbu-konkurentna-obrada-mrežnih-operacija-i-simulacije-grešaka)
-  - [Zadatak 1: fetch_users i izdvajanje podataka](#zadatak-1-fetch_users-i-izdvajanje-podataka)
-  - [Zadatak 2: filter_cat_facts](#zadatak-2-filter_cat_facts)
-  - [Zadatak 3: mix_dog_cat_facts](#zadatak-3-mix_dog_cat_facts)
-  - [Zadatak 4: simulacija autentifikacije korisnika](#zadatak-4-simulacija-autentifikacije-korisnika)
-  - [Zadatak 5: pretvorba sinkronog koda u asinkroni](#zadatak-5-pretvorba-sinkronog-koda-u-asinkroni)
-  - [Zadatak 6: simulacija raspodijeljenog sustava za dohvaćanje i obradu vremenskih podataka](#zadatak-6-simulacija-raspodijeljenog-sustava-za-dohvaćanje-i-obradu-vremenskih-podataka)
+- [5. Zadaci za vježbu: Konkurentna obrada HTTP zahtjeva, timeout, ograničavanje konkurentnosti i retry/backoff strategije](#5-zadaci-za-vježbu-konkurentna-obrada-http-zahtjeva-timeout-ograničavanje-konkurentnosti-i-retrybackoff-strategije)
 
 <div style="page-break-after: always; break-after: page;"></div>
 
@@ -191,7 +185,7 @@ Tipičan komunikacijski model HTTP-a (**klijent ↔ poslužitelj**) temelji se n
 
 - **Verzija protokola** (_engl. protocol version_): označava verziju HTTP-protokola korištenu u zahtjevu (npr. `HTTP/1.1`, `HTTP/2`, `HTTP/3`).
 
-<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/http-request.png?raw=true" style="width:60%; box-shadow: none !important; "></img>
+<img src="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/http-request.png?raw=true" style="width:50%; box-shadow: none !important; "></img>
 
 > **Slika 6.** Struktura HTTP-zahtjeva: metoda, URL, zaglavlja i tijelo zahtjeva.
 
@@ -376,7 +370,7 @@ Unutar VS Codea promijenite _interpreter_ na novokreirano okruženje `rs4` kako 
 → CTRL/CMD + SHIFT + P -> Python: Select Interpreter -> rs4
 ```
 
-![alt text](<CleanShot 2026-11-19 at 00.23.15.png>)
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.23.15.png"><img src="./CleanShot%202026-11-19%20at%2000.23.15.png" alt="Odabir Python interpretera u VS Codeu" width="50%"></a>
 
 > **Slika 8.** Odabir ispravnog _interpreter-a_ u VS Codeu omogućuje da se prilikom pokretanja skripti koristi Python iz virtualnog okruženja, a ne globalne distribucije.
 
@@ -1304,9 +1298,9 @@ Zadano je ponašanje funkcije `asyncio.gather` da čeka završetak svih korutina
 
 > Kako mi ne možemo pravilno obraditi podatke bez svih odgovora (podataka svih kamera), a opet ne želimo da naš glavni sustav "visi" čekajući odgovore koji možda nikada neće stići, možemo postaviti vremensko ograničenje za svaki zahtjev.
 
-![alt text](<CleanShot 2026-11-19 at 00.52.45@2x.png>)
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.52.45%402x.png"><img src="./CleanShot%202026-11-19%20at%2000.52.45%402x.png" alt="Odgovori pet kamera uz vremensko ograničenje od tri sekunde" width="50%"></a>
 
-> Ilustracija primjera s kamerama.
+> **Slika 13.** Kamere 1, 2 i 4 odgovaraju unutar tri sekunde. Za kamere 3 i 5 istječe vrijeme čekanja.
 
 To možemo postići korištenjem `asyncio.wait_for` funkcije koja omogućuje **postavljanje vremenskog ograničenja za izvršavanje korutine**. Ako korutina ne završi unutar zadanog vremena, podići će se iznimka `asyncio.TimeoutError`.
 
@@ -1373,9 +1367,9 @@ Data from camera 2 fetched.
 An error occurred while fetching camera data: Camera 3 is unreachable!
 ```
 
-![alt text](<CleanShot 2026-11-19 at 00.56.21@2x.png>)
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.56.21%402x.png"><img src="./CleanShot%202026-11-19%20at%2000.56.21%402x.png" alt="Iznimka na kameri 3 nakon šest sekundi" width="50%"></a>
 
-> Svih pet korutina započinje konkurentno. Svaka kamera ima različito trajanje simuliranog mrežnog zahtjeva, ali **kamera 3 nakon 6 sekundi podiže iznimku**.
+> **Slika 14.** Svih pet korutina započinje konkurentno. Svaka kamera ima različito trajanje simuliranog mrežnog zahtjeva, ali **kamera 3 nakon 6 sekundi podiže iznimku**.
 
 Možemo simulirati situaciju da zahtjev kamere 3 traje predugo, npr. 20 sekundi, ali će podatak ipak naposljetku stići:
 
@@ -1460,9 +1454,9 @@ A timeout occurred while fetching camera data.
 
 Uočite da smo dobili `TimeoutError` te se aktivirao `except` blok za hvatanje iznimke.
 
-![alt text](<CleanShot 2026-11-19 at 01.11.14@2x.png>)
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.11.14%402x.png"><img src="./CleanShot%202026-11-19%20at%2001.11.14%402x.png" alt="Zajedničko vremensko ograničenje od deset sekundi za pet kamera" width="50%"></a>
 
-> Svih pet kamera započinje konkurentno dohvaćanje podataka. Kamera 3 simulira spor mrežni odgovor od 20 sekundi, dok ostale kamere završavaju nakon 2, 4, 8 i 10 sekundi. Za razliku od prethodnog primjera, ovdje `asyncio.wait_for()` postavlja jedno zajedničko vremensko ograničenje od 10 sekundi za cijeli `asyncio.gather()`.
+> **Slika 15.** Svih pet kamera započinje konkurentno dohvaćanje podataka. Kamera 3 simulira spor mrežni odgovor od 20 sekundi, dok ostale kamere završavaju nakon 2, 4, 8 i 10 sekundi. Za razliku od prethodnog primjera, ovdje `asyncio.wait_for()` postavlja jedno zajedničko vremensko ograničenje od 10 sekundi za cijeli `asyncio.gather()`.
 
 Ipak, možemo ograničiti i dohvaćanje podataka za svaku kameru pojedinačno budući da je `asyncio.sleep` također korutina.
 
@@ -1563,9 +1557,9 @@ Možemo ga zamisliti kao ograničen broj ulaznica za pristup resursu. Kada korut
 
 U praksi se najčešće koristi konstrukcija `async with semaphore`:, koja automatski upravlja preuzimanjem i oslobađanjem semafora.
 
-![alt text](image.png)
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/image.png"><img src="./image.png" alt="Zauzimanje i oslobađanje mjesta na semaforu" width="30%"></a>
 
-> Ilustracija: 1. Acquire semaphore, 2. Do work, 3. Release semaphore.
+> **Slika 16.** Korutina zauzima slobodno mjesto, obavlja posao i oslobađa mjesto za sljedeću korutinu.
 
 Zašto želimo ograničiti konkurentnost? U mnogim slučajevima, prevelik broj istovremenih zahtjeva može preopteretiti poslužitelj ili mrežu, što može dovesti do pogrešaka ili sporog odziva. Ograničavanjem broja istovremenih zahtjeva možemo postići stabilniji i pouzdaniji rad aplikacije.
 
@@ -1599,11 +1593,13 @@ async with semaphore:
     # Ovdje ide kod koji pristupa resursu ili izvršava kritični dio koda
 ```
 
-## 3.1 Primjer kamera: Bez ograničavanja konkurentnosti
+## 3.1. Primjer kamera: Bez ograničavanja konkurentnosti
 
-![alt text](<CleanShot 2026-11-19 at 01.24.04@2x.png>)
+Pokazat ćemo primjer u kojem šaljemo 100 zahtjeva na 100 kamera bez ograničavanja konkurentnosti. Svaka kamera simulira mrežni odgovor koji traje 1 sekundu.
 
-> U ovom primjeru šaljemo 100 HTTP zahtjeva istovremeno, bez ograničavanja konkurentnosti. To može dovesti do preopterećenja poslužitelja i sporijeg odziva.
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.24.04%402x.png"><img src="./CleanShot%202026-11-19%20at%2001.24.04%402x.png" alt="Sto konkurentnih zahtjeva prema istom poslužitelju" width="50%"></a>
+
+> **Slika 17.** U ovom primjeru šaljemo 100 HTTP zahtjeva istovremeno, bez ograničavanja konkurentnosti. To može dovesti do preopterećenja poslužitelja i sporijeg odziva.
 
 ```python
 import asyncio
@@ -1642,11 +1638,20 @@ asyncio.run(main())
 
 Koje je ovdje vrijeme izvršavanja programa u slučaju da nema zastoja u mreži i da sve kamere odgovaraju u roku od 1 sekunde?
 
-Odgovor: Budući da sve kamere šalju zahtjev istovremeno i svaka simulacija traje 1 sekundu, ukupno vrijeme izvršavanja programa bit će otprilike 1 sekunda, plus malo vremena za raspoređivanje zadataka i ispis rezultata. Dakle, očekivano vrijeme izvršavanja programa je oko 1 sekunda.
+<details>
+<summary>Prikaži odgovor</summary>
 
-## 3.2 Primjer kamera: S ograničavanjem konkurentnosti (`asyncio.Semaphore`)
+Budući da sve kamere šalju zahtjev istovremeno i svaka simulacija traje 1 sekundu, ukupno vrijeme izvršavanja programa bit će otprilike 1 sekunda, plus malo vremena za raspoređivanje zadataka i ispis rezultata. Dakle, očekivano vrijeme izvršavanja programa je oko 1 sekunda.
 
-![alt text](<CleanShot 2026-11-19 at 01.24.29@2x.png>)
+</details>
+
+## 3.2. Primjer kamera: S ograničavanjem konkurentnosti (`asyncio.Semaphore`)
+
+Pokazat ćemo kako ograničiti konkurentnost na 5 kamera istovremeno koristeći `asyncio.Semaphore`. Na taj način, samo 5 korutina može pristupiti resursu (API-ju) u isto vrijeme, dok ostale čekaju da se oslobodi mjesto.
+
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.24.29%402x.png"><img src="./CleanShot%202026-11-19%20at%2001.24.29%402x.png" alt="Semafor propušta najviše pet od sto korutina odjednom" width="50%"></a>
+
+> **Slika 18.** Od 100 korutina prvih pet pristupa API-ju, a preostalih 95 čeka da se oslobodi mjesto.
 
 ```python
 import asyncio
@@ -1711,117 +1716,17 @@ async def main():
 
 Koje je ovdje vrijeme izvršavanja programa u slučaju da nema zastoja u mreži i da sve kamere odgovaraju u roku od 1 sekunde?
 
-Odgovor: Budući da smo ograničili konkurentnost na 5 kamera, program će obrađivati 5 kamera istovremeno. Svaka grupa od 5 kamera traje 1 sekundu, a ukupno imamo 100 kamera. Dakle, potrebno je obraditi 20 grupa (100 / 5 = 20). Ukupno vrijeme izvršavanja programa bit će otprilike 20 sekundi, plus malo vremena za raspoređivanje zadataka i ispis rezultata. Dakle, očekivano vrijeme izvršavanja programa je oko 20 sekundi.
+<details>
+<summary>Prikaži odgovor</summary>
 
-![alt text](image-1.png)
+Budući da smo ograničili konkurentnost na 5 kamera, program će obrađivati 5 kamera istovremeno. Svaka grupa od 5 kamera traje 1 sekundu, a ukupno imamo 100 kamera. Dakle, potrebno je obraditi 20 grupa (100 / 5 = 20). Ukupno vrijeme izvršavanja programa bit će otprilike 20 sekundi, plus malo vremena za raspoređivanje zadataka i ispis rezultata. Dakle, očekivano vrijeme izvršavanja programa je oko 20 sekundi.
 
->
+</details>
+
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/image-1.png"><img src="./image-1.png" alt="Opterećenje API-ja pri neograničenom i ograničenom pristupu" width="75%"></a>
+
+> **Slika 19.** Ograničavanje konkuretnnosti može zaštititi poslužitelj od preopterećenja i omogućiti stabilniji rad aplikacije.
 
 # 4. Retry i backoff strategije
 
-# Zadaci za vježbu: konkurentna obrada mrežnih operacija i simulacije grešaka
-
-## Zadatak 1: fetch_users i izdvajanje podataka
-
-**Definirajte korutinu `fetch_users`** koja će slati GET-zahtjev na [JSONPlaceholder API](https://jsonplaceholder.typicode.com/) na URL-u: `https://jsonplaceholder.typicode.com/users`. Morate simulirati slanje 5 zahtjeva konkurentno unutar `main` korutine. Unutar `main` korutine izmjerite vrijeme izvođenja programa, a rezultate pohranite u listu odjedanput koristeći `asyncio.gather` funkciju. Nakon toga koristeći funkciju `map` ili _list comprehension_ izdvojite u 3 zasebne liste: samo **imena korisnika**, samo **adrese e-pošte korisnika** i samo **korisnička imena**. Na kraju `main` korutine ispišite sve 3 liste i vrijeme izvođenja programa.
-
-<br>
-
-## Zadatak 2: filter_cat_facts
-
-**Definirajte dvije korutine**, od kojih će jedna služiti za dohvaćanje činjenica o mačkama koristeći `get_cat_fact` korutinu koja šalje GET-zahtjev na URL: `https://catfact.ninja/fact`. Izradite 20 `Task` objekata za dohvaćanje činjenica o mačkama te ih pozovite unutar `main` korutine i rezultate pohranite odjednom koristeći `asyncio.gather` funkciju. Druga korutina `filter_cat_facts` ne šalje HTTP-zahtjeve, već zaprima **gotovu listu činjenica (stringova) o mačkama** i vraća novu listu koja sadrži samo one činjenice koje sadrže riječ "cat" ili "cats" (neovisno o velikim/malim slovima).
-
-_Primjer konačnog ispisa:_
-
-```plaintext
-Filtrirane činjenice o mačkama:
-- A 2007 Gallup poll revealed that both men and women were equally likely to own a cat.
-- The first cat in space was a French cat named Felicette (a.k.a. "Astrocat") In 1963, France blasted the cat into outer space. Electrodes implanted in her brains sent neurological signals back to Earth. She survived the trip.
-- The lightest cat on record is a blue point Himalayan called Tinker Toy, who weighed 1 pound, 6 ounces (616 g). Tinker Toy was 2.75 inches (7 cm) tall and 7.5 inches (19 cm) long.
-- The first commercially cloned pet was a cat named "Little Nicky." He cost his owner $50,000, making him one of the most expensive cats ever.
-- In the 1750s, Europeans introduced cats into the Americas to control pests.
-- A group of cats is called a clowder.
-```
-
-<br>
-
-<div style="page-break-after: always; break-after: page;"></div>
-
-## Zadatak 3: mix_dog_cat_facts
-
-**Definirajte korutinu `get_dog_fact`** koja dohvaća činjenice o psima sa servisa [DOG API](https://dogapi.dog/docs/api-v2).
-
-Korutina `get_dog_fact` neka dohvaća činjenicu o psima na URL-u: `https://dogapi.dog/api/v2/facts`.
-Nakon toga **definirajte korutinu `get_cat_fact`** koja dohvaća činjenicu o mačkama slanjem zahtjeva na URL: `https://catfact.ninja/fact`.
-
-Istovremeno pohranite rezultate izvršavanja ovih _Taskova_ koristeći `asyncio.gather(*dog_facts_tasks, *cat_facts_tasks)` funkciju u listu `dog_cat_facts`, a zatim ih koristeći _list slicing_ odvojite u dvije liste s obzirom na to da znate da je prvih 5 činjenica o psima, a drugih 5 o mačkama (bez obzira na to što mrežni rezultati različito "dolaze", gather ih pohranjuje redoslijedom poziva).
-
-**Na kraju definirajte treću korutinu `mix_facts`** koja prima dvije liste, `dog_facts` i `cat_facts`, te vraća novu listu u kojoj se za svaki indeks `i` nalazi odabrana činjenica prema sljedećem pravilu: uzmite činjenicu o psima ako je njezina duljina veća od duljine odgovarajuće mačje činjenice; u suprotnom odaberite mačju činjenicu. Za paralelnu iteraciju dviju lista upotrijebite funkciju `zip`, npr. `for dog_fact, cat_fact in zip(dog_facts, cat_facts)`. Nakon dobivanja nove liste ispišite filtrirani skup činjenica.
-
-_Primjer konačnog ispisa:_
-
-```plaintext
-Miksane činjenice o psima i mačkama:
-
-If they have ample water, cats can tolerate temperatures up to 133 °F.
-Dogs with little human contact in the first three months typically don’t make good pets.
-The most popular dog breed in Canada, U.S., and Great Britain is the Labrador retriever.
-An estimated 1,000,000 dogs in the U.S. have been named as the primary beneficiaries in their owner’s will.
-When a cats rubs up against you, the cat is marking you with it's scent claiming ownership.
-```
-
-## Zadatak 4: simulacija autentifikacije korisnika
-
-**Napišite korutinu `autentifikacija` koja simulira proces autentifikacije korisnika**. Korutina treba primiti korisničko ime i lozinku, a zatim simulirati sporo I/O-čekanje (npr. 2 sekunde) prije nego što vrati `True` ako su korisničko ime i lozinka ispravni. Korisničko ime i lozinku provjerite prema rječniku `korisnici` koji sadrži parove korisničkog imena i lozinke.
-
-```python
-korisnici = {
-    "korisnik1": "lozinka1",
-    "korisnik2": "lozinka2",
-    "korisnik3": "lozinka3",
-}
-```
-
-Simulirajte pogrešku u autentifikaciji ako su uneseni podaci netočni (`raise ValueError`).
-
-- Napišite glavnu funkciju koja će poslati konkurentne zahtjeve za autentifikaciju za 5 različitih korisnika (za neke s ispravnim, a za neke s neispravnim podacima). Kako se ponaša `asyncio.gather()` kada se dogodi iznimka u jednoj od korutina?
-
-Izmijenite kod korutine i simulirajte grešku u autentifikaciji koja se javlja **odmah** nakon 3 sekunde čekanja (npr. ne radi autentifikacijski servis) i podignite iznimku `TimeoutError`.
-
-- Dodajte _timeout_ prilikom **poziva korutine** `autentifikacija` kako biste simulirali situaciju kada autentifikacijski servis ne odgovara na vrijeme.
-
-## Zadatak 5: pretvorba sinkronog koda u asinkroni
-
-Sljedeći isječak programskog koda pretvorite u asinkroni program s konkurentnom obradom mrežnih zahtjeva:
-
-```python
-import requests
-
-def fetch_url(url: str) -> str:
-    response = requests.get(url, timeout=5)
-    return response.text
-
-def main():
-    urls = [
-        "https://example.com",
-        "https://httpbin.org/get",
-        "https://api.github.com"
-    ]
-
-    for url in urls:
-        content = fetch_url(url)
-        print(f"Fetched {len(content)} characters from {url}")
-
-if __name__ == "__main__":
-    main()
-```
-
-## Zadatak 6: simulacija raspodijeljenog sustava za dohvaćanje i obradu vremenskih podataka
-
-Radite na raspodijeljenom sustavu za dohvaćanje vremenskih podataka s različitih javnih API-ja. Vaš servis treba konkurentno agregirati podatke o vremenu iz više izvora te nakon toga izračunati i ispisati prosječnu temperaturu. Definirajte korutinu `fetch_weather_data` (predstavlja mikroservis koji vraća podatke s meteorološke stanice na određenoj lokaciji) koja simulira određeno čekanje (možete staviti nasumično čekanje između 1 i 5 sekundi koristeći `random.uniform(1, 5)`) i vraća nasumičnu temperaturu između `20` i `25` stupnjeva Celzijusa. U glavnoj korutini `main` kreirajte i rasporedite 10 objekata tipa Task za konkurentno dohvaćanje vremenskih podataka s 10 različitih vremenskih stanica. Nakon što dobijete sve rezultate, izračunajte i ispišite prosječnu temperaturu.
-
-- Simulirajte situaciju u kojoj nekoliko vremenskih stanica ne odgovara na vrijeme te pravilno obradite iznimku `TimeoutError`.
-
-- Ograničite vrijeme čekanja na svaki zahtjev na najviše 2 sekunde; u suprotnom slučaju vratite `None` te izračunajte prosječnu temperaturu bez podataka za tu mjernu stanicu.
-
-Ako hoćete, možete određene dijelove koda rasporediti u zasebne datoteke (module) ili možete sve napisati u jednoj datoteci.
+# 5. Zadaci za vježbu: Konkurentna obrada HTTP zahtjeva, timeout, ograničavanje konkurentnosti i retry/backoff strategije
