@@ -1,17 +1,17 @@
 # Raspodijeljeni sustavi ([RS - 273470](https://fipu.unipu.hr/fipu/predmet/rassus_a))
 
-<img src="../images/RS-banner.png" alt="Raspodijeljeni sustavi (RS - 273470)" style="border-radius: 8px;">
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/images/RS-banner.png" alt="Raspodijeljeni sustavi (RS - 273470)" style="border-radius: 8px;">
 
 **Nositelj**: doc. dr. sc. Nikola Tanković  
 **Asistent**: Luka Blašković, mag. inf.
 
 **Ustanova**: Sveučilište Jurja Dobrile u Puli, Fakultet informatike u Puli
 
-<img src="../images/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; "></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/images/FIPU_UNIPU.png" style="width:40%; box-shadow: none !important; "></img>
 
 # (4) Asinkroni Python: Konkurentna obrada mrežnih operacija
 
-<img src="../rs-icons/RS_4.png" style="width:9%; border-radius: 8px; float:right;"></img>
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/rs-icons/RS_4.png" style="width:9%; border-radius: 8px; float:right;"></img>
 
 <div style="float: clear; margin-right:5px;">
 Na prethodnim vježbama upoznali smo temeljne koncepte asinkronog programiranja u Pythonu koristeći biblioteku <code>asyncio</code>. Naučili smo kako definirati i pokretati korutine te konkurentno izvršavati kod pomoću <code>asyncio.gather</code> i <code>asyncio.create_task</code>, a upoznali smo i ulogu <i>event loop</i> mehanizma koji omogućava učinkovito izvršavanje korutina unutar jedne dretve u Pythonu – samu konkurentnost.
@@ -59,6 +59,12 @@ Do sada smo sve primjere temeljili na simuliranim I/O-operacijama koristeći `as
   - [3.1. Primjer kamera: Bez ograničavanja konkurentnosti](#31-primjer-kamera-bez-ograničavanja-konkurentnosti)
   - [3.2. Primjer kamera: S ograničavanjem konkurentnosti (`asyncio.Semaphore`)](#32-primjer-kamera-s-ograničavanjem-konkurentnosti-asynciosemaphore)
 - [4. Retry i backoff strategije](#4-retry-i-backoff-strategije)
+  - [4.1. Kada ponoviti zahtjev?](#41-kada-ponoviti-zahtjev)
+  - [4.2. Koliko čekati između ponovnih pokušaja?](#42-koliko-čekati-između-ponovnih-pokušaja)
+  - [4.3. Retry i backoff implementacija](#43-retry-i-backoff-implementacija)
+    - [4.3.1. Retry implementacija](#431-retry-implementacija)
+    - [4.3.2. Backoff implemntacija](#432-backoff-implemntacija)
+    - [4.3.3 Kombiniranje retry i backoff strategija s ograničavanjem konkurentnosti](#433-kombiniranje-retry-i-backoff-strategija-s-ograničavanjem-konkurentnosti)
 - [5. Zadaci za vježbu: Konkurentna obrada HTTP zahtjeva, timeout, ograničavanje konkurentnosti i retry/backoff strategije](#5-zadaci-za-vježbu-konkurentna-obrada-http-zahtjeva-timeout-ograničavanje-konkurentnosti-i-retrybackoff-strategije)
 
 <div style="page-break-after: always; break-after: page;"></div>
@@ -116,19 +122,19 @@ Mnogi web-servisi i mikroservisi koriste HTTP za međusobnu komunikaciju. HTTP j
 
 HTTP je [_stateless_ protokol](https://www.rfc-editor.org/rfc/rfc9110.html#section-3.3). To znači da se svaki zahtjev može protumačiti neovisno o prethodnim zahtjevima na istoj vezi. Aplikacija pritom može čuvati stanje, primjerice korisničku sesiju.
 
-<img src="./screenshots/http-autentifikacija-tokenom.png" alt="Prijava korisnika i dohvat profila uz autentifikacijski token" width="50%">
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/http-autentifikacija-tokenom.png" alt="Prijava korisnika i dohvat profila uz autentifikacijski token" width="50%">
 
 > **Slika 2.** Ilustracija autentifikacije i dohvaćanja korisničkih podataka na endpointu `/profile`. Nakon prvog zahtjeva (prijava), ne mora značiti da će poslužitelj zapamtiti korisnika i da će svaki sljedeći zahtjev biti autoriziran. U token-based API sustavima, klijent mora poslati valjani token u svakom sljedećem HTTP-zahtjevu kako bi poslužitelj mogao autorizirati korisnika.
 
 [Idempotentnost](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) znači da **ponavljanje istog zahtjeva ima isti namjeravani učinak na poslužitelju kao i jedan zahtjev**. Metode `GET`, `PUT` i `DELETE` idempotentne su, dok za `POST` to ovisi o konkretnoj operaciji. Primjerice, prvi zahtjev `DELETE /korisnici/42` može vratiti `204 No Content`, a ponovljeni `404 Not Found`. U oba slučaja korisnik nakon zahtjeva više ne postoji.
 
-<img src="./screenshots/http-idempotentnost.png" alt="Učinak ponovljenih zahtjeva PUT i POST" width="50%">
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/http-idempotentnost.png" alt="Učinak ponovljenih zahtjeva PUT i POST" width="50%">
 
 > **Slika 3.** PUT je idempotentan jer ponovljeni zahtjevi s istim podacima neće promijeniti stanje resursa `products`, odnosno operacija ažuriranja cijene proizvoda na 10€ (PUT /products/1 {"price": 10}) neće imati dodatni učinak na stanje resursa. S druge strane, `POST /orders` nije idempotentan jer ponovljeni zahtjevi mogu stvoriti više narudžbi.
 
 Za [**otpornost na pogreške**](https://en.wikipedia.org/wiki/Fault_tolerance) (_engl. fault tolerance_) važno je razlikovati primitak odgovora od isteka vremena čekanja. Statusnim kodom `503 Service Unavailable` poslužitelj javlja da privremeno ne može obraditi zahtjev. Ako nakon slanja zahtjeva `POST /narudzbe` istekne vrijeme čekanja, poslužitelj je možda već izradio narudžbu. Ponavljanjem zahtjeva klijent tada može izraditi još jednu.
 
-<img src="./screenshots/http-istek-vremena.png" alt="Ponavljanje zahtjeva za izradu narudžbe nakon isteka vremena čekanja" width="50%">
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/http-istek-vremena.png" alt="Ponavljanje zahtjeva za izradu narudžbe nakon isteka vremena čekanja" width="50%">
 
 > **Slika 4.** U slučaju isteka vremena čekanja, klijent ne zna je li poslužitelj obradio zahtjev ili ne. Ako je poslužitelj već izradio narudžbu, ponovljeni zahtjev može stvoriti dupliciranu narudžbu ako nema implementiran mehanizam za provjeru dupliciranih zahtjeva.
 
@@ -370,7 +376,7 @@ Unutar VS Codea promijenite _interpreter_ na novokreirano okruženje `rs4` kako 
 → CTRL/CMD + SHIFT + P -> Python: Select Interpreter -> rs4
 ```
 
-<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.23.15.png"><img src="./CleanShot%202026-11-19%20at%2000.23.15.png" alt="Odabir Python interpretera u VS Codeu" width="50%"></a>
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.23.15.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.23.15.png" alt="Odabir Python interpretera u VS Codeu" width="50%"></a>
 
 > **Slika 8.** Odabir ispravnog _interpreter-a_ u VS Codeu omogućuje da se prilikom pokretanja skripti koristi Python iz virtualnog okruženja, a ne globalne distribucije.
 
@@ -524,7 +530,7 @@ for i in range(5):
   send_request()
 ```
 
-<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.25.16%402x.png"><img src="./CleanShot%202026-11-19%20at%2000.25.16%402x.png" alt="Tri uzastopna HTTP-zahtjeva na vremenskoj crti od 0 do 3 s" width="50%"></a>
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.25.16%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.25.16%402x.png" alt="Tri uzastopna HTTP-zahtjeva na vremenskoj crti od 0 do 3 s" width="50%"></a>
 
 > **Slika 9.** Tri HTTP-zahtjeva šalju se sekvencijalno. Svaki traje jednu sekundu, pa ukupno čekanje traje tri sekunde.
 
@@ -846,7 +852,7 @@ async def main():
     print(fact_dict)
 ```
 
-<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.36.53%402x.png"><img src="./CleanShot%202026-11-19%20at%2000.36.53%402x.png" alt="Slanje GET-zahtjeva i čitanje JSON-odgovora u biblioteci aiohttp" width="50%"></a>
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.36.53%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.36.53%402x.png" alt="Slanje GET-zahtjeva i čitanje JSON-odgovora u biblioteci aiohttp" width="50%"></a>
 
 > **Slika 10.** U biblioteci `aiohttp` korutina čeka HTTP-odgovor pozivom `await session.get(url)`, a zatim čita tijelo odgovora pozivom `await response.json()`.
 
@@ -932,13 +938,6 @@ async def get_cat_fact(session):
   response = await session.get("https://catfact.ninja/fact")
   fact_dict = await response.json()
   return fact_dict
-
-# ili koristeći httpx
-
-async def get_cat_fact(client):
-  response = await client.get("https://catfact.ninja/fact")
-  fact_dict = response.json()
-  return fact_dict
 ```
 
 U `main` korutini tada **moramo definirati otvaranje same sesije**:
@@ -955,7 +954,7 @@ async def main():
     ...  # ovdje šaljemo zahtjeve
 ```
 
-Napokon, možemo koristiti `asyncio.gather` funkciju kako bismo poslali 5 zahtjeva konkurentno.
+Napokon, **možemo koristiti `asyncio.gather` funkciju kako bismo poslali 5 zahtjeva konkurentno**.
 
 - kako već znamo dobro _comprehension_ sintaksu, iskoristit ćemo _list comprehension_ za izradu liste korutina:
 
@@ -988,13 +987,6 @@ async def main():
   async with aiohttp.ClientSession() as session:
     cat_fact_korutine = [get_cat_fact(session) for i in range(5)]
     await asyncio.gather(*cat_fact_korutine)
-
-# ili koristeći httpx
-
-async def main():
-  async with httpx.AsyncClient() as client:
-    cat_fact_korutine = [get_cat_fact(client) for i in range(5)]
-    await asyncio.gather(*cat_fact_korutine)
 ```
 
 > Pokrenite kod – vidimo da se činjenice o mačkama 🐱 ispisuju dosta brzo.
@@ -1007,11 +999,11 @@ Cats bury their feces to cover their trails from predators.
 The Egyptian Mau is probably the oldest breed of cat. In fact, the breed is so ancient that its name is the Egyptian word for "cat."
 ```
 
-<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.45.57%402x.png"><img src="./CleanShot%202026-11-19%20at%2000.45.57%402x.png" alt="Pet korutina dijeli jednu HTTP-sesiju pri konkurentnom slanju zahtjeva" width="50%"></a>
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.45.57%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.45.57%402x.png" alt="Pet korutina dijeli jednu HTTP-sesiju pri konkurentnom slanju zahtjeva" width="50%"></a>
 
 > **Slika 11.** Svih pet korutina koristi istu HTTP sesiju. `asyncio.gather()` omogućuje preklapanje mrežnog čekanja i čeka njihov završetak.
 
-<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.46.27%402x.png"><img src="./CleanShot%202026-11-19%20at%2000.46.27%402x.png" alt="Vremenski prikaz preklapanja pet HTTP-zahtjeva" width="50%"></a>
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.46.27%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.46.27%402x.png" alt="Vremenski prikaz preklapanja pet HTTP-zahtjeva" width="50%"></a>
 
 > **Slika 12.** Shematski prikaz, nije stvarno mjerenje. Zahtjevi započinju približno zajedno, ali mogu završiti različitim redoslijedom.
 
@@ -1288,9 +1280,13 @@ Redoslijed rezultata u listi:
 
 ## 2.3. Timeout mrežnih operacija i obrada iznimki (`asyncio.wait_for`)
 
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/HAK.png" alt="Prometne kamere iznad semafora" width="50%">
+
+> **Slika 13.** Prometne kamere postavljene iznad semafora.
+
 Kada radimo s mrežnim operacijama, **uvijek postoji mogućnost da dođe do kašnjenja ili prekida veze**. Zbog toga je važno postaviti vremenska ograničenja (_timeout_) za naše mrežne zahtjeve kako bismo spriječili da naš program "visi" čekajući odgovor koji možda nikada neće stići.
 
-Zadano je ponašanje funkcije `asyncio.gather` da čeka završetak svih korutina, bez vremenskog ograničenja. Ovo može biti praktično, ali i opasno ako neka od korutina traje predugo zbog mrežnih problema.
+Zadano je ponašanje funkcije `asyncio.gather` da **čeka završetak svih korutina, bez vremenskog ograničavanja**. Ovo može biti praktično, ali i opasno ako neka od korutina traje predugo zbog mrežnih (ili drugih) problema.
 
 > Primjer: Naš raspodijeljeni sustav za praćenje prometa motornih vozila šalje zahtjeve na različite _monitoring_ kamere instalirane na cestama na udaljenim lokacijama. Postoje mikroservisi za svaku kameru koji obrađuju slike i imaju REST API za dohvaćanje podataka kako bi komunicirali s glavnim sustavom. Zamislite da je glavni sustav u stvari naša `main` korutina koja šalje zahtjeve na različite kamere koristeći `asyncio.gather` funkciju, pri čemu svaki zahtjev predstavlja korutinu koja šalje HTTP-zahtjev na različite API-je kamera.
 
@@ -1298,9 +1294,9 @@ Zadano je ponašanje funkcije `asyncio.gather` da čeka završetak svih korutina
 
 > Kako mi ne možemo pravilno obraditi podatke bez svih odgovora (podataka svih kamera), a opet ne želimo da naš glavni sustav "visi" čekajući odgovore koji možda nikada neće stići, možemo postaviti vremensko ograničenje za svaki zahtjev.
 
-<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.52.45%402x.png"><img src="./CleanShot%202026-11-19%20at%2000.52.45%402x.png" alt="Odgovori pet kamera uz vremensko ograničenje od tri sekunde" width="50%"></a>
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.52.45%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.52.45%402x.png" alt="Odgovori pet kamera uz vremensko ograničenje od tri sekunde" width="50%"></a>
 
-> **Slika 13.** Kamere 1, 2 i 4 odgovaraju unutar tri sekunde. Za kamere 3 i 5 istječe vrijeme čekanja.
+> **Slika 14.** Kamere 1, 2 i 4 odgovaraju unutar tri sekunde. Za kamere 3 i 5 istječe vrijeme čekanja.
 
 To možemo postići korištenjem `asyncio.wait_for` funkcije koja omogućuje **postavljanje vremenskog ograničenja za izvršavanje korutine**. Ako korutina ne završi unutar zadanog vremena, podići će se iznimka `asyncio.TimeoutError`.
 
@@ -1343,7 +1339,7 @@ async def main():
     camera_ids = [1, 2, 3, 4, 5]
     tasks = [fetch_camera_data(camera_id) for camera_id in camera_ids]
 
-    # Primjer asyncio.gather bez timeouta
+    # Primjer asyncio.gather() bez timeouta
 
     try:
         results = await asyncio.gather(*tasks)
@@ -1367,22 +1363,23 @@ Data from camera 2 fetched.
 An error occurred while fetching camera data: Camera 3 is unreachable!
 ```
 
-<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.56.21%402x.png"><img src="./CleanShot%202026-11-19%20at%2000.56.21%402x.png" alt="Iznimka na kameri 3 nakon šest sekundi" width="50%"></a>
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.56.21%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2000.56.21%402x.png" alt="Iznimka na kameri 3 nakon šest sekundi" width="50%"></a>
 
-> **Slika 14.** Svih pet korutina započinje konkurentno. Svaka kamera ima različito trajanje simuliranog mrežnog zahtjeva, ali **kamera 3 nakon 6 sekundi podiže iznimku**.
+> **Slika 15.** Svih pet korutina započinje konkurentno. Svaka kamera ima različito trajanje simuliranog mrežnog zahtjeva, ali **kamera 3 nakon 6 sekundi svakako podiže iznimku**.
 
-Možemo simulirati situaciju da zahtjev kamere 3 traje predugo, npr. 20 sekundi, ali će podatak ipak naposljetku stići:
+Možemo simulirati situaciju da zahtjev kamere 3 traje predugo, npr. 20 sekundi, ali da podatak naposlijetku dođe. U tom slučaju, `asyncio.gather` funkcija čeka na sve korutine i ne vraća rezultat dok se sve ne završe.
 
 ```python
 async def fetch_camera_data(camera_id):
     print(f"Fetching data from camera {camera_id}...")
     # Simuliramo mrežnu operaciju s različitim vremenima trajanja
-    await asyncio.sleep(camera_id * 2 if camera_id != 3 else 20) # kamera 3 traje 20 sekundi, sve ostale vraćaju odgovor nakon 2 sekunde
+    # kamera 3 traje 20 sekundi, sve ostale vraćaju odgovor nakon 2 sekunde
+    await asyncio.sleep(camera_id * 2 if camera_id != 3 else 20)
     print(f"Data from camera {camera_id} fetched.")
     return f"Data from camera {camera_id}"
 ```
 
-Ispisuje:
+Ispisuje nakon 20 sekundi:
 
 ```plaintext
 Fetching data from camera 1...
@@ -1398,13 +1395,13 @@ Data from camera 3 fetched.
 All camera data fetched: ['Data from camera 1', 'Data from camera 2', 'Data from camera 3', 'Data from camera 4', 'Data from camera 5']
 ```
 
-Uočite da se rezultati kamera 4 i 5 ispisuju prije rezultata kamere 3 budući da je kamera 3 simulirana kao najsporija, a zahtjevi su poslani konkurentno.
-
 ### Primjer 9: Vremensko ograničenje za skup kamera i za pojedinu kameru
 
-Ipak, želimo postaviti vremensko ograničenje od 10 sekundi za svaki zahtjev kako funkcija `asyncio.gather` ne bi bila usko grlo našeg programa koje čeka do 20 sekundi na odgovor kamere 3.
+Ipak, želimo postaviti vremensko ograničenje od 10 sekundi za svaki zahtjev (_timeout_) kako funkcija `asyncio.gather` ne bi bila usko grlo našeg programa koje čeka do 20 sekundi na odgovor kamere 3.
 
-Koristimo funkciju `asyncio.wait_for`. Ova funkcija očekuje bilo koju korutinu kao ulazni podatak i vrijeme maksimalnog čekanja na izvršavanje u sekundama.
+Koristimo funkciju `asyncio.wait_for` koja će podići iznimku `asyncio.TimeoutError` ako korutina ne završi unutar zadanog vremena.
+
+Fukcija `wait_for` očekuje 2 argumenta: korutinu i vremensko ograničenje u sekundama:
 
 **Sintaksa:**
 
@@ -1412,9 +1409,12 @@ Koristimo funkciju `asyncio.wait_for`. Ova funkcija očekuje bilo koju korutinu 
 await asyncio.wait_for(coroutine, timeout)
 ```
 
-- gdje je `coroutine` korutina koju želimo izvršiti s vremenskim ograničenjem, a `timeout` maksimalno vrijeme (u sekundama) koje korutina smije trajati.
+- gdje je `coroutine` korutina koju želimo izvršiti s vremenskim ograničenjem,
+- a `timeout` maksimalno vrijeme (u sekundama) koje korutina smije trajati.
 
-Osim pojedine korutine, možemo ograničiti i `asyncio.gather()` funkciju koja čeka na sve korutine.
+Osim pojedine korutine, možemo kao argument proslijediti i `asyncio.gather` poziv koji čeka na sve korutine. Na taj način možemo postaviti vremensko ograničenje za **sve korutine odjednom**.
+
+> To znači da će se na svaku korutinu unutar `asyncio.gather` poziva primijeniti isto vremensko ograničenje `timeout`. Ako **bilo koja od korutina ne završi unutar zadanog vremena**, podići će se iznimka `asyncio.TimeoutError`.
 
 **Sintaksa**:
 
@@ -1422,7 +1422,7 @@ Osim pojedine korutine, možemo ograničiti i `asyncio.gather()` funkciju koja �
 await asyncio.wait_for(asyncio.gather(*tasks), timeout) # ograničavamo čekanje na sve korutine koje pokreće asyncio.gather() funkcija
 ```
 
-Možemo ograničiti `asyncio.gather()` s `asyncio.wait_for()` na sljedeći način:
+_Primjer:_
 
 ```python
 async def main():
@@ -1454,9 +1454,9 @@ A timeout occurred while fetching camera data.
 
 Uočite da smo dobili `TimeoutError` te se aktivirao `except` blok za hvatanje iznimke.
 
-<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.11.14%402x.png"><img src="./CleanShot%202026-11-19%20at%2001.11.14%402x.png" alt="Zajedničko vremensko ograničenje od deset sekundi za pet kamera" width="50%"></a>
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.11.14%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.11.14%402x.png" alt="Zajedničko vremensko ograničenje od deset sekundi za pet kamera" width="50%"></a>
 
-> **Slika 15.** Svih pet kamera započinje konkurentno dohvaćanje podataka. Kamera 3 simulira spor mrežni odgovor od 20 sekundi, dok ostale kamere završavaju nakon 2, 4, 8 i 10 sekundi. Za razliku od prethodnog primjera, ovdje `asyncio.wait_for()` postavlja jedno zajedničko vremensko ograničenje od 10 sekundi za cijeli `asyncio.gather()`.
+> **Slika 16.** Svih pet kamera započinje konkurentno dohvaćanje podataka. Kamera 3 simulira spori mrežni odgovor od 20 sekundi, dok ostale kamere završavaju nakon 2, 4, 8 i 10 sekundi. Za razliku od prethodnog primjera, ovdje `asyncio.wait_for()` postavlja jedno zajedničko vremensko ograničenje od 10 sekundi za cijeli `asyncio.gather()`.
 
 Ipak, možemo ograničiti i dohvaćanje podataka za svaku kameru pojedinačno budući da je `asyncio.sleep` također korutina.
 
@@ -1464,7 +1464,8 @@ Ipak, možemo ograničiti i dohvaćanje podataka za svaku kameru pojedinačno bu
 async def fetch_camera_data(camera_id):
     print(f"Fetching data from camera {camera_id}...")
     try:
-        await asyncio.wait_for(asyncio.sleep(camera_id * 2 if camera_id != 3 else 20), timeout=10)  # Postavljamo timeout od 10 sekundi za dohvaćanje podataka o svakoj kameri pojedinačno (timeoutat će kamera broj 3)
+        # Postavljamo timeout od 10 sekundi za dohvaćanje podataka o svakoj kameri pojedinačno (timeoutat će kamera broj 3)
+        await asyncio.wait_for(asyncio.sleep(camera_id * 2 if camera_id != 3 else 20), timeout=10)
         print(f"Data from camera {camera_id} fetched.")
         return f"Data from camera {camera_id}"
     except asyncio.TimeoutError:
@@ -1478,7 +1479,7 @@ Nakon toga možemo koristiti `asyncio.gather` kao i prije:
 async def main():
     camera_ids = [1, 2, 3, 4, 5]
     tasks = [fetch_camera_data(camera_id) for camera_id in camera_ids]
-    results = await asyncio.gather(*tasks)
+    results = await asyncio.gather(*tasks) # ne wrappamo u wait_for jer smo timeout postavili za svaku kameru pojedinačno
     print("All camera data fetched:", results)
 ```
 
@@ -1502,15 +1503,17 @@ All camera data fetched: ['Data from camera 1', 'Data from camera 2', None, 'Dat
 
 ---
 
-Ako koristite biblioteku `httpx`, možete postaviti vremensko ograničenje za svaku korutinu pojedinačno, koristeći `httpx.Timeout` klasu. Na primjer:
+Ako koristite biblioteku `httpx`, možete postaviti vremensko ograničenje za svaku korutinu pojedinačno, koristeći `httpx.Timeout` klasu, međutim preporučuje se korištenje `asyncio.wait_for`.
 
 ```python
 import httpx
 
 async def fetch_camera_data(camera_id):
     print(f"Fetching data from camera {camera_id}...")
-    timeout = httpx.Timeout(10.0)  # Postavljamo timeout od 10 sekundi za svaku kameru
-    async with httpx.AsyncClient(timeout=timeout) as client: # ovdje možemo postaviti timeout za cijeli klijent, a ne samo za pojedinu korutinu
+    # Postavljamo timeout od 10 sekundi za svaku kameru
+    timeout = httpx.Timeout(10.0)
+    # ovdje možemo postaviti timeout za cijeli klijent, a ne samo za pojedinu korutinu
+    async with httpx.AsyncClient(timeout=timeout) as client:
         try:
             response = await client.get(f"https://example.com/camera/{camera_id}/data")
             response.raise_for_status()  # Provjeravamo statusni kod odgovora
@@ -1539,6 +1542,7 @@ async def get_cat_fact(session):
 async def main():
     async with aiohttp.ClientSession() as session:
         try:
+            # ograničavamo jedan poziv get_cat_fact na 10 sekundi
             return await asyncio.wait_for(get_cat_fact(session), timeout=10)
         except asyncio.TimeoutError:
             print("Isteklo je vrijeme za dohvat činjenice.")
@@ -1546,8 +1550,6 @@ async def main():
 
 print(asyncio.run(main()))
 ```
-
-U drugom primjeru `timeout=None` isključuje vremenska ograničenja samog klijenta jer cijeli dohvat već ograničava `asyncio.wait_for`. Ako želimo da `httpx` zasebno ograniči čekanje na uspostavu veze ili na sljedeći dio odgovora, možemo postaviti `httpx.AsyncClient(timeout=10)` i obraditi iznimku `httpx.TimeoutException`. [Vremenska ograničenja u biblioteci HTTPX](https://www.python-httpx.org/advanced/timeouts/)
 
 # 3. Ograničavanje konkurentnosti kroz `asyncio.Semaphore`
 
@@ -1557,19 +1559,19 @@ Možemo ga zamisliti kao ograničen broj ulaznica za pristup resursu. Kada korut
 
 U praksi se najčešće koristi konstrukcija `async with semaphore`:, koja automatski upravlja preuzimanjem i oslobađanjem semafora.
 
-<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/image.png"><img src="./image.png" alt="Zauzimanje i oslobađanje mjesta na semaforu" width="30%"></a>
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/image.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/image.png" alt="Zauzimanje i oslobađanje mjesta na semaforu" width="50%"></a>
 
-> **Slika 16.** Korutina zauzima slobodno mjesto, obavlja posao i oslobađa mjesto za sljedeću korutinu.
+> **Slika 17.** Ilustracija: korutina zauzima slobodno mjesto, obavlja posao i oslobađa mjesto za sljedeću korutinu.
 
-Zašto želimo ograničiti konkurentnost? U mnogim slučajevima, prevelik broj istovremenih zahtjeva može preopteretiti poslužitelj ili mrežu, što može dovesti do pogrešaka ili sporog odziva. Ograničavanjem broja istovremenih zahtjeva možemo postići stabilniji i pouzdaniji rad aplikacije.
+Zašto želimo ograničiti konkurentnost? U mnogim slučajevima, **prevelik broj istovremenih zahtjeva može preopteretiti poslužitelj ili mrežu**, što može dovesti do pogrešaka ili sporog odziva. Ograničavanjem broja istovremenih zahtjeva možemo postići stabilniji i realizirati predvidljiv sustav.
 
-_Primjer:_ Sustav za praćenje prometa putem kamera
+_Primjer:_ Nastavljamo s primjerom sustava za praćenje prometa motornih vozila od prije.
 
 > Zamislimo da naš sustav za praćenje prometa prikuplja podatke s 100 prometnih kamera, pri čemu svaka kamera ima vlastiti REST API.
 
-> Ako istovremeno pošaljemo 100 HTTP zahtjeva, poslužitelj koji obrađuje podatke kamera možda neće imati dovoljno resursa za obradu svih zahtjeva. To može uzrokovati sporiji odziv, preopterećenje poslužitelja ili HTTP pogreške (npr. `503 Service Unavailable`).
+> Ako istovremeno pošaljemo 100 HTTP zahtjeva, poslužitelj koji obrađuje podatke kamera možda neće imati dovoljno resursa za obradu svih zahtjeva. To može uzrokovati sporiji odziv, preopterećenje poslužitelja što rezultira nekim HTTP pogreškama (npr. `503 Service Unavailable`).
 
-> Umjesto toga, možemo koristiti asyncio.Semaphore(5) kako bismo **ograničili broj istovremenih HTTP zahtjeva na najviše 5**.
+Možemo koristiti `asyncio.Semaphore(5)` kako bismo **ograničili broj istovremenih HTTP zahtjeva koje klijent šalje na najviše 5** (ili drugi proizvoljan broj).
 
 Dakle:
 
@@ -1590,16 +1592,16 @@ Koristmo kontekstni menadžer `async with` kako bismo automatski upravljali preu
 
 ```python
 async with semaphore:
-    # Ovdje ide kod koji pristupa resursu ili izvršava kritični dio koda
+    # blok koda koji pristupa resursu
 ```
 
 ## 3.1. Primjer kamera: Bez ograničavanja konkurentnosti
 
-Pokazat ćemo primjer u kojem šaljemo 100 zahtjeva na 100 kamera bez ograničavanja konkurentnosti. Svaka kamera simulira mrežni odgovor koji traje 1 sekundu.
+Ipak, pokazat ćemo primjer u kojem šaljemo 100 zahtjeva na 100 kamera **bez ograničavanja konkurentnosti**, odnosno bez semafora. Svaka kamera simulira mrežni odgovor koji traje 1 sekundu.
 
-<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.24.04%402x.png"><img src="./CleanShot%202026-11-19%20at%2001.24.04%402x.png" alt="Sto konkurentnih zahtjeva prema istom poslužitelju" width="50%"></a>
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.24.04%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.24.04%402x.png" alt="Sto konkurentnih zahtjeva prema istom poslužitelju" width="50%"></a>
 
-> **Slika 17.** U ovom primjeru šaljemo 100 HTTP zahtjeva istovremeno, bez ograničavanja konkurentnosti. To može dovesti do preopterećenja poslužitelja i sporijeg odziva.
+> **Slika 18.** U ovom primjeru šaljemo 100 HTTP zahtjeva istovremeno, bez ograničavanja konkurentnosti. To može dovesti do preopterećenja poslužitelja i sporijeg odziva.
 
 ```python
 import asyncio
@@ -1607,6 +1609,7 @@ import random
 import time
 
 
+# zamislimo da je poslužitelj koji obrađuje zahtjeve i vraća podatke o prosječnim brzinama vozila na cesti
 async def process_camera(camera_id):
     print(f"Kamera {camera_id}: započinje obradu")
 
@@ -1621,6 +1624,7 @@ async def process_camera(camera_id):
     return average_speed
 
 
+# zamislimo da je klijent koji šalje zahtjeve na 100 kamera i prikuplja podatke o prosječnim brzinama vozila
 async def main():
     start = time.perf_counter()
 
@@ -1630,8 +1634,8 @@ async def main():
     elapsed = time.perf_counter() - start
 
     print(f"\nObrađeno kamera: {len(results)}")
+    print(f"Prosječna brzina na temelju svih kamera: {sum(results) / len(results):.1f} km/h")
     print(f"Ukupno vrijeme: {elapsed:.2f} s")
-
 
 asyncio.run(main())
 ```
@@ -1641,7 +1645,7 @@ Koje je ovdje vrijeme izvršavanja programa u slučaju da nema zastoja u mreži 
 <details>
 <summary>Prikaži odgovor</summary>
 
-Budući da sve kamere šalju zahtjev istovremeno i svaka simulacija traje 1 sekundu, ukupno vrijeme izvršavanja programa bit će otprilike 1 sekunda, plus malo vremena za raspoređivanje zadataka i ispis rezultata. Dakle, očekivano vrijeme izvršavanja programa je oko 1 sekunda.
+Budući da sve kamere šalju zahtjev istovremeno i svaka simulacija traje 1 sekundu, ukupno vrijeme izvršavanja programa bit će otprilike 1 sekunda, plus malo vremena za raspoređivanje zadataka i ispis rezultata.
 
 </details>
 
@@ -1649,9 +1653,13 @@ Budući da sve kamere šalju zahtjev istovremeno i svaka simulacija traje 1 seku
 
 Pokazat ćemo kako ograničiti konkurentnost na 5 kamera istovremeno koristeći `asyncio.Semaphore`. Na taj način, samo 5 korutina može pristupiti resursu (API-ju) u isto vrijeme, dok ostale čekaju da se oslobodi mjesto.
 
-<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.24.29%402x.png"><img src="./CleanShot%202026-11-19%20at%2001.24.29%402x.png" alt="Semafor propušta najviše pet od sto korutina odjednom" width="50%"></a>
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.24.29%402x.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2001.24.29%402x.png" alt="Semafor propušta najviše pet od sto korutina odjednom" width="50%"></a>
 
-> **Slika 18.** Od 100 korutina prvih pet pristupa API-ju, a preostalih 95 čeka da se oslobodi mjesto.
+> **Slika 19.** Od 100 korutina prvih pet pristupa API-ju, a preostalih 95 čeka da se oslobodi mjesto. Semaforom možemo ograničiti broj istovremenih konkurentnih zahtjeva prema poslužitelju (u našem slučaju jednostavnog poziva korutine).
+
+Semafor želimo definirati u `main` funkciji, a zatim ga proslijediti svakoj korutini koja obrađuje kameru.
+
+Unutar korutine koja obrađuje "zahtjev", koristmo kontekstni menadžer `async with semaphore` kako bismo osigurali da samo 5 korutina istovremeno pristupa resursu.
 
 ```python
 import asyncio
@@ -1660,7 +1668,7 @@ import time
 
 
 async def process_camera(camera_id, semaphore):
-    async with semaphore:
+    async with semaphore: # otvaramo kontekstni menadžer koji preuzima semafor iz poziva korutine
         print(f"Kamera {camera_id}: započinje obradu")
 
         # Simulacija mrežnog čekanja (1 sekunda)
@@ -1677,10 +1685,10 @@ async def process_camera(camera_id, semaphore):
 async def main():
     start = time.perf_counter()
 
-    semaphore = asyncio.Semaphore(5)
+    semaphore = asyncio.Semaphore(5) # 1. tu definiramo semafor
 
     tasks = [
-        process_camera(i, semaphore)
+        process_camera(i, semaphore) # 2. u svakom zahtjevu prosljeđujemo referencu na taj semafor
         for i in range(1, 101)
     ]
 
@@ -1693,7 +1701,7 @@ async def main():
 
 asyncio.run(main())
 
-# ili koristeći async with
+# ili koristeći "async with" unutar main funkcije (isti je rezultat)
 
 async def main():
     start = time.perf_counter()
@@ -1719,14 +1727,230 @@ Koje je ovdje vrijeme izvršavanja programa u slučaju da nema zastoja u mreži 
 <details>
 <summary>Prikaži odgovor</summary>
 
-Budući da smo ograničili konkurentnost na 5 kamera, program će obrađivati 5 kamera istovremeno. Svaka grupa od 5 kamera traje 1 sekundu, a ukupno imamo 100 kamera. Dakle, potrebno je obraditi 20 grupa (100 / 5 = 20). Ukupno vrijeme izvršavanja programa bit će otprilike 20 sekundi, plus malo vremena za raspoređivanje zadataka i ispis rezultata. Dakle, očekivano vrijeme izvršavanja programa je oko 20 sekundi.
+Budući da smo ograničili konkurentnost na 5 kamera, program će obrađivati 5 kamera istovremeno. Svaka grupa od 5 kamera traje 1 sekundu, a ukupno imamo 100 kamera. Dakle, potrebno je obraditi 20 grupa (100 / 5 = 20). Ukupno vrijeme izvršavanja programa bit će otprilike 20 sekundi, plus malo vremena za raspoređivanje zadataka i ispis rezultata.
 
 </details>
 
-<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/image-1.png"><img src="./image-1.png" alt="Opterećenje API-ja pri neograničenom i ograničenom pristupu" width="75%"></a>
+<a href="https://github.com/lukablaskovic/FIPU-RS/blob/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/image-1.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/image-1.png" alt="Opterećenje API-ja pri neograničenom i ograničenom pristupu" width="50%"></a>
 
-> **Slika 19.** Ograničavanje konkuretnnosti može zaštititi poslužitelj od preopterećenja i omogućiti stabilniji rad aplikacije.
+> **Slika 20.** Ograničavanje konkurentnosti može zaštititi poslužitelj od preopterećenja i omogućiti stabilniji rad aplikacije.
 
 # 4. Retry i backoff strategije
+
+Zamislimo da od prometne kamere zatražimo prosječnu brzinu vozila u nekom intervalu. Prvi zahtjev istekne (_timeouta_), ali kamera nekoliko sekundi poslije ponovno odgovara. Ako i dalje trebamo podatak, možemo ponoviti zahtjev (engl. **_retry_**).
+
+Odgodu prije sljedećeg pokušaja pritom nazivamo **_backoff_**. Pritom odlučujemo **kada ima smisla pokušati ponovno**, **koliko ćemo čekati** i **nakon koliko pokušaja odustajemo**.
+
+## 4.1. Kada ponoviti zahtjev?
+
+| Ishod zahtjeva                                        | Što klijent može učiniti?                                                                                                                                               |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Istek vremena pri dohvatu podatka metodom `GET`       | Pričekati i ponovno zatražiti podatak.                                                                                                                                  |
+| `503 Service Unavailable` ili `429 Too Many Requests` | Ponoviti zahtjev nakon odgode. Ako poslužitelj pošalje zaglavlje u HTTP odgovoru `Retry-After`, trebali bismo pričekati barem onoliko koliko je definirano u zaglavlju. |
+| `400 Bad Request` ili `401 Unauthorized`              | Ispraviti zahtjev ili pribaviti valjane pristupne podatke. Ponavljanje istog zahtjeva neće riješiti uzrok pogreške **tako da nema smisla ponavljati**.                  |
+
+Kod isteka vremena znamo samo da klijent nije na vrijeme primio odgovor, **međutim to ne implciira da poslužitelj nije obradio taj zahtjev.**
+
+Dohvat prosječne brzine automobila metodom `GET` tada možemo sigurno ponoviti.
+
+Međutim, ako je zahtjevom `POST /kamera` ili `PATCH /kamera` iz centralnog sustava poslan zahtjev za **promjenu konfiguracije kamere** (npr. podizanje osjetljivosti senzora ZA neku vrijednostu), tada **ponavljanje istog zahtjeva može dovesti do neželjenih posljedica**.
+
+> Npr. ako zahtjev `PATCH /kamera` podiže osjetljivost senzora za 10%, a poslužitelj je taj zahtjev obradio međutim odgovor je zakasnio, ponavljanje istog zahtjeva dovest će do **dvostrukog povećanja osjetljivosti senzora**.
+
+Za sigurno ponavljanje takve operacije API mora podržavati _ključ idempotentnosti_ koji klijent šalje sa svakim pokušajem iste narudžbe.
+
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2012.28.39%402x.png" alt="Ponavljanje zahtjeva GET i PATCH prema prometnoj kameri" width="50%">
+
+> **Slika 21.** Ilustracija slanja zahtjeva za dohvaćanje brzine odnosno promjenu konfiguracije kamere. Zahtjev `GET /kamera` možemo sigurno ponoviti, dok zahtjev `PATCH /kamera` može dovesti do neželjenih posljedica ako ga poslužitelj obradi više puta.
+
+Ovime ćemo se detaljnije baviti na budućim vježbama.
+
+## 4.2. Koliko čekati između ponovnih pokušaja?
+
+Pretpostavimo da dopuštamo **četiri pokušaja ukupno**. Sljedeće pitanje je koliko čekati između ponovnih pokušaja. Ako klijent odmah nakon isteka vremena pošalje novi zahtjev, poslužitelj može biti još uvijek preopterećen i ponovno vratiti pogrešku. U tom slučaju, **odgoda prije ponovnog pokušaja** može povećati šanse da poslužitelj obradi zahtjev.
+
+Ako poslužitelj vrati odgovor `503 Service Unavailable` ili `429 Too Many Requests`, možemo provjeriti zaglavlje `Retry-After` i pričekati barem onoliko koliko je definirano u zaglavlju.
+
+Primjer odgovora:
+
+```http
+HTTP/1.1 503 Service Unavailable
+Retry-After: 5 // ovo je zaglavlje u HTTP odgovoru
+```
+
+Tada **klijent treba pričekati barem 5 sekundi prije ponovnog pokušaja**.
+
+Ako poslužitelj ne navede odgodu, tada se u pravilu koristi jedna od sljedećih strategija:
+
+- **fiksna/linearna odgoda** (_eng. fixed/linear backoff_) – npr. 1 sekunda između svakog ponovnog pokušaja
+- **eksponencijalna odgoda** (_eng. exponential backoff_) – npr. 1 sekunda nakon prvog isteka vremena, 2 sekunde nakon drugog, 4 sekunde nakon trećeg itd.
+
+Eksponencijalni backoff je uobičajena strategija jer omogućuje poslužitelju da se oporavi od preopterećenja i smanjuje šanse da klijent ponovno pošalje zahtjev dok je poslužitelj još uvijek zauzet.
+
+Definirana je kao:
+
+\[
+d_n = d_1 \cdot b^{n-1}
+\]
+
+gdje je \(d_1\) početna odgoda, \(b > 1\) faktor rasta, a \(n\) redni broj ponavljanja. Za \(d_1 = 1\,\text{s}\) i \(b = 2\) klijent čeka 1 s prije prvog ponavljanja, 2 s prije drugog i 4 s prije trećeg.
+
+_Primjer_
+
+| Strategija             | Prije 2. pokušaja | Prije 3. pokušaja | Prije 4. pokušaja |
+| ---------------------- | ----------------: | ----------------: | ----------------: |
+| Fiksna odgoda          |               1 s |               1 s |               1 s |
+| Eksponencijalna odgoda |               1 s |               2 s |               4 s |
+
+<img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/CleanShot%202026-11-19%20at%2012.38.35%402x.png" alt="Eksponencijalna odgoda između zahtjeva za dohvat brzine" width="50%">
+
+> **Slika 22.** Nakon svakog odgovora `503 Service Unavailable` klijent udvostručuje odgodu između pokušaja. Čeka redom 1, 2 i 4 sekunde, a u četvrtom pokušaju prima podatak o brzini.
+
+## 4.3. Retry i backoff implementacija
+
+Za početak simulirajmo jednu kameru tako da pokus možemo ponoviti. U prva dva pokušaja kameri treba 0,5 sekundi za odgovor, a u trećem samo 0,05 sekundi. Klijent je pri svakom pokušaju spreman čekati najviše 0,2 sekunde.
+
+```python
+import asyncio
+
+async def fetch_camera_speed(attempt):
+    response_time = 0.5 if attempt <= 2 else 0.05
+    await asyncio.sleep(response_time)
+    return 48.2
+```
+
+### 4.3.1. Retry implementacija
+
+Kad prvi pokušaj istekne, klijent može odmah ponovno zatražiti podatak. Svaki takav ponovni poziv je _retry_.
+
+U primjeru dopuštamo četiri pokušaja ukupno, što znači jedan početni pokušaj i najviše tri ponavljanja.
+
+Na slici 23 servis B javlja pogrešku odgovorom `503 Service Unavailable`. Servis A svaki put ponavlja isti zahtjev. U primjeru koda ispod slike povod za ponavljanje je istek vremena.
+
+```mermaid
+sequenceDiagram
+    participant A as Servis A
+    participant B as Servis B
+    A->>B: GET /brzina
+    B-->>A: 503 Service Unavailable
+    A->>B: GET /brzina (prvo ponavljanje)
+    B-->>A: 503 Service Unavailable
+    A->>B: GET /brzina (drugo ponavljanje)
+    B-->>A: 200 OK (48,2 km/h)
+```
+
+> **Slika 23.** Servis A dvaput ponavlja zahtjev za dohvat brzine. Servis B vraća podatak u trećem pokušaju.
+
+Ispod funkcije `fetch_camera_speed` dodajmo sljedeći kod:
+
+```python
+async def main():
+    max_attempts = 4 # maksimalni broj pokušaja (1 početni + 3 ponavljanja)
+
+    for attempt in range(1, max_attempts + 1):
+        print(f"Pokušaj {attempt}/{max_attempts}")
+        try:
+            speed = await asyncio.wait_for(fetch_camera_speed(attempt), timeout=0.2)
+        except asyncio.TimeoutError:
+            if attempt == max_attempts:
+                print("Kamera nije odgovorila na vrijeme. Odustajemo.")
+                return
+            print("Istek vremena. Odmah pokušavamo ponovno.")
+        else:
+            print(f"Prosječna brzina: {speed} km/h")
+            return
+
+asyncio.run(main())
+```
+
+### 4.3.2. Backoff implemntacija
+
+Što ako kameri želimo dati vremena da se oporavi? Zadržimo istu funkciju `fetch_camera_speed`, a prethodnu funkciju `main` i njezin poziv zamijenimo kodom u nastavku.
+
+Nakon prvog isteka vremena čekamo 1 sekundu, a nakon drugog 2 sekunde. Ta je odgoda _backoff_. Vremensko ograničenje pojedinog zahtjeva i dalje iznosi 0,2 sekunde.
+
+```python
+async def main():
+    max_attempts = 4
+    delay = 1 # početna odgoda prije ponovnog pokušaja
+
+    for attempt in range(1, max_attempts + 1):
+        print(f"Pokušaj {attempt}/{max_attempts}")
+        try:
+            speed = await asyncio.wait_for(fetch_camera_speed(attempt), timeout=0.2)
+        except asyncio.TimeoutError:
+            if attempt == max_attempts:
+                print("Kamera nije odgovorila na vrijeme. Odustajemo.")
+                return
+            print(f"Istek vremena. Sljedeći pokušaj za {delay} s.")
+            await asyncio.sleep(delay)
+            delay *= 2 # eksponencijalna odgoda
+        else:
+            print(f"Prosječna brzina: {speed} km/h")
+            return
+
+asyncio.run(main())
+```
+
+**Kakav ispis očekujete? Hoće li klijent čekati i 4 sekunde?**
+
+<details>
+<summary>Prikaži odgovor</summary>
+
+```text
+Pokušaj 1/4
+Istek vremena. Sljedeći pokušaj za 1 s.
+Pokušaj 2/4
+Istek vremena. Sljedeći pokušaj za 2 s.
+Pokušaj 3/4
+Prosječna brzina: 48.2 km/h
+```
+
+Treći pokušaj uspijeva pa `return` završava korutinu. Odgoda od 4 sekunde primijenila bi se samo da je istekao i treći pokušaj.
+
+</details>
+
+**Isprobajte sami.** Postavite `response_time = 0.5` za svaki pokušaj. Koliko će puta klijent poslati zahtjev, a koliko će puta čekati između zahtjeva?
+
+### 4.3.3 Kombiniranje retry i backoff strategija s ograničavanjem konkurentnosti
+
+Ako želimo kombinirati sve tri strategije, možemo koristiti `asyncio.Semaphore` za ograničavanje konkurentnosti, `asyncio.wait_for` za vremensko ograničenje svakog zahtjeva i implementirati retry/backoff logiku unutar svake korutine.
+
+_Primjer:_ Želimo dohvatiti podatke s 10 kamera, ali ograničiti broj istovremenih zahtjeva na 3, postaviti timeout od 2 sekunde za svaki zahtjev i implementirati retry/backoff strategiju s maksimalno 3 pokušaja i eksponencijalnom odgodom.
+
+```python
+import asyncio
+import random
+
+async def fetch_camera_data(camera_id, semaphore):
+    max_attempts = 3
+    delay = 1  # početna odgoda prije ponovnog pokušaja
+
+    for attempt in range(1, max_attempts + 1):
+        async with semaphore:
+            print(f"Kamera {camera_id}: Pokušaj {attempt}/{max_attempts}")
+            try:
+                # Simulacija mrežnog čekanja (0.5 sekundi za kamere 1-9, 3 sekunde za kameru 10)
+                response_time = 0.5 if camera_id != 10 else 3
+                await asyncio.wait_for(asyncio.sleep(response_time), timeout=2)
+                print(f"Kamera {camera_id}: Podaci dohvaćeni.")
+                return f"Podaci s kamere {camera_id}"
+            except asyncio.TimeoutError:
+                if attempt == max_attempts:
+                    print(f"Kamera {camera_id}: Nije odgovorila na vrijeme. Odustajemo.")
+                    return None
+                print(f"Kamera {camera_id}: Istek vremena. Sljedeći pokušaj za {delay} s.")
+                await asyncio.sleep(delay)
+                delay *= 2  # eksponencijalna odgoda
+
+async def main():
+    semaphore = asyncio.Semaphore(3)  # Ograničavamo konkurentnost na 3 kamere
+    camera_ids = range(1, 11)  # 10 kamera
+    tasks = [fetch_camera_data(camera_id, semaphore) for camera_id in camera_ids]
+    results = await asyncio.gather(*tasks)
+    print("Rezultati:", results)
+
+asyncio.run(main())
+```
 
 # 5. Zadaci za vježbu: Konkurentna obrada HTTP zahtjeva, timeout, ograničavanje konkurentnosti i retry/backoff strategije
