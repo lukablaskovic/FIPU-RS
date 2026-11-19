@@ -67,6 +67,7 @@ Do sada smo sve primjere temeljili na simuliranim I/O-operacijama koristeći `as
     - [4.3.1. Retry implementacija](#431-retry-implementacija)
     - [4.3.2. Backoff implemntacija](#432-backoff-implemntacija)
     - [4.3.3 Kombiniranje retry i backoff strategija s ograničavanjem konkurentnosti](#433-kombiniranje-retry-i-backoff-strategija-s-ograničavanjem-konkurentnosti)
+    - [UKRATKO: asyncio/aiohttp šalabahter](#ukratko-asyncioaiohttp-šalabahter)
 - [5. Zadaci za vježbu: Konkurentna obrada HTTP zahtjeva, timeout, ograničavanje konkurentnosti i retry/backoff strategije](#5-zadaci-za-vježbu-konkurentna-obrada-http-zahtjeva-timeout-ograničavanje-konkurentnosti-i-retrybackoff-strategije)
   - [5.1. Simulacija slanja i obrade zahtjeva](#51-simulacija-slanja-i-obrade-zahtjeva)
   - [5.2. Konkurentni dohvat činjenica o mačkama](#52-konkurentni-dohvat-činjenica-o-mačkama)
@@ -561,22 +562,8 @@ print("Šaljemo 5. zahtjev...")
 send_request()
 ```
 
-**Isti primjer uz sinkroni `httpx`**
-
-```python
-import httpx
-
-def send_request():
-  response = httpx.get("https://catfact.ninja/fact")
-  print(response.json()["fact"])
-
-for i in range(5):
-  print(f"Šaljemo {i + 1}. zahtjev...")
-  send_request()
-```
-
 <p align="center">
-  <a href="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/sekvencijalni-http-zahtjevi.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/sekvencijalni-http-zahtjevi.png" alt="Tri uzastopna HTTP-zahtjeva na vremenskoj crti od 0 do 3 s" width="50%"></a>
+  <a href="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/sekvencijalni-http-zahtjevi.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/sekvencijalni-http-zahtjevi.png" alt="Tri uzastopna HTTP-zahtjeva na vremenskoj crti od 0 do 3 s" width="70%"></a>
 </p>
 
 > **Slika 9.** Tri HTTP-zahtjeva šalju se sekvencijalno. Svaki traje jednu sekundu, pa ukupno čekanje traje tri sekunde.
@@ -617,25 +604,6 @@ end = time.perf_counter() # timestamp #2
 print(f"Izvršavanje programa traje {end - start:.2f} s.")
 ```
 
-**Isti primjer uz sinkroni `httpx`**
-
-```python
-import time
-import httpx
-
-def send_request():
-  response = httpx.get("https://catfact.ninja/fact")
-  print(response.json()["fact"])
-
-start = time.perf_counter()
-for i in range(5):
-  print(f"Šaljemo {i + 1}. zahtjev...")
-  send_request()
-
-end = time.perf_counter()
-print(f"Izvršavanje programa traje {end - start:.2f} s.")
-```
-
 Poslat ćemo 15 zahtjeva, a kod ćemo strukturirati u `for` petlju:
 
 ```python
@@ -649,25 +617,6 @@ def send_request():
 
 start = time.perf_counter()
 
-for i in range(15):
-  print(f"Šaljemo {i + 1}. zahtjev...")
-  send_request()
-
-end = time.perf_counter()
-print(f"Izvršavanje programa traje {end - start:.2f} s.")
-```
-
-**Isti primjer uz sinkroni `httpx`**
-
-```python
-import time
-import httpx
-
-def send_request():
-  response = httpx.get("https://catfact.ninja/fact")
-  print(response.json()["fact"])
-
-start = time.perf_counter()
 for i in range(15):
   print(f"Šaljemo {i + 1}. zahtjev...")
   send_request()
@@ -693,14 +642,13 @@ Cilj nam je poslati više zahtjeva na _Cat Facts API_ i postići brže vrijeme i
 
 Kada razmišljamo o konkurentnom slanju HTTP-zahtjeva, najidealnije je razmišljati o **korutinama**. Na zadnjim smo vježbama definirali korutine s fiksnim čekanjima (_non-blocking_ `asyncio.sleep`), a sada ćemo definirati korutine koje će slati HTTP-zahtjeve na neki servis.
 
-Za primjere u nastavku učitajmo module na početku datoteke. U svakom primjeru pokrenite samo jednu inačicu: onu s bibliotekom `aiohttp` ili onu ispod komentara `# ili koristeći httpx`.
+Na početku datoteke učitajmo module za asinkrone primjere. U primjeru 3 usporedit ćemo dohvat JSON-a pomoću biblioteka `aiohttp` i `httpx`, a zatim ćemo koristiti `aiohttp`.
 
 ```python
 import asyncio
 import time
 
 import aiohttp
-import httpx
 ```
 
 Kada šaljemo više zahtjeva istom poslužitelju, jedan klijent može ponovno koristiti već otvorene veze. U sinkronom kodu za to bismo koristili `requests.Session`. U asinkronom kodu otvorit ćemo jednu instancu `aiohttp.ClientSession` ili `httpx.AsyncClient` i koristiti je za sve zahtjeve.
@@ -832,11 +780,6 @@ U biblioteci `aiohttp` klijent je instanca klase **`ClientSession`**, a u biblio
 ```python
 async with aiohttp.ClientSession() as session:
     ...  # ovdje šaljemo zahtjeve
-
-# ili koristeći httpx
-
-async with httpx.AsyncClient() as client:
-    ...  # ovdje šaljemo zahtjeve
 ```
 
 #### Primjer 3: Dohvat činjenica pomoću asinkronog klijenta
@@ -846,12 +789,6 @@ U obje biblioteke GET-zahtjev šaljemo metodom `get`. Unutar korutine koristimo 
 ```python
 async with aiohttp.ClientSession() as session:
   response = await session.get("https://catfact.ninja/fact") # šalje HTTP GET-zahtjev na navedeni URL
-  print(response)
-
-# ili koristeći httpx
-
-async with httpx.AsyncClient() as client:
-  response = await client.get("https://catfact.ninja/fact")
   print(response)
 ```
 
@@ -863,16 +800,6 @@ Prebacujemo cijeli kod unutar `main` korutine:
 async def main(): # definiramo main korutinu
   async with aiohttp.ClientSession() as session: # otvaramo HTTP-sesiju koristeći context manager "with"
     response = await session.get("https://catfact.ninja/fact") # mrežni zahtjev
-    print(response)
-
-# pokrećemo main korutinu i event loop koristeći funkciju asyncio.run()
-asyncio.run(main())
-
-# ili koristeći httpx
-
-async def main():
-  async with httpx.AsyncClient() as client:
-    response = await client.get("https://catfact.ninja/fact")
     print(response)
 
 # pokrećemo main korutinu i event loop koristeći funkciju asyncio.run()
@@ -889,14 +816,20 @@ async def main():
     response = await session.get("https://catfact.ninja/fact") # mrežni zahtjev
     fact_dict = await response.json() # dodajemo await jer je json() asinkrona metoda koja vraća objekt korutine
     print(fact_dict) # ispisuje nasumičnu činjenicu
+```
 
-# ili koristeći httpx
+**Isti dohvat uz asinkroni `httpx`**
+
+```python
+import httpx
 
 async def main():
   async with httpx.AsyncClient() as client:
     response = await client.get("https://catfact.ninja/fact")
     fact_dict = response.json()
     print(fact_dict)
+
+asyncio.run(main())
 ```
 
 <p align="center">
@@ -917,15 +850,6 @@ async def main():
     for i in range(5):
       response = await session.get("https://catfact.ninja/fact") # mrežni zahtjev
       fact_dict = await response.json() # deserijalizacija JSON-odgovora
-      print(fact_dict)
-
-# ili koristeći httpx
-
-async def main():
-  async with httpx.AsyncClient() as client:
-    for i in range(5):
-      response = await client.get("https://catfact.ninja/fact")
-      fact_dict = response.json()
       print(fact_dict)
 ```
 
@@ -952,18 +876,6 @@ async def main():
       print(f"Šaljemo {i + 1}. zahtjev...")
       response = await session.get("https://catfact.ninja/fact")
       fact_dict = await response.json()
-      print(fact_dict['fact'])
-
-asyncio.run(main())
-
-# ili koristeći httpx
-
-async def main():
-  async with httpx.AsyncClient() as client:
-    for i in range(5):
-      print(f"Šaljemo {i + 1}. zahtjev...")
-      response = await client.get("https://catfact.ninja/fact")
-      fact_dict = response.json()
       print(fact_dict['fact'])
 
 asyncio.run(main())
@@ -995,12 +907,6 @@ U `main` korutini tada **moramo definirati otvaranje same sesije**:
 async def main():
   async with aiohttp.ClientSession() as session:
     ...  # ovdje ćemo pripremiti korutine
-
-# ili koristeći httpx
-
-async def main():
-  async with httpx.AsyncClient() as client:
-    ...  # ovdje šaljemo zahtjeve
 ```
 
 Napokon, **možemo koristiti `asyncio.gather` funkciju kako bismo poslali 5 zahtjeva konkurentno**.
@@ -1016,17 +922,6 @@ async def get_cat_fact(session):
 async def main():
   async with aiohttp.ClientSession() as session:
     cat_fact_korutine = [get_cat_fact(session) for i in range(5)]
-
-# ili koristeći httpx
-
-async def get_cat_fact(client):
-  response = await client.get("https://catfact.ninja/fact")
-  fact_dict = response.json()
-  print(fact_dict['fact'])
-
-async def main():
-  async with httpx.AsyncClient() as client:
-    cat_fact_korutine = [get_cat_fact(client) for i in range(5)]
 ```
 
 **Pozivamo korutine konkurentno** koristeći `asyncio.gather` funkciju.
@@ -1072,19 +967,11 @@ async def get_cat_fact(session):
   response = await session.get("https://catfact.ninja/fact")
   fact_dict = await response.json()
   print(fact_dict['fact'])
-
-# ili koristeći httpx
-
-async def get_cat_fact(client):
-  print("Šaljemo zahtjev za mačji fact")
-  response = await client.get("https://catfact.ninja/fact")
-  fact_dict = response.json()
-  print(fact_dict['fact'])
 ```
 
 I bez dodavanja `time` modula odmah vidimo razliku u terminalu! Prije smo imali **sekvencijalno slanje jednog zahtjeva za drugim i čekanje na odgovor prije slanja sljedećeg zahtjeva**:
 
-**Sinkrono slanje HTTP-zahtjeva:**
+Sinkrono slanje HTTP-zahtjeva:
 
 ```plaintext
 Šaljemo 1. zahtjev...
@@ -1102,7 +989,7 @@ Izvršavanje programa traje 1.26 s.
 
 Sada vidimo da se svi zahtjevi (korutine koje su _schedulane_ u _event loopu_) prvo pošalju **konkurentno**, a zatim se ispisuju sve činjenice. **Ne čekamo više na odgovor kroz svaku iteraciju petlje**.
 
-**Primjer ispisa pri konkurentnom slanju (`aiohttp`)**
+Primjer ispisa pri konkurentnom slanju (`aiohttp`)
 
 ```
 Šaljemo zahtjev za mačji fact
@@ -1122,7 +1009,7 @@ A cat’s nose pad is ridged with a unique pattern, just like the fingerprint of
 
 <hr>
 
-Izmjerimo i vrijeme izvođenja programa. Prikazana vremena izmjerena su s bibliotekom `aiohttp`. Pokrenite i inačicu s bibliotekom `httpx` te usporedite svoja mjerenja.
+Izmjerimo i vrijeme izvođenja programa. Prikazana vremena izmjerena su s bibliotekom `aiohttp`.
 
 Započet ćemo mjeriti kad se pozove `main` korutina, a završiti na kraju `main` korutine.
 
@@ -1131,18 +1018,6 @@ async def main():
   start = time.perf_counter()
   async with aiohttp.ClientSession() as session:
       cat_fact_korutine = [get_cat_fact(session) for i in range(5)]
-      await asyncio.gather(*cat_fact_korutine)
-  end = time.perf_counter()
-  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
-
-asyncio.run(main())
-
-# ili koristeći httpx
-
-async def main():
-  start = time.perf_counter()
-  async with httpx.AsyncClient() as client:
-      cat_fact_korutine = [get_cat_fact(client) for i in range(5)]
       await asyncio.gather(*cat_fact_korutine)
   end = time.perf_counter()
   print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
@@ -1176,16 +1051,6 @@ async def main():
       await asyncio.gather(*cat_fact_korutine)
   end = time.perf_counter()
   print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
-
-# ili koristeći httpx
-
-async def main():
-  start = time.perf_counter()
-  async with httpx.AsyncClient() as client:
-      cat_fact_korutine = [get_cat_fact(client) for i in range(15)]
-      await asyncio.gather(*cat_fact_korutine)
-  end = time.perf_counter()
-  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
 ```
 
 _Primjer ispisa:_
@@ -1195,32 +1060,14 @@ _Primjer ispisa:_
 Šaljemo zahtjev za mačji fact
 Šaljemo zahtjev za mačji fact
 Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
-Šaljemo zahtjev za mačji fact
+
+...
+
 Cat families usually play best in even numbers. Cats and kittens should be acquired in pairs whenever possible.
 Cats are subject to gum disease and to dental caries. They should have their teeth cleaned by the vet or the cat dentist once a year.
 The biggest wildcat today is the Siberian Tiger. It can be more than 12 feet (3.6 m) long (about the size of a small car) and weigh up to 700 pounds (317 kg).
-A group of cats is called a clowder.
-The heaviest cat on record is Himmy, a Tabby from Queensland, Australia. He weighed nearly 47 pounds (21 kg). He died at the age of 10.
-A cat can jump up to five times its own height in a single bound.
-A commemorative tower was built in Scotland for a cat named Towser, who caught nearly 30,000 mice in her lifetime.
-Purring does not always indicate that a cat is happy and healthy - some cats will purr loudly when they are terrified or in pain.
-Long, muscular hind legs enable snow leopards to leap seven times their own body length in a single bound.
-The most traveled cat is Hamlet, who escaped from his carrier while on a flight. He hid for seven weeks behind a panel on the airplane. By the time he was discovered, he had traveled nearly 373,000 miles (600,000 km).
-Cats and kittens should be acquired in pairs whenever possible as cat families interact best in pairs.
-The earliest ancestor of the modern cat lived about 30 million years ago. Scientists called it the Proailurus, which means "first cat" in Greek. The group of animals that pet cats belong to emerged around 12 million years ago.
-There are up to 60 million feral cats in the United States alone.
-The strongest climber among the big cats, a leopard can carry prey twice its weight up a tree.
-The name "jaguar" comes from a Native American word meaning "he who kills with one leap".
+
+...
 
 Izvršavanje programa traje 0.61 s.
 ```
@@ -1244,17 +1091,6 @@ async def main():
   start = time.perf_counter()
   async with aiohttp.ClientSession() as session:
       cat_fact_tasks = [asyncio.create_task(get_cat_fact(session)) for _ in range(5)]
-      for task in cat_fact_tasks:
-          await task
-  end = time.perf_counter()
-  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
-
-# ili koristeći httpx
-
-async def main():
-  start = time.perf_counter()
-  async with httpx.AsyncClient() as client:
-      cat_fact_tasks = [asyncio.create_task(get_cat_fact(client)) for _ in range(5)]
       for task in cat_fact_tasks:
           await task
   end = time.perf_counter()
@@ -1514,7 +1350,7 @@ A timeout occurred while fetching camera data.
 Uočite da smo dobili `TimeoutError` te se aktivirao `except` blok za hvatanje iznimke.
 
 <p align="center">
-  <a href="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/zajednicki-timeout-za-pet-kamera.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/zajednicki-timeout-za-pet-kamera.png" alt="Zajedničko vremensko ograničenje od deset sekundi za pet kamera" width="50%"></a>
+  <a href="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/zajednicki-timeout-za-pet-kamera.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/zajednicki-timeout-za-pet-kamera.png" alt="Zajedničko vremensko ograničenje od deset sekundi za pet kamera" width="70%"></a>
 </p>
 
 > **Slika 16.** Svih pet kamera započinje konkurentno dohvaćanje podataka. Kamera 3 simulira spori mrežni odgovor od 20 sekundi, dok ostale kamere završavaju nakon 2, 4, 8 i 10 sekundi. Za razliku od prethodnog primjera, ovdje `asyncio.wait_for()` postavlja jedno zajedničko vremensko ograničenje od 10 sekundi za cijeli `asyncio.gather()`.
@@ -1563,32 +1399,6 @@ All camera data fetched: ['Data from camera 1', 'Data from camera 2', None, 'Dat
 ```
 
 ---
-
-Ako koristite biblioteku `httpx`, možete postaviti vremensko ograničenje za svaku korutinu pojedinačno, koristeći `httpx.Timeout` klasu, međutim preporučuje se korištenje `asyncio.wait_for`.
-
-```python
-import httpx
-
-async def fetch_camera_data(camera_id):
-    print(f"Fetching data from camera {camera_id}...")
-    # Postavljamo timeout od 10 sekundi za svaku kameru
-    timeout = httpx.Timeout(10.0)
-    # ovdje možemo postaviti timeout za cijeli klijent, a ne samo za pojedinu korutinu
-    async with httpx.AsyncClient(timeout=timeout) as client:
-        try:
-            response = await client.get(f"https://example.com/camera/{camera_id}/data")
-            response.raise_for_status()  # Provjeravamo statusni kod odgovora
-            print(f"Data from camera {camera_id} fetched.")
-            return response.json()
-        except httpx.TimeoutException:
-            print(f"Timeout while fetching data from camera {camera_id}.")
-            return None
-        except httpx.HTTPStatusError as e:
-            print(f"HTTP error while fetching data from camera {camera_id}: {e}")
-            return None
-```
-
-Stvar je ista, samo što koristimo `httpx` biblioteku i njene metode za rukovanje vremenskim ograničenjima i iznimkama.
 
 ### Primjer 10: Vremensko ograničenje pri dohvatu s API-ja
 
@@ -1672,7 +1482,6 @@ Ipak, pokazat ćemo primjer u kojem šaljemo 100 zahtjeva na 100 kamera **bez og
 import asyncio
 import random
 import time
-
 
 # zamislimo da je poslužitelj koji obrađuje zahtjeve i vraća podatke o prosječnim brzinama vozila na cesti
 async def process_camera(camera_id):
@@ -1799,7 +1608,7 @@ Budući da smo ograničili konkurentnost na 5 kamera, program će obrađivati 5 
 </details>
 
 <p align="center">
-  <a href="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/opterecenje-api-ja-sa-semaforom-i-bez-njega.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/opterecenje-api-ja-sa-semaforom-i-bez-njega.png" alt="Opterećenje API-ja pri neograničenom i ograničenom pristupu" width="50%"></a>
+  <a href="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/opterecenje-api-ja-sa-semaforom-i-bez-njega.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/opterecenje-api-ja-sa-semaforom-i-bez-njega.png" alt="Opterećenje API-ja pri neograničenom i ograničenom pristupu" width="70%"></a>
 </p>
 
 > **Slika 20.** Ograničavanje konkurentnosti može zaštititi poslužitelj od preopterećenja i omogućiti stabilniji rad aplikacije.
@@ -1900,6 +1709,8 @@ U primjeru dopuštamo četiri pokušaja ukupno, što znači jedan početni poku�
 
 Na slici 23 servis B javlja pogrešku odgovorom `503 Service Unavailable`. Servis A svaki put ponavlja isti zahtjev. U primjeru koda ispod slike povod za ponavljanje je istek vremena.
 
+<div align="center" style="text-align: center;">
+
 ```mermaid
 sequenceDiagram
     participant A as Servis A
@@ -1911,6 +1722,8 @@ sequenceDiagram
     A->>B: GET /brzina (drugo ponavljanje)
     B-->>A: 200 OK (48,2 km/h)
 ```
+
+</div>
 
 > **Slika 23.** Servis A dvaput ponavlja zahtjev za dohvat brzine. Servis B vraća podatak u trećem pokušaju.
 
@@ -2026,6 +1839,30 @@ async def main():
 asyncio.run(main())
 ```
 
+### UKRATKO: asyncio/aiohttp šalabahter
+
+**Osnove biblioteke `asyncio` (RS3)**
+
+- `async def dohvati():` definira korutinu. Pozivom `await dohvati()` čekamo njezin rezultat.
+- `await asyncio.sleep(1)` pauzira trenutačnu korutinu na jednu sekundu. Za to vrijeme druge se mogu izvršavati.
+- `asyncio.run(main())` pokreće _event loop_ i izvršava korutinu `main()`. Unutar korutine `asyncio.get_event_loop()` vraća aktivni _event loop_.
+- `task = asyncio.create_task(dohvati())` raspoređuje korutinu za izvršavanje. Njezin rezultat kasnije možemo preuzeti s `await task`.
+- `rezultati = await asyncio.gather(*korutine)` pokreće korutine konkurentno. Rezultati su poredani redoslijedom kojim smo proslijedili korutine, čak i ako odgovori stignu drugim redom.
+
+**Slanje HTTP-zahtjeva pomoću biblioteke `aiohttp`**
+
+- `async with aiohttp.ClientSession() as session:` otvara sesiju. Istu sesiju proslijedimo svim korutinama koje šalju zahtjeve. Izlaskom iz bloka sesija se zatvara.
+- `async with session.get(url) as response:` šalje GET-zahtjev. Unutar bloka čitamo status i tijelo odgovora.
+- `response.status` daje HTTP statusni kod. Poziv `response.raise_for_status()` podiže iznimku `aiohttp.ClientResponseError` za status 400 ili veći.
+- `podaci = await response.json()` čita i dekodira JSON.
+
+**Vremensko ograničenje, semafor i ponovni pokušaji**
+
+- `await asyncio.wait_for(dohvati(), timeout=2)` ograničava pojedini dohvat na dvije sekunde. Istek vremena obrađujemo s `except asyncio.TimeoutError:`. Ako u `wait_for()` proslijedimo cijeli `gather()`, ograničenje vrijedi za cijelu skupinu.
+- `semafor = asyncio.Semaphore(3)` stvara semafor koji dijele sve korutine. Ako dohvat stavimo u blok `async with semafor:`, istodobno se mogu izvršavati najviše tri dohvata.
+- Za GET-zahtjev nakon isteka vremena ili statusa `503` možemo ponoviti dohvat. Tri pokušaja ukupno dopuštaju početni zahtjev i najviše dva ponavljanja.
+- Za eksponencijalni _backoff_ postavimo `odgoda = 0.5`. Ako slijedi još jedan pokušaj, izađemo iz bloka semafora, pričekamo s `await asyncio.sleep(odgoda)` pa udvostručimo odgodu s `odgoda *= 2`.
+
 # 5. Zadaci za vježbu: Konkurentna obrada HTTP zahtjeva, timeout, ograničavanje konkurentnosti i retry/backoff strategije
 
 ## 5.1. Simulacija slanja i obrade zahtjeva
@@ -2036,6 +1873,18 @@ Tri prometne kamere obrađuju zahtjeve različitim brzinama. Prvoj za obradu tre
 2. U korutini `main()` pošaljite zahtjeve kamerama redom 1, 2 i 3. Prvi ih put pošaljite sekvencijalno, a drugi put konkurentno pomoću `asyncio.gather()`. Svako izvođenje zasebno izmjerite funkcijom `time.perf_counter()`.
 3. Prije pokretanja predvidite trajanje obaju izvođenja. U konkurentnoj inačici usporedite redoslijed primitka odgovora s redoslijedom oznaka u listi koju vraća `gather()`. Kako objašnjavate razliku?
 
+```python
+import asyncio
+
+async def posalji_zahtjev(kamera_id, trajanje):
+    pass  # ...
+
+async def main():
+    pass  # ...
+
+asyncio.run(main())
+```
+
 ## 5.2. Konkurentni dohvat činjenica o mačkama
 
 Napišite program koji s adrese `https://catfact.ninja/fact` dohvaća pet nasumičnih činjenica o mačkama i izdvaja najdulju.
@@ -2043,6 +1892,18 @@ Napišite program koji s adrese `https://catfact.ninja/fact` dohvaća pet nasumi
 1. U korutini `main()` otvorite jednu sesiju (`aiohttp.ClientSession` ili `httpx.AsyncClient`) za svih pet zahtjeva.
 2. Napišite korutinu `dohvati_cinjenicu(klijent, broj_zahtjeva)` koja šalje jedan GET-zahtjev, provjerava status odgovora i iz JSON-a čita polja `fact` i `length`. Po primitku ispišite broj zahtjeva, a kao rezultat vratite broj zahtjeva, tekst i duljinu činjenice.
 3. Pokrenite svih pet dohvata konkurentno. Nakon što prikupite rezultate, ispišite tekst najdulje činjenice, njezinu duljinu i broj zahtjeva kojim je dohvaćena. Ako više činjenica ima istu najveću duljinu, dovoljno je ispisati jednu.
+
+```python
+import asyncio
+
+async def dohvati_cinjenicu(klijent, broj_zahtjeva):
+    pass  # ...
+
+async def main():
+    pass  # ...
+
+asyncio.run(main())
+```
 
 ## 5.3. Istek vremena i obrada iznimki
 
@@ -2059,6 +1920,21 @@ Nadzorni centar na odgovor pojedine kamere čeka najviše 1 sekundu. Za provjeru
 2. Za svaku kameru obradite `asyncio.TimeoutError` i `ConnectionError` te zabilježite razlog neuspjeha. Na kraju ispišite po jedan redak za svaku kameru s izmjerenom brzinom ili razlogom neuspjeha.
 3. Izračunajte prosječnu brzinu samo iz uspješnih očitanja. Za podatke iz tablice trebali biste dobiti 50 km/h. Što će program ispisati ako sve četiri kamere zakasne?
 
+```python
+import asyncio
+
+async def dohvati_brzinu(kamera_id):
+    pass  # ...
+
+async def obradi_ocitanje(kamera_id):
+    pass  # ...
+
+async def main():
+    pass  # ...
+
+asyncio.run(main())
+```
+
 ## 5.4. Ograničavanje broja aktivnih zahtjeva
 
 Poslužitelj istodobno može obrađivati tri zahtjeva. Napišite program koji mu šalje osam zahtjeva. Obradu svakog zahtjeva simulirajte čekanjem od 1 sekunde.
@@ -2067,6 +1943,18 @@ Poslužitelj istodobno može obrađivati tri zahtjeva. Napišite program koji mu
 2. Pratite koliko je zahtjeva trenutačno u obradi. Uvećajte brojač kad zahtjev dobije mjesto, smanjite ga po završetku obrade i zabilježite najveću dosegnutu vrijednost.
 3. Pokrenite program s ograničenjem od 3, a zatim od 4 zahtjeva. Za oba izvođenja ispišite najveći zabilježeni broj aktivnih zahtjeva i ukupno trajanje. Kako biste iz broja zahtjeva, trajanja jedne obrade i ograničenja konkurentnosti procijenili ukupno trajanje svakog izvođenja?
 
+```python
+import asyncio
+
+async def obradi_zahtjev(broj_zahtjeva, semafor):
+    pass  # ...
+
+async def main():
+    pass  # ...
+
+asyncio.run(main())
+```
+
 ## 5.5. Ponovni pokušaji nakon isteka vremena
 
 Kamera u prvom pokušaju odgovara nakon 0,8 s, u drugom nakon 0,6 s, a u trećem nakon 0,1 s. Klijent je pri svakom pokušaju spreman čekati najviše 0,3 s.
@@ -2074,6 +1962,21 @@ Kamera u prvom pokušaju odgovara nakon 0,8 s, u drugom nakon 0,6 s, a u trećem
 1. Napišite korutinu koja prima redni broj pokušaja i simulira odgovarajuće trajanje dohvata. Kad dohvat uspije, neka vrati brzinu od 54 km/h.
 2. Na strani klijenta dopustite **najviše tri pokušaja ukupno**. Ako vrijeme istekne, pričekajte 0,5 s prije drugog pokušaja, a zatim udvostručite odgodu prije svakog sljedećeg pokušaja. Ispišite redni broj svakog pokušaja i njegov ishod.
 3. Isprobajte dva slučaja. Najprije provjerite da treći pokušaj vraća brzinu. Zatim postavite trajanje trećeg dohvata na 0,8 s. Provjerite da klijent nakon trećeg isteka odmah javlja neuspjeh. Koliko je zahtjeva poslao, a koliko je puta čekao između pokušaja?
+
+```python
+import asyncio
+
+async def dohvati_brzinu(pokusaj):
+    pass  # ...
+
+async def dohvati_s_ponavljanjem():
+    pass  # ...
+
+async def main():
+    pass  # ...
+
+asyncio.run(main())
+```
 
 ## 5.6. Pouzdan dohvat činjenica o mačkama
 
@@ -2084,3 +1987,18 @@ Nadogradite program iz zadatka 5.2. tako da pokuša prikupiti po jednu činjenic
 3. Za svaki zahtjev ispišite njegov broj, broj pokušaja i činjenicu ili razlog neuspjeha. Na kraju ispišite koliko je činjenica dohvaćeno, koliko je zahtjeva završilo neuspjehom i koliko je ukupno pokušaja bilo potrebno.
 
 **Provjera.** Prije slanja stvarnih zahtjeva zamijenite samo dohvat simulacijom. Neka zahtjev 2 zakasni u prvom pokušaju, zahtjev 5 svaki put vrati status `503`, a svi ostali pokušaji uspiju. Očekivani rezultat je **7 dohvaćenih činjenica, 1 neuspješan zahtjev i 11 pokušaja ukupno**. Zatim pokrenite isti program sa stvarnim API-jem.
+
+```python
+import asyncio
+
+async def dohvati_cinjenicu(klijent, broj_zahtjeva):
+    pass  # ...
+
+async def dohvati_s_ponavljanjem(klijent, broj_zahtjeva, semafor):
+    pass  # ...
+
+async def main():
+    pass  # ...
+
+asyncio.run(main())
+```
