@@ -18,7 +18,7 @@ Asinkronost je koncept koji označava mogućnost simultanog izvršavanja više z
 </div>
 <br>
 
-**🆙 Posljednje ažurirano: 18.11.2026.**
+**🆙 Posljednje ažurirano: 19.11.2026.**
 
 ## Sadržaj
 
@@ -39,7 +39,7 @@ Asinkronost je koncept koji označava mogućnost simultanog izvršavanja više z
     - [Primjer 5: Što ako _awaitamo_ samo jednu korutinu, a rasporedimo više korutina u event loop?](#primjer-5-što-ako-awaitamo-samo-jednu-korutinu-a-rasporedimo-više-korutina-u-event-loop)
   - [1.4. Konkurentno izvršavanje s funkcijom `asyncio.gather()`](#14-konkurentno-izvršavanje-s-funkcijom-asynciogather)
   - [1.5. Konkurentno izvođenje kroz `asyncio.gather()` VS `asyncio.create_task()`](#15-konkurentno-izvođenje-kroz-asynciogather-vs-asynciocreate_task)
-    - [UKRATKO: Asyncio šalabahter](#ukratko-asyncio-šalabahter)
+- [UKRATKO: Asyncio šalabahter](#ukratko-asyncio-šalabahter)
 - [2. Zadaci za vježbu - Korutine, Task objekti, gather metoda, event loop](#2-zadaci-za-vježbu---korutine-task-objekti-gather-metoda-event-loop)
 
 <div style="page-break-after: always; break-after: page;"></div>
@@ -1172,7 +1172,7 @@ asyncio.run(main())
 
 <div style="page-break-after: always; break-after: page;"></div>
 
-### UKRATKO: Asyncio šalabahter
+# UKRATKO: Asyncio šalabahter
 
 - `async def function_name():` - definicija korutine
 - `await coroutine()` - pozivanje korutine i čekanje na njen završetak

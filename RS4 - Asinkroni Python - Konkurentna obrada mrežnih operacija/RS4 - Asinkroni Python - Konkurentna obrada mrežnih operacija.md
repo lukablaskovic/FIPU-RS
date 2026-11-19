@@ -67,7 +67,7 @@ Do sada smo sve primjere temeljili na simuliranim I/O-operacijama koristeći `as
     - [4.3.1. Retry implementacija](#431-retry-implementacija)
     - [4.3.2. Backoff implemntacija](#432-backoff-implemntacija)
     - [4.3.3 Kombiniranje retry i backoff strategija s ograničavanjem konkurentnosti](#433-kombiniranje-retry-i-backoff-strategija-s-ograničavanjem-konkurentnosti)
-    - [UKRATKO: asyncio/aiohttp šalabahter](#ukratko-asyncioaiohttp-šalabahter)
+- [UKRATKO: asyncio/aiohttp šalabahter](#ukratko-asyncioaiohttp-šalabahter)
 - [5. Zadaci za vježbu: Konkurentna obrada HTTP zahtjeva, timeout, ograničavanje konkurentnosti i retry/backoff strategije](#5-zadaci-za-vježbu-konkurentna-obrada-http-zahtjeva-timeout-ograničavanje-konkurentnosti-i-retrybackoff-strategije)
   - [5.1. Simulacija slanja i obrade zahtjeva](#51-simulacija-slanja-i-obrade-zahtjeva)
   - [5.2. Konkurentni dohvat činjenica o mačkama](#52-konkurentni-dohvat-činjenica-o-mačkama)
@@ -1576,26 +1576,6 @@ async def main():
     print(f"Ukupno vrijeme: {elapsed:.2f} s")
 
 asyncio.run(main())
-
-# ili koristeći "async with" unutar main funkcije (isti je rezultat)
-
-async def main():
-    start = time.perf_counter()
-
-    semaphore = asyncio.Semaphore(5)
-
-    async with semaphore:
-        tasks = [
-            process_camera(i, semaphore)
-            for i in range(1, 101)
-        ]
-
-        results = await asyncio.gather(*tasks)
-
-    elapsed = time.perf_counter() - start
-
-    print(f"\nObrađeno kamera: {len(results)}")
-    print(f"Ukupno vrijeme: {elapsed:.2f} s")
 ```
 
 Koje je ovdje vrijeme izvršavanja programa u slučaju da nema zastoja u mreži i da sve kamere odgovaraju u roku od 1 sekunde?
@@ -1638,7 +1618,7 @@ Međutim, ako je zahtjevom `POST /kamera` ili `PATCH /kamera` iz centralnog sust
 Za sigurno ponavljanje takve operacije API mora podržavati _ključ idempotentnosti_ koji klijent šalje sa svakim pokušajem iste narudžbe.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamera-ponavljanje-get-i-patch-zahtjeva.png" alt="Ponavljanje zahtjeva GET i PATCH prema prometnoj kameri" width="50%">
+  <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamera-ponavljanje-get-i-patch-zahtjeva.png" alt="Ponavljanje zahtjeva GET i PATCH prema prometnoj kameri" width="75%">
 </p>
 
 > **Slika 21.** Ilustracija slanja zahtjeva za dohvaćanje brzine odnosno promjenu konfiguracije kamere. Zahtjev `GET /kamera` možemo sigurno ponoviti, dok zahtjev `PATCH /kamera` može dovesti do neželjenih posljedica ako ga poslužitelj obradi više puta.
@@ -1683,7 +1663,7 @@ _Primjer_
 | Eksponencijalna odgoda |               1 s |               2 s |               4 s |
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/eksponencijalni-backoff-nakon-odgovora-503.png" alt="Eksponencijalna odgoda između zahtjeva za dohvat brzine" width="50%">
+  <img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/eksponencijalni-backoff-nakon-odgovora-503.png" alt="Eksponencijalna odgoda između zahtjeva za dohvat brzine" width="75%">
 </p>
 
 > **Slika 22.** Nakon svakog odgovora `503 Service Unavailable` klijent udvostručuje odgodu između pokušaja. Čeka redom 1, 2 i 4 sekunde, a u četvrtom pokušaju prima podatak o brzini.
@@ -1839,7 +1819,7 @@ async def main():
 asyncio.run(main())
 ```
 
-### UKRATKO: asyncio/aiohttp šalabahter
+# UKRATKO: asyncio/aiohttp šalabahter
 
 **Osnove biblioteke `asyncio` (RS3)**
 
