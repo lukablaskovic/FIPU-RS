@@ -1,31 +1,36 @@
 import asyncio
+import random
+import time
 
 
-async def fetch_camera_data(camera_id):
-    print(f"Fetching data from camera {camera_id}...")
-    # Simuliramo mrežnu operaciju s različitim vremenima trajanja
-    await asyncio.sleep(
-        camera_id * 2
-    )  # Zahtjev kameri s oznakom 1 traje 2 sekunde, a zahtjev kameri s oznakom 2 traje 4 sekunde itd.
-    if camera_id == 3:
-        raise Exception(
-            "Camera 3 is unreachable!"
-        )  # Simuliramo grešku za kameru 3 (kamera koja se nalazi na nepovoljnoj lokaciji)
-    print(f"Data from camera {camera_id} fetched.")
-    return f"Data from camera {camera_id}"
+async def process_camera(camera_id, semaphore):
+    async with semaphore:
+        print(f"Kamera {camera_id}: započinje obradu")
+
+        # Simulacija mrežnog čekanja (1 sekunda)
+        await asyncio.sleep(1)
+
+        # Simulirani podaci o brzinama 100 vozila
+        speeds = [random.randint(30, 130) for _ in range(100)]
+        average_speed = sum(speeds) / len(speeds)
+
+        print(f"Kamera {camera_id}: prosječna brzina {average_speed:.1f} km/h")
+        return average_speed
 
 
 async def main():
-    camera_ids = [1, 2, 3, 4, 5]
-    tasks = [fetch_camera_data(camera_id) for camera_id in camera_ids]
+    start = time.perf_counter()
 
-    # Primjer asyncio.gather bez timeouta
+    semaphore = asyncio.Semaphore(5)
 
-    try:
-        results = await asyncio.gather(*tasks)
-        print("All camera data fetched:", results)
-    except Exception as e:
-        print("An error occurred while fetching camera data:", e)
+    tasks = [process_camera(i, semaphore) for i in range(1, 101)]
+
+    results = await asyncio.gather(*tasks)
+
+    elapsed = time.perf_counter() - start
+
+    print(f"\nObrađeno kamera: {len(results)}")
+    print(f"Ukupno vrijeme: {elapsed:.2f} s")
 
 
 asyncio.run(main())

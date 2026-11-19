@@ -38,17 +38,31 @@ Do sada smo sve primjere temeljili na simuliranim I/O-operacijama koristeći `as
   - [1.3. HTTP statusni kodovi](#13-http-statusni-kodovi)
 - [2. Konkurentna obrada mrežnih operacija pomoću biblioteka `aiohttp` i `httpx`](#2-konkurentna-obrada-mrežnih-operacija-pomoću-biblioteka-aiohttp-i-httpx)
   - [2.1. Kako šaljemo HTTP-zahtjeve sinkrono (biblioteka `requests`)?](#21-kako-šaljemo-http-zahtjeve-sinkrono-biblioteka-requests)
+    - [Primjer 1: Dohvat jedne činjenice i čitanje JSON-odgovora](#primjer-1-dohvat-jedne-činjenice-i-čitanje-json-odgovora)
+    - [Primjer 2: Sekvencijalno slanje 5 i 15 zahtjeva](#primjer-2-sekvencijalno-slanje-5-i-15-zahtjeva)
   - [2.2. Kako šaljemo HTTP-zahtjeve konkurentno (`aiohttp` i `httpx`)?](#22-kako-šaljemo-http-zahtjeve-konkurentno-aiohttp-i-httpx)
     - [2.2.1. Context Manager `with`](#221-context-manager-with)
     - [2.2.2. Asinkroni klijenti `ClientSession` i `AsyncClient`](#222-asinkroni-klijenti-clientsession-i-asyncclient)
+      - [Primjer 3: Dohvat činjenica pomoću asinkronog klijenta](#primjer-3-dohvat-činjenica-pomoću-asinkronog-klijenta)
     - [2.2.3. Konkurentna obrada HTTP-zahtjeva (`asyncio.gather`)](#223-konkurentna-obrada-http-zahtjeva-asynciogather)
+      - [Primjer 4: Pet konkurentnih zahtjeva u zajedničkoj HTTP-sesiji](#primjer-4-pet-konkurentnih-zahtjeva-u-zajedničkoj-http-sesiji)
     - [2.2.4. Mjerenja vremena konkurentnih HTTP zahtjeva](#224-mjerenja-vremena-konkurentnih-http-zahtjeva)
+      - [Primjer 5: Usporedba sekvencijalnog i konkurentnog slanja 5 i 15 zahtjeva](#primjer-5-usporedba-sekvencijalnog-i-konkurentnog-slanja-5-i-15-zahtjeva)
     - [2.2.5. Konkurentna obrada HTTP-zahtjeva (`asyncio.Task`)](#225-konkurentna-obrada-http-zahtjeva-asynciotask)
+      - [Primjer 6: Raspoređivanje zadataka i prikupljanje rezultata](#primjer-6-raspoređivanje-zadataka-i-prikupljanje-rezultata)
+      - [Primjer 7: Redoslijed pristizanja odgovora](#primjer-7-redoslijed-pristizanja-odgovora)
   - [2.3. Timeout mrežnih operacija i obrada iznimki (`asyncio.wait_for`)](#23-timeout-mrežnih-operacija-i-obrada-iznimki-asynciowait_for)
-- [3. Zadaci za vježbu: konkurentna obrada mrežnih operacija i simulacije grešaka](#3-zadaci-za-vježbu-konkurentna-obrada-mrežnih-operacija-i-simulacije-grešaka)
-  - [Zadatak 1: fetch\_users i izdvajanje podataka](#zadatak-1-fetch_users-i-izdvajanje-podataka)
-  - [Zadatak 2: filter\_cat\_facts](#zadatak-2-filter_cat_facts)
-  - [Zadatak 3: mix\_dog\_cat\_facts](#zadatak-3-mix_dog_cat_facts)
+    - [Primjer 8: Simulacija pogreške i kašnjenja prometne kamere](#primjer-8-simulacija-pogreške-i-kašnjenja-prometne-kamere)
+    - [Primjer 9: Vremensko ograničenje za skup kamera i za pojedinu kameru](#primjer-9-vremensko-ograničenje-za-skup-kamera-i-za-pojedinu-kameru)
+    - [Primjer 10: Vremensko ograničenje pri dohvatu s API-ja](#primjer-10-vremensko-ograničenje-pri-dohvatu-s-api-ja)
+- [3. Ograničavanje konkurentnosti kroz `asyncio.Semaphore`](#3-ograničavanje-konkurentnosti-kroz-asynciosemaphore)
+  - [3.1 Primjer kamera: Bez ograničavanja konkurentnosti](#31-primjer-kamera-bez-ograničavanja-konkurentnosti)
+  - [3.2 Primjer kamera: S ograničavanjem konkurentnosti (`asyncio.Semaphore`)](#32-primjer-kamera-s-ograničavanjem-konkurentnosti-asynciosemaphore)
+- [4. Retry i backoff strategije](#4-retry-i-backoff-strategije)
+- [Zadaci za vježbu: konkurentna obrada mrežnih operacija i simulacije grešaka](#zadaci-za-vježbu-konkurentna-obrada-mrežnih-operacija-i-simulacije-grešaka)
+  - [Zadatak 1: fetch_users i izdvajanje podataka](#zadatak-1-fetch_users-i-izdvajanje-podataka)
+  - [Zadatak 2: filter_cat_facts](#zadatak-2-filter_cat_facts)
+  - [Zadatak 3: mix_dog_cat_facts](#zadatak-3-mix_dog_cat_facts)
   - [Zadatak 4: simulacija autentifikacije korisnika](#zadatak-4-simulacija-autentifikacije-korisnika)
   - [Zadatak 5: pretvorba sinkronog koda u asinkroni](#zadatak-5-pretvorba-sinkronog-koda-u-asinkroni)
   - [Zadatak 6: simulacija raspodijeljenog sustava za dohvaćanje i obradu vremenskih podataka](#zadatak-6-simulacija-raspodijeljenog-sustava-za-dohvaćanje-i-obradu-vremenskih-podataka)
@@ -399,6 +413,8 @@ requests.HTTP_METHOD("<URL>")
 
 Isti pozivi u sinkronoj inačici biblioteke `httpx` glase `httpx.get("https://catfact.ninja/fact")` i `httpx.post("https://example.com/api", json=python_dict)`.
 
+### Primjer 1: Dohvat jedne činjenice i čitanje JSON-odgovora
+
 Primjer slanja GET-zahtjeva na endpoint `/fact`:
 
 URL servisa: `https://catfact.ninja`
@@ -468,11 +484,13 @@ s obzirom na to da je GET zadana metoda za curl.
 
 <div style="page-break-after: always; break-after: page;"></div>
 
+### Primjer 2: Sekvencijalno slanje 5 i 15 zahtjeva
+
 Rekli smo da u sinkronim programima svaka funkcija koju pozovemo, ako traje dugo, blokira izvođenje programa dok se ne završi. To vrijedi i za HTTP-zahtjeve.
 
 - u sinkronoj obradi svaki zahtjev koji pošaljemo **čeka na odgovor na prethodni zahtjev** prije nego što pošaljemo novi. Ako neki zahtjevi traju dugo, to može značajno usporiti izvođenje programa.
 
-_Primjer:_ Poslat ćemo pet zahtjeva na Cat Facts API. Kod za slanje možemo staviti u jednostavnu funkciju koja šalje GET-zahtjev i ispisuje rezultat. Sam podatak možemo dohvatiti preko ključa `fact`, ali prije toga moramo **deserijalizirati JSON-odgovor** pomoću metode `json()`.
+Poslat ćemo pet zahtjeva na Cat Facts API. Kod za slanje možemo staviti u jednostavnu funkciju koja šalje GET-zahtjev i ispisuje rezultat. Sam podatak možemo dohvatiti preko ključa `fact`, ali prije toga moramo **deserijalizirati JSON-odgovor** pomoću metode `json()`.
 
 ```python
 import requests
@@ -774,6 +792,8 @@ async with httpx.AsyncClient() as client:
     ...  # ovdje šaljemo zahtjeve
 ```
 
+#### Primjer 3: Dohvat činjenica pomoću asinkronog klijenta
+
 U obje biblioteke GET-zahtjev šaljemo metodom `get`. Unutar korutine koristimo `await` kako bismo pričekali odgovor.
 
 ```python
@@ -869,6 +889,8 @@ Konkurentnost nismo postigli budući da **čekamo odgovor na svaki zahtjev prije
 ### 2.2.3. Konkurentna obrada HTTP-zahtjeva (`asyncio.gather`)
 
 U prošloj ste skripti naučili da možemo koristiti `asyncio.gather` funkciju kako bismo **pozvali više korutina konkurentno** i **zatim pohranili sve rezultate u jednu listu** ili možemo koristiti `asyncio.create_task` _wrapper_ kako bismo **stvorili zadatke (objekte tipa `Task`) za svaku korutinu** i **dodali ih u _event loop_** prije nego što ih pokrenemo.
+
+#### Primjer 4: Pet konkurentnih zahtjeva u zajedničkoj HTTP-sesiji
 
 Kako smo rekli da razmišljamo u kontekstu egzekucije korutina, idemo pokušati "izvući" kod za slanje zahtjeva u zasebnu korutinu (izvan `main` korutine):
 
@@ -1000,6 +1022,8 @@ The Egyptian Mau is probably the oldest breed of cat. In fact, the breed is so a
 > **Slika 12.** Shematski prikaz, nije stvarno mjerenje. Zahtjevi započinju približno zajedno, ali mogu završiti različitim redoslijedom.
 
 ### 2.2.4. Mjerenja vremena konkurentnih HTTP zahtjeva
+
+#### Primjer 5: Usporedba sekvencijalnog i konkurentnog slanja 5 i 15 zahtjeva
 
 U sekvencijalnom primjeru dohvat pet činjenica trajao je od jedne do dvije sekunde. Usporedimo ga s konkurentnim dohvatom. Na početku svake korutine ispišimo poruku kako bismo u terminalu vidjeli kada zahtjev kreće, a kada stiže odgovor.
 
@@ -1170,6 +1194,8 @@ Naučili smo kako koristiti `asyncio.gather` funkciju za konkurentno izvođenje 
 
 Rekli smo da `Task` objekti omogućuju bolju kontrolu nad izvršavanjem korutina jer možemo pratiti njihov status, upravljati njima pojedinačno i eventualno čekati pojedinačne rezultate korutina pomoću `await` ključne riječi, za razliku od `asyncio.gather` funkcije koja nam vraća sve rezultate odjednom.
 
+#### Primjer 6: Raspoređivanje zadataka i prikupljanje rezultata
+
 U našem primjeru dohvaćanja činjenica o mačkama korutine su `get_cat_fact`. Možemo ih jednostavno pohraniti u listu i zatim izraditi `Task` objekte za svaku, koristeći _list comprehension_.
 
 Poziv `asyncio.create_task` raspoređuje svaku korutinu za izvršavanje. Zatim petljom prolazimo kroz listu i čekamo završetak svakog zadatka. Dok čekamo prvi, i ostali raspoređeni zadaci mogu napredovati.
@@ -1215,167 +1241,54 @@ Izvršavanje programa traje 0.28 s.
 
 > Ako izvrtite kod više puta, vidjet ćete da je rezultat izvođenja (~0,27 s) identičan onome dobivenom s `asyncio.gather` funkcijom.
 
-<hr>
-
 <div style="page-break-after: always; break-after: page;"></div>
 
-Rekli smo da je moguće i kombinirati ova dva pristupa, odnosno koristiti `asyncio.gather` funkciju za konkurentno izvođenje _Taskova_. Međutim, ovo je pomalo redundantno budući da `gather` automatski _wrappa_ korutine u `Task` objekte.
+#### Primjer 7: Redoslijed pristizanja odgovora
+
+Pri sekvencijalnom slanju drugi zahtjev šaljemo tek nakon što obradimo prvi odgovor. U ovom primjeru rasporedit ćemo svih pet zadataka prije nego što počnemo čekati njihove rezultate. Svakom ćemo zahtjevu dodijeliti broj od 1 do 5 kako bismo mogli pratiti istu činjenicu u dva ispisa.
+
+1. **Unutar korutine** ispisujemo broj zahtjeva i činjenicu čim pročitamo odgovor. Ako zahtjev 2 završi prvi, prva će se ispisati njegova činjenica.
+2. **Nakon poziva `await asyncio.gather(*tasks)`** ponovno ispisujemo činjenice, ovaj put iz vraćene liste. Budući da smo zadatke predali redom od 1 do 5, njihove ćemo rezultate u listi dobiti tim istim redom.
 
 ```python
-async def main():
-  start = time.perf_counter()
-  async with aiohttp.ClientSession() as session:
-    cat_fact_tasks = [asyncio.create_task(get_cat_fact(session)) for _ in range(5)] # pohranjujemo Taskove u listu
-    await asyncio.gather(*cat_fact_tasks) # pozivamo Taskove konkurentno
-  end = time.perf_counter()
-  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
-
-# ili koristeći httpx
+async def get_cat_fact(session, broj):
+    response = await session.get("https://catfact.ninja/fact")
+    data = await response.json()
+    print(f"{broj}: {data['fact']}")
+    return data["fact"]
 
 async def main():
-  start = time.perf_counter()
-  async with httpx.AsyncClient() as client:
-    cat_fact_tasks = [asyncio.create_task(get_cat_fact(client)) for _ in range(5)]
-    await asyncio.gather(*cat_fact_tasks)
-  end = time.perf_counter()
-  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
-```
+    print("Redoslijed obrade odgovora:")
+    async with aiohttp.ClientSession() as session:
+        tasks = [asyncio.create_task(get_cat_fact(session, broj)) for broj in range(1, 6)]
+        facts = await asyncio.gather(*tasks)
 
-Možemo maknuti `print` naredbe unutar korutine `get_cat_fact` te vratiti samo činjenicu kao rezultat te korutine:
-
-```python
-async def get_cat_fact(session):
-  response = await session.get("https://catfact.ninja/fact")
-  fact_dict = await response.json()
-  return fact_dict['fact']
-
-async def main():
-  start = time.perf_counter()
-  async with aiohttp.ClientSession() as session:
-    cat_fact_tasks = [asyncio.create_task(get_cat_fact(session)) for _ in range(5)] # pohranjujemo Taskove u listu
-    actual_cat_facts = await asyncio.gather(*cat_fact_tasks) # pohranit ćemo rezultate u listu
-  end = time.perf_counter()
-  print(actual_cat_facts)
-  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
-
-asyncio.run(main())
-
-# ili koristeći httpx
-
-async def get_cat_fact(client):
-  response = await client.get("https://catfact.ninja/fact")
-  fact_dict = response.json()
-  return fact_dict['fact']
-
-async def main():
-  start = time.perf_counter()
-  async with httpx.AsyncClient() as client:
-    cat_fact_tasks = [asyncio.create_task(get_cat_fact(client)) for _ in range(5)]
-    actual_cat_facts = await asyncio.gather(*cat_fact_tasks)
-  end = time.perf_counter()
-  print(actual_cat_facts)
-  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
+    print("\nRedoslijed rezultata u listi:")
+    for broj, fact in enumerate(facts, start=1):
+        print(f"{broj}: {fact}")
 
 asyncio.run(main())
 ```
 
-Rezultat je lista činjenica:
+**Primjer ispisa**:
 
 ```plaintext
-['The Maine Coone is the only native American long haired breed.',
-'The Amur leopard is one of the most endangered animals in the world.',
-"A cat's normal pulse is 140-240 beats per minute, with an average of 195.",
-'The cat has 500 skeletal muscles (humans have 650).',
-'A happy cat holds her tail high and steady.']
+Redoslijed obrade odgovora:
+2: It is estimated that cats...
+1: According to a Gallup poll...
+5: Cats are the world's most popular pets...
+3: The oldest cat to give birth...
+4: Cats can jump...
 
-Izvršavanje programa traje 0.27 s.
+Redoslijed rezultata u listi:
+1: According to a Gallup poll...
+2: It is estimated that cats...
+3: The oldest cat to give birth...
+4: Cats can jump...
+5: Cats are the world's most popular pets...
 ```
 
-<hr>
-
-<div style="page-break-after: always; break-after: page;"></div>
-
-U slučaju da nam ispisi i vrijeme izvođenja nisu dovoljan dokaz da su zahtjevi uistinu poslani konkurentno, možemo još provjeriti **redoslijed ispisivanja činjenica** koji nam je, ako se prisjetite, kod sekvencijalnog slanja uvijek bio isti: `1 2 3 4 5`.
-
-Ovdje to možemo testirati tako što ćemo jednostavno proslijediti `i` lokalnu varijablu iz petlje u korutinu `get_cat_fact`:
-
-```python
-async def get_cat_fact(session, i):
-  response = await session.get("https://catfact.ninja/fact")
-  fact_dict = await response.json()
-  print(f"{i + 1}: {fact_dict['fact']}") # dodajemo ispis u formatu: "redniBroj: činjenica"
-  return fact_dict['fact']
-
-async def main():
-  start = time.perf_counter()
-  async with aiohttp.ClientSession() as session:
-    cat_fact_tasks = [asyncio.create_task(get_cat_fact(session, i)) for i in range(5)] # u korutinu prosljeđujemo parametar "session" i lokalnu varijablu "i"
-    actual_cat_facts = await asyncio.gather(*cat_fact_tasks)
-  end = time.perf_counter()
-  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
-asyncio.run(main())
-
-# ili koristeći httpx
-
-async def get_cat_fact(client, i):
-  response = await client.get("https://catfact.ninja/fact")
-  fact_dict = response.json()
-  print(f"{i + 1}: {fact_dict['fact']}")
-  return fact_dict['fact']
-
-async def main():
-  start = time.perf_counter()
-  async with httpx.AsyncClient() as client:
-    cat_fact_tasks = [asyncio.create_task(get_cat_fact(client, i)) for i in range(5)]
-    actual_cat_facts = await asyncio.gather(*cat_fact_tasks)
-  end = time.perf_counter()
-  print(f"\nIzvršavanje programa traje {end - start:.2f} s.")
-asyncio.run(main())
-```
-
-_Primjer ispisa (round 1)_:
-
-```plaintext
-2: It is estimated that cats can make over 60 different sounds.
-1: According to a Gallup poll, most American pet owners obtain their cats by adopting strays.
-5: Cats are the world's most popular pets, outnumbering dogs by as many as three to one
-3: The oldest cat to give birth was Kitty who, at the age of 30, gave birth to two kittens. During her life, she gave birth to 218 kittens.
-4: Cats can jump up to 7 times their tail length.
-```
-
-_Primjer ispisa (round 2)_:
-
-```plaintext
-1: In Japan, cats are thought to have the power to turn into super spirits when they die. This may be because according to the Buddhist religion, the body of the cat is the temporary resting place of very spiritual people.i
-4: A cat sees about 6 times better than a human at night, and needs 1/6 the amount of of light that a human does - it has a layer of extra reflecting cells which absorb light.
-3: Cats lived with soldiers in trenches, where they killed mice during World War I.
-5: In relation to their body size, cats have the largest eyes of any mammal.
-2: Female felines are \superfecund
-```
-
-_Primjer ispisa (round 3)_:
-
-```plaintext
-4: Mountain lions are strong jumpers, thanks to muscular hind legs that are longer than their front legs.
-2: Cats' hearing stops at 65 khz (kilohertz); humans' hearing stops at 20 khz.
-3: Retractable claws are a physical phenomenon that sets cats apart from the rest of the animal kingdom. I n the cat family, only cheetahs cannot retract their claws.
-5: A cat uses its whiskers for measuring distances.  The whiskers of a cat are capable of registering very small changes in air pressure.
-1: Tylenol and chocolate are both poisionous to cats.
-```
-
-Ako se prisjetimo ilustracije konkurentnog izvođenja na samom početku skripte `RS3`, može se zaključiti zašto su rezultati ovakvi.
-
-<details>
-  <summary>Spoiler alert! Odgovor na pitanje</summary>
-  <p>
-    U ovom primjeru <code>asyncio.create_task</code> raspoređuje svaku korutinu za izvršavanje. Ispis unutar korutine pokazuje kada je obrađen pojedini odgovor. Lista koju vraća <code>asyncio.gather</code> <b>zadržava redoslijed predanih zadataka</b>.
-  </p>
-  <p>
-    Budući da korutine traju različito zbog mrežne obrade, njihovi se rezultati vraćaju u različitim trenucima. Zbog toga <i>event loop</i> aktivira pojedine korutine onim redoslijedom kojim pristižu HTTP-odgovori.
-  </p>
-</details>
-
-> Sada definitivno možemo reći da je kod koji smo definirali **konkurentan** te možemo uočiti **konkretna poboljšanja u brzini izvođenja programa** 🚀
+Činjenica iz zahtjeva 2 ispisala se prva tijekom obrade, a u listi je na drugom mjestu. Pri ponovnom pokretanju prvi ispis može imati drukčiji redoslijed, pa i `1 2 3 4 5`. Redoslijed u listi uvijek odgovara redoslijedu zadataka predanih funkciji `asyncio.gather()`, dok se redoslijed ispisa tijekom obrade može razlikovati jer ovisi o tome **koji je mrežni zahtjev završio prvi**.
 
 <div style="page-break-after: always; break-after: page;"></div>
 
@@ -1393,9 +1306,9 @@ Zadano je ponašanje funkcije `asyncio.gather` da čeka završetak svih korutina
 
 ![alt text](<CleanShot 2026-11-19 at 00.52.45@2x.png>)
 
-> Ilustracija primjera s kamerama.  
+> Ilustracija primjera s kamerama.
 
-To možemo postići korištenjem `asyncio.wait_for` funkcije koja omogućuje postavljanje vremenskog ograničenja za izvršavanje korutine. Ako korutina ne završi unutar zadanog vremena, podići će se iznimka `asyncio.TimeoutError`.
+To možemo postići korištenjem `asyncio.wait_for` funkcije koja omogućuje **postavljanje vremenskog ograničenja za izvršavanje korutine**. Ako korutina ne završi unutar zadanog vremena, podići će se iznimka `asyncio.TimeoutError`.
 
 **Sintaksa:**
 
@@ -1416,7 +1329,9 @@ raise ExceptionType("poruka o grešci")
 
 - gdje `ExceptionType` predstavlja tip iznimke koju želimo podići (npr. `ValueError`, `TimeoutError` itd.)
 
-*Primjer: *Definirat ćemo nekoliko korutina koje simuliraju mrežne operacije naših mikroservisa za praćenje prometa motornih vozila.
+### Primjer 8: Simulacija pogreške i kašnjenja prometne kamere
+
+Definirat ćemo nekoliko korutina koje simuliraju mrežne operacije naših mikroservisa za praćenje prometa motornih vozila.
 
 ```python
 import asyncio
@@ -1491,6 +1406,8 @@ All camera data fetched: ['Data from camera 1', 'Data from camera 2', 'Data from
 
 Uočite da se rezultati kamera 4 i 5 ispisuju prije rezultata kamere 3 budući da je kamera 3 simulirana kao najsporija, a zahtjevi su poslani konkurentno.
 
+### Primjer 9: Vremensko ograničenje za skup kamera i za pojedinu kameru
+
 Ipak, želimo postaviti vremensko ograničenje od 10 sekundi za svaki zahtjev kako funkcija `asyncio.gather` ne bi bila usko grlo našeg programa koje čeka do 20 sekundi na odgovor kamere 3.
 
 Koristimo funkciju `asyncio.wait_for`. Ova funkcija očekuje bilo koju korutinu kao ulazni podatak i vrijeme maksimalnog čekanja na izvršavanje u sekundama.
@@ -1502,6 +1419,14 @@ await asyncio.wait_for(coroutine, timeout)
 ```
 
 - gdje je `coroutine` korutina koju želimo izvršiti s vremenskim ograničenjem, a `timeout` maksimalno vrijeme (u sekundama) koje korutina smije trajati.
+
+Osim pojedine korutine, možemo ograničiti i `asyncio.gather()` funkciju koja čeka na sve korutine.
+
+**Sintaksa**:
+
+```python
+await asyncio.wait_for(asyncio.gather(*tasks), timeout) # ograničavamo čekanje na sve korutine koje pokreće asyncio.gather() funkcija
+```
 
 Možemo ograničiti `asyncio.gather()` s `asyncio.wait_for()` na sljedeći način:
 
@@ -1535,13 +1460,17 @@ A timeout occurred while fetching camera data.
 
 Uočite da smo dobili `TimeoutError` te se aktivirao `except` blok za hvatanje iznimke.
 
+![alt text](<CleanShot 2026-11-19 at 01.11.14@2x.png>)
+
+> Svih pet kamera započinje konkurentno dohvaćanje podataka. Kamera 3 simulira spor mrežni odgovor od 20 sekundi, dok ostale kamere završavaju nakon 2, 4, 8 i 10 sekundi. Za razliku od prethodnog primjera, ovdje `asyncio.wait_for()` postavlja jedno zajedničko vremensko ograničenje od 10 sekundi za cijeli `asyncio.gather()`.
+
 Ipak, možemo ograničiti i dohvaćanje podataka za svaku kameru pojedinačno budući da je `asyncio.sleep` također korutina.
 
 ```python
 async def fetch_camera_data(camera_id):
     print(f"Fetching data from camera {camera_id}...")
     try:
-        await asyncio.wait_for(asyncio.sleep(camera_id * 2 if camera_id != 3 else 20), timeout=10)  # Postavljamo timeout od 10 sekundi za dohvaćanje podataka o svakoj kameri pojedinačno
+        await asyncio.wait_for(asyncio.sleep(camera_id * 2 if camera_id != 3 else 20), timeout=10)  # Postavljamo timeout od 10 sekundi za dohvaćanje podataka o svakoj kameri pojedinačno (timeoutat će kamera broj 3)
         print(f"Data from camera {camera_id} fetched.")
         return f"Data from camera {camera_id}"
     except asyncio.TimeoutError:
@@ -1577,6 +1506,34 @@ Timeout while fetching data from camera 5.
 All camera data fetched: ['Data from camera 1', 'Data from camera 2', None, 'Data from camera 4', None]
 ```
 
+---
+
+Ako koristite biblioteku `httpx`, možete postaviti vremensko ograničenje za svaku korutinu pojedinačno, koristeći `httpx.Timeout` klasu. Na primjer:
+
+```python
+import httpx
+
+async def fetch_camera_data(camera_id):
+    print(f"Fetching data from camera {camera_id}...")
+    timeout = httpx.Timeout(10.0)  # Postavljamo timeout od 10 sekundi za svaku kameru
+    async with httpx.AsyncClient(timeout=timeout) as client: # ovdje možemo postaviti timeout za cijeli klijent, a ne samo za pojedinu korutinu
+        try:
+            response = await client.get(f"https://example.com/camera/{camera_id}/data")
+            response.raise_for_status()  # Provjeravamo statusni kod odgovora
+            print(f"Data from camera {camera_id} fetched.")
+            return response.json()
+        except httpx.TimeoutException:
+            print(f"Timeout while fetching data from camera {camera_id}.")
+            return None
+        except httpx.HTTPStatusError as e:
+            print(f"HTTP error while fetching data from camera {camera_id}: {e}")
+            return None
+```
+
+Stvar je ista, samo što koristimo `httpx` biblioteku i njene metode za rukovanje vremenskim ograničenjima i iznimkama.
+
+### Primjer 10: Vremensko ograničenje pri dohvatu s API-ja
+
 Kako isto ograničenje primijeniti na stvarni HTTP-zahtjev? Ponovno ćemo koristiti Cat Facts API. Funkcijom `asyncio.wait_for` ograničit ćemo ukupno vrijeme za dohvat i čitanje odgovora na deset sekundi. Ako vrijeme istekne, ispisat ćemo poruku i vratiti `None`, kao u primjeru s kamerama.
 
 ```python
@@ -1594,29 +1551,175 @@ async def main():
             return None
 
 print(asyncio.run(main()))
-
-# ili koristeći httpx
-
-async def get_cat_fact(client):
-    response = await client.get("https://catfact.ninja/fact")
-    return response.json()["fact"]
-
-async def main():
-    async with httpx.AsyncClient(timeout=None) as client:
-        try:
-            return await asyncio.wait_for(get_cat_fact(client), timeout=10)
-        except asyncio.TimeoutError:
-            print("Isteklo je vrijeme za dohvat činjenice.")
-            return None
-
-print(asyncio.run(main()))
 ```
 
 U drugom primjeru `timeout=None` isključuje vremenska ograničenja samog klijenta jer cijeli dohvat već ograničava `asyncio.wait_for`. Ako želimo da `httpx` zasebno ograniči čekanje na uspostavu veze ili na sljedeći dio odgovora, možemo postaviti `httpx.AsyncClient(timeout=10)` i obraditi iznimku `httpx.TimeoutException`. [Vremenska ograničenja u biblioteci HTTPX](https://www.python-httpx.org/advanced/timeouts/)
 
-> Više o rukovanju iznimkama i timeoutima radit ćemo na budućim vježbama.
+# 3. Ograničavanje konkurentnosti kroz `asyncio.Semaphore`
 
-# 3. Zadaci za vježbu: konkurentna obrada mrežnih operacija i simulacije grešaka
+**Ograničavanje konkurentnosti** tehnika je kojom kontroliramo koliko korutina može istovremeno pristupati određenom resursu ili izvršavati određeni dio koda. U Pythonu se za tu svrhu koristi `asyncio.Semaphore`, koji omogućuje ograničavanje broja korutina koje istovremeno pristupaju određenom resursu.
+
+Možemo ga zamisliti kao ograničen broj ulaznica za pristup resursu. Kada korutina želi pristupiti resursu, ona "uzima ulaznicu" (poziva `acquire()`), a kada završi s korištenjem resursa, "vraća ulaznicu" (poziva `release()`). Ako nema dostupnih ulaznica, korutina mora pričekati dok se jedna ne oslobodi.
+
+U praksi se najčešće koristi konstrukcija `async with semaphore`:, koja automatski upravlja preuzimanjem i oslobađanjem semafora.
+
+![alt text](image.png)
+
+> Ilustracija: 1. Acquire semaphore, 2. Do work, 3. Release semaphore.
+
+Zašto želimo ograničiti konkurentnost? U mnogim slučajevima, prevelik broj istovremenih zahtjeva može preopteretiti poslužitelj ili mrežu, što može dovesti do pogrešaka ili sporog odziva. Ograničavanjem broja istovremenih zahtjeva možemo postići stabilniji i pouzdaniji rad aplikacije.
+
+_Primjer:_ Sustav za praćenje prometa putem kamera
+
+> Zamislimo da naš sustav za praćenje prometa prikuplja podatke s 100 prometnih kamera, pri čemu svaka kamera ima vlastiti REST API.
+
+> Ako istovremeno pošaljemo 100 HTTP zahtjeva, poslužitelj koji obrađuje podatke kamera možda neće imati dovoljno resursa za obradu svih zahtjeva. To može uzrokovati sporiji odziv, preopterećenje poslužitelja ili HTTP pogreške (npr. `503 Service Unavailable`).
+
+> Umjesto toga, možemo koristiti asyncio.Semaphore(5) kako bismo **ograničili broj istovremenih HTTP zahtjeva na najviše 5**.
+
+Dakle:
+
+- Prvih 5 korutina započinje slanje HTTP zahtjeva.
+- Preostalih 95 korutina čeka na oslobađanje semafora.
+- Kada jedna korutina završi, oslobađa mjesto sljedećoj.
+- Postupak se ponavlja dok se ne obrade sve kamere.
+
+Kako bismo bolje ovo razumjeli, ilustrirajmo primjer sa i bez ograničavanja konkurentnosti.
+
+**Sintaksa**
+
+```python
+semaphore = asyncio.Semaphore(n)  # n je maksimalan broj istovremenih korutina koje se mogu izvršavati
+```
+
+Koristmo kontekstni menadžer `async with` kako bismo automatski upravljali preuzimanjem i oslobađanjem semafora:
+
+```python
+async with semaphore:
+    # Ovdje ide kod koji pristupa resursu ili izvršava kritični dio koda
+```
+
+## 3.1 Primjer kamera: Bez ograničavanja konkurentnosti
+
+![alt text](<CleanShot 2026-11-19 at 01.24.04@2x.png>)
+
+> U ovom primjeru šaljemo 100 HTTP zahtjeva istovremeno, bez ograničavanja konkurentnosti. To može dovesti do preopterećenja poslužitelja i sporijeg odziva.
+
+```python
+import asyncio
+import random
+import time
+
+
+async def process_camera(camera_id):
+    print(f"Kamera {camera_id}: započinje obradu")
+
+    # Simulacija mrežnog čekanja (1 sekunda)
+    await asyncio.sleep(1)
+
+    # Simulirani podaci o brzinama 100 vozila
+    speeds = [random.randint(30, 130) for _ in range(100)]
+    average_speed = sum(speeds) / len(speeds)
+
+    print(f"Kamera {camera_id}: prosječna brzina {average_speed:.1f} km/h")
+    return average_speed
+
+
+async def main():
+    start = time.perf_counter()
+
+    tasks = [process_camera(i) for i in range(1, 101)]
+    results = await asyncio.gather(*tasks)
+
+    elapsed = time.perf_counter() - start
+
+    print(f"\nObrađeno kamera: {len(results)}")
+    print(f"Ukupno vrijeme: {elapsed:.2f} s")
+
+
+asyncio.run(main())
+```
+
+Koje je ovdje vrijeme izvršavanja programa u slučaju da nema zastoja u mreži i da sve kamere odgovaraju u roku od 1 sekunde?
+
+Odgovor: Budući da sve kamere šalju zahtjev istovremeno i svaka simulacija traje 1 sekundu, ukupno vrijeme izvršavanja programa bit će otprilike 1 sekunda, plus malo vremena za raspoređivanje zadataka i ispis rezultata. Dakle, očekivano vrijeme izvršavanja programa je oko 1 sekunda.
+
+## 3.2 Primjer kamera: S ograničavanjem konkurentnosti (`asyncio.Semaphore`)
+
+![alt text](<CleanShot 2026-11-19 at 01.24.29@2x.png>)
+
+```python
+import asyncio
+import random
+import time
+
+
+async def process_camera(camera_id, semaphore):
+    async with semaphore:
+        print(f"Kamera {camera_id}: započinje obradu")
+
+        # Simulacija mrežnog čekanja (1 sekunda)
+        await asyncio.sleep(1)
+
+        # Simulirani podaci o brzinama 100 vozila
+        speeds = [random.randint(30, 130) for _ in range(100)]
+        average_speed = sum(speeds) / len(speeds)
+
+        print(f"Kamera {camera_id}: prosječna brzina {average_speed:.1f} km/h")
+        return average_speed
+
+
+async def main():
+    start = time.perf_counter()
+
+    semaphore = asyncio.Semaphore(5)
+
+    tasks = [
+        process_camera(i, semaphore)
+        for i in range(1, 101)
+    ]
+
+    results = await asyncio.gather(*tasks)
+
+    elapsed = time.perf_counter() - start
+
+    print(f"\nObrađeno kamera: {len(results)}")
+    print(f"Ukupno vrijeme: {elapsed:.2f} s")
+
+asyncio.run(main())
+
+# ili koristeći async with
+
+async def main():
+    start = time.perf_counter()
+
+    semaphore = asyncio.Semaphore(5)
+
+    async with semaphore:
+        tasks = [
+            process_camera(i, semaphore)
+            for i in range(1, 101)
+        ]
+
+        results = await asyncio.gather(*tasks)
+
+    elapsed = time.perf_counter() - start
+
+    print(f"\nObrađeno kamera: {len(results)}")
+    print(f"Ukupno vrijeme: {elapsed:.2f} s")
+```
+
+Koje je ovdje vrijeme izvršavanja programa u slučaju da nema zastoja u mreži i da sve kamere odgovaraju u roku od 1 sekunde?
+
+Odgovor: Budući da smo ograničili konkurentnost na 5 kamera, program će obrađivati 5 kamera istovremeno. Svaka grupa od 5 kamera traje 1 sekundu, a ukupno imamo 100 kamera. Dakle, potrebno je obraditi 20 grupa (100 / 5 = 20). Ukupno vrijeme izvršavanja programa bit će otprilike 20 sekundi, plus malo vremena za raspoređivanje zadataka i ispis rezultata. Dakle, očekivano vrijeme izvršavanja programa je oko 20 sekundi.
+
+![alt text](image-1.png)
+
+>
+
+# 4. Retry i backoff strategije
+
+# Zadaci za vježbu: konkurentna obrada mrežnih operacija i simulacije grešaka
 
 ## Zadatak 1: fetch_users i izdvajanje podataka
 
