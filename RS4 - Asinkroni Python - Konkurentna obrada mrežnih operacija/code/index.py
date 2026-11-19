@@ -4,7 +4,9 @@ import time
 
 
 async def process_camera(camera_id, semaphore):
-    async with semaphore:
+    async with (
+        semaphore
+    ):  # otvaramo kontekstni menadžer koji preuzima semafor iz poziva korutine
         print(f"Kamera {camera_id}: započinje obradu")
 
         # Simulacija mrežnog čekanja (1 sekunda)
@@ -18,14 +20,18 @@ async def process_camera(camera_id, semaphore):
         return average_speed
 
 
+# ili koristeći "async with" unutar main funkcije:
+
+
 async def main():
     start = time.perf_counter()
 
     semaphore = asyncio.Semaphore(5)
 
-    tasks = [process_camera(i, semaphore) for i in range(1, 101)]
+    async with semaphore:
+        tasks = [process_camera(i, semaphore) for i in range(1, 101)]
 
-    results = await asyncio.gather(*tasks)
+        results = await asyncio.gather(*tasks)
 
     elapsed = time.perf_counter() - start
 
