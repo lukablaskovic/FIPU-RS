@@ -66,6 +66,12 @@ Do sada smo sve primjere temeljili na simuliranim I/O-operacijama koristeći `as
     - [4.3.2. Backoff implemntacija](#432-backoff-implemntacija)
     - [4.3.3 Kombiniranje retry i backoff strategija s ograničavanjem konkurentnosti](#433-kombiniranje-retry-i-backoff-strategija-s-ograničavanjem-konkurentnosti)
 - [5. Zadaci za vježbu: Konkurentna obrada HTTP zahtjeva, timeout, ograničavanje konkurentnosti i retry/backoff strategije](#5-zadaci-za-vježbu-konkurentna-obrada-http-zahtjeva-timeout-ograničavanje-konkurentnosti-i-retrybackoff-strategije)
+  - [5.1. Simulacija slanja i obrade zahtjeva](#51-simulacija-slanja-i-obrade-zahtjeva)
+  - [5.2. Konkurentni dohvat činjenica o mačkama](#52-konkurentni-dohvat-činjenica-o-mačkama)
+  - [5.3. Istek vremena i obrada iznimki](#53-istek-vremena-i-obrada-iznimki)
+  - [5.4. Ograničavanje broja aktivnih zahtjeva](#54-ograničavanje-broja-aktivnih-zahtjeva)
+  - [5.5. Ponovni pokušaji nakon isteka vremena](#55-ponovni-pokušaji-nakon-isteka-vremena)
+  - [5.6. Pouzdan dohvat činjenica o mačkama](#56-pouzdan-dohvat-činjenica-o-mačkama)
 
 <div style="page-break-after: always; break-after: page;"></div>
 
@@ -1954,3 +1960,60 @@ asyncio.run(main())
 ```
 
 # 5. Zadaci za vježbu: Konkurentna obrada HTTP zahtjeva, timeout, ograničavanje konkurentnosti i retry/backoff strategije
+
+## 5.1. Simulacija slanja i obrade zahtjeva
+
+Tri prometne kamere obrađuju zahtjeve različitim brzinama. Prvoj za obradu trebaju 3 sekunde, drugoj 1 sekunda, a trećoj 2 sekunde.
+
+1. Napišite korutinu `posalji_zahtjev(kamera_id, trajanje)`. Pri slanju ispišite oznaku kamere, simulirajte čekanje odgovora pozivom `await asyncio.sleep(trajanje)`, a pri primitku odgovora ponovno ispišite oznaku i vratite je kao rezultat.
+2. U korutini `main()` pošaljite zahtjeve kamerama redom 1, 2 i 3. Prvi ih put pošaljite sekvencijalno, a drugi put konkurentno pomoću `asyncio.gather()`. Svako izvođenje zasebno izmjerite funkcijom `time.perf_counter()`.
+3. Prije pokretanja predvidite trajanje obaju izvođenja. U konkurentnoj inačici usporedite redoslijed primitka odgovora s redoslijedom oznaka u listi koju vraća `gather()`. Kako objašnjavate razliku?
+
+## 5.2. Konkurentni dohvat činjenica o mačkama
+
+Napišite program koji s adrese `https://catfact.ninja/fact` dohvaća pet nasumičnih činjenica o mačkama i izdvaja najdulju.
+
+1. U korutini `main()` otvorite jednu sesiju (`aiohttp.ClientSession` ili `httpx.AsyncClient`) za svih pet zahtjeva.
+2. Napišite korutinu `dohvati_cinjenicu(klijent, broj_zahtjeva)` koja šalje jedan GET-zahtjev, provjerava status odgovora i iz JSON-a čita polja `fact` i `length`. Po primitku ispišite broj zahtjeva, a kao rezultat vratite broj zahtjeva, tekst i duljinu činjenice.
+3. Pokrenite svih pet dohvata konkurentno. Nakon što prikupite rezultate, ispišite tekst najdulje činjenice, njezinu duljinu i broj zahtjeva kojim je dohvaćena. Ako više činjenica ima istu najveću duljinu, dovoljno je ispisati jednu.
+
+## 5.3. Istek vremena i obrada iznimki
+
+Nadzorni centar na odgovor pojedine kamere čeka najviše 1 sekundu. Za provjeru programa simulirajte sljedeće mrežne uvjete pomoću `asyncio.sleep()`.
+
+| Kamera | Ponašanje pri dohvatu                         |
+| ------ | --------------------------------------------- |
+| 1      | Nakon 0,2 s vraća brzinu od 48 km/h.          |
+| 2      | Nakon 2 s vraća brzinu od 65 km/h.            |
+| 3      | Nakon 0,1 s podiže iznimku `ConnectionError`. |
+| 4      | Nakon 0,4 s vraća brzinu od 52 km/h.          |
+
+1. Pokrenite sva četiri dohvata konkurentno. Ograničite trajanje **svakog pojedinog dohvata** funkcijom `asyncio.wait_for()`.
+2. Za svaku kameru obradite `asyncio.TimeoutError` i `ConnectionError` te zabilježite razlog neuspjeha. Na kraju ispišite po jedan redak za svaku kameru s izmjerenom brzinom ili razlogom neuspjeha.
+3. Izračunajte prosječnu brzinu samo iz uspješnih očitanja. Za podatke iz tablice trebali biste dobiti 50 km/h. Što će program ispisati ako sve četiri kamere zakasne?
+
+## 5.4. Ograničavanje broja aktivnih zahtjeva
+
+Poslužitelj istodobno može obrađivati tri zahtjeva. Napišite program koji mu šalje osam zahtjeva. Obradu svakog zahtjeva simulirajte čekanjem od 1 sekunde.
+
+1. U korutini `main()` stvorite jedan `asyncio.Semaphore(3)` i proslijedite ga svim korutinama. Svih osam pokrenite pomoću `asyncio.gather()`.
+2. Pratite koliko je zahtjeva trenutačno u obradi. Uvećajte brojač kad zahtjev dobije mjesto, smanjite ga po završetku obrade i zabilježite najveću dosegnutu vrijednost.
+3. Pokrenite program s ograničenjem od 3, a zatim od 4 zahtjeva. Za oba izvođenja ispišite najveći zabilježeni broj aktivnih zahtjeva i ukupno trajanje. Kako biste iz broja zahtjeva, trajanja jedne obrade i ograničenja konkurentnosti procijenili ukupno trajanje svakog izvođenja?
+
+## 5.5. Ponovni pokušaji nakon isteka vremena
+
+Kamera u prvom pokušaju odgovara nakon 0,8 s, u drugom nakon 0,6 s, a u trećem nakon 0,1 s. Klijent je pri svakom pokušaju spreman čekati najviše 0,3 s.
+
+1. Napišite korutinu koja prima redni broj pokušaja i simulira odgovarajuće trajanje dohvata. Kad dohvat uspije, neka vrati brzinu od 54 km/h.
+2. Na strani klijenta dopustite **najviše tri pokušaja ukupno**. Ako vrijeme istekne, pričekajte 0,5 s prije drugog pokušaja, a zatim udvostručite odgodu prije svakog sljedećeg pokušaja. Ispišite redni broj svakog pokušaja i njegov ishod.
+3. Isprobajte dva slučaja. Najprije provjerite da treći pokušaj vraća brzinu. Zatim postavite trajanje trećeg dohvata na 0,8 s. Provjerite da klijent nakon trećeg isteka odmah javlja neuspjeh. Koliko je zahtjeva poslao, a koliko je puta čekao između pokušaja?
+
+## 5.6. Pouzdan dohvat činjenica o mačkama
+
+Nadogradite program iz zadatka 5.2. tako da pokuša prikupiti po jednu činjenicu za svaki od osam numeriranih zahtjeva, čak i kada neki od njih zakasne ili servis vrati pogrešku.
+
+1. Koristite jednu HTTP-sesiju i zajednički semafor koji dopušta najviše **tri aktivna dohvata**. Svaki pokušaj, uključujući ponovljene, mora dobiti mjesto. Od tog trenutka smije trajati najviše 2 sekunde.
+2. Ponovite dohvat ako istekne vrijeme ili poslužitelj vrati `503 Service Unavailable`. Dopustite najviše tri pokušaja po zahtjevu, uz odgode od 0,5 s i 1 s. Oslobodite mjesto na semaforu prije čekanja kako bi za to vrijeme drugi zahtjev mogao krenuti. Za ostale neuspješne HTTP statuse odmah zabilježite neuspjeh tog zahtjeva.
+3. Za svaki zahtjev ispišite njegov broj, broj pokušaja i činjenicu ili razlog neuspjeha. Na kraju ispišite koliko je činjenica dohvaćeno, koliko je zahtjeva završilo neuspjehom i koliko je ukupno pokušaja bilo potrebno.
+
+**Provjera.** Prije slanja stvarnih zahtjeva zamijenite samo dohvat simulacijom. Neka zahtjev 2 zakasni u prvom pokušaju, zahtjev 5 svaki put vrati status `503`, a svi ostali pokušaji uspiju. Očekivani rezultat je **7 dohvaćenih činjenica, 1 neuspješan zahtjev i 11 pokušaja ukupno**. Zatim pokrenite isti program sa stvarnim API-jem.
