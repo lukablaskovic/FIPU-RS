@@ -1186,7 +1186,7 @@ Zadano je ponašanje funkcije `asyncio.gather` da **čeka završetak svih koruti
 > Kako mi ne možemo pravilno obraditi podatke bez svih odgovora (podataka svih kamera), a opet ne želimo da naš glavni sustav "visi" čekajući odgovore koji možda nikada neće stići, možemo postaviti vremensko ograničenje za svaki zahtjev.
 
 <p align="center">
-  <a href="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamere-istek-cekanja-nakon-tri-sekunde.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamere-istek-cekanja-nakon-tri-sekunde.png" alt="Odgovori pet kamera uz vremensko ograničenje od tri sekunde" width="50%"></a>
+  <a href="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamere-istek-cekanja-nakon-tri-sekunde.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamere-istek-cekanja-nakon-tri-sekunde.png" alt="Odgovori pet kamera uz vremensko ograničenje od tri sekunde" width="75%"></a>
 </p>
 
 > **Slika 14.** Kamere 1, 2 i 4 odgovaraju unutar tri sekunde. Za kamere 3 i 5 istječe vrijeme čekanja.
@@ -1257,7 +1257,7 @@ An error occurred while fetching camera data: Camera 3 is unreachable!
 ```
 
 <p align="center">
-  <a href="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamera-3-iznimka-nakon-sest-sekundi.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamera-3-iznimka-nakon-sest-sekundi.png" alt="Iznimka na kameri 3 nakon šest sekundi" width="50%"></a>
+  <a href="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamera-3-iznimka-nakon-sest-sekundi.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/kamera-3-iznimka-nakon-sest-sekundi.png" alt="Iznimka na kameri 3 nakon šest sekundi" width="75%"></a>
 </p>
 
 > **Slika 15.** Svih pet korutina započinje konkurentno. Svaka kamera ima različito trajanje simuliranog mrežnog zahtjeva, ali **kamera 3 nakon 6 sekundi svakako podiže iznimku**.
@@ -1350,7 +1350,7 @@ A timeout occurred while fetching camera data.
 Uočite da smo dobili `TimeoutError` te se aktivirao `except` blok za hvatanje iznimke.
 
 <p align="center">
-  <a href="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/zajednicki-timeout-za-pet-kamera.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/zajednicki-timeout-za-pet-kamera.png" alt="Zajedničko vremensko ograničenje od deset sekundi za pet kamera" width="70%"></a>
+  <a href="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/zajednicki-timeout-za-pet-kamera.png"><img src="https://raw.githubusercontent.com/lukablaskovic/FIPU-RS/main/RS4%20-%20Asinkroni%20Python%20-%20Konkurentna%20obrada%20mre%C5%BEnih%20operacija/screenshots/zajednicki-timeout-za-pet-kamera.png" alt="Zajedničko vremensko ograničenje od deset sekundi za pet kamera" width="75%"></a>
 </p>
 
 > **Slika 16.** Svih pet kamera započinje konkurentno dohvaćanje podataka. Kamera 3 simulira spori mrežni odgovor od 20 sekundi, dok ostale kamere završavaju nakon 2, 4, 8 i 10 sekundi. Za razliku od prethodnog primjera, ovdje `asyncio.wait_for()` postavlja jedno zajedničko vremensko ograničenje od 10 sekundi za cijeli `asyncio.gather()`.
